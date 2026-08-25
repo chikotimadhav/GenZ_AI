@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenZ AI — Workspace</title>
+    <!-- Google Fonts: Instrument Serif (headings) and Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;0,400i;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-workspace">
+        
+        <!-- 1. LEFT SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-logo">
+                        <i data-lucide="sparkles"></i>
+                    </div>
+                    <div class="brand-info">
+                        <h2>GenZ AI</h2>
+                        <span>Powered by NVIDIA NIM</span>
+                    </div>
+                </div>
+                <button class="icon-btn mobile-only" id="closeSidebarBtn">
+                    <i data-lucide="chevrons-left"></i>
+                </button>
+            </div>
+
+            <!-- New Chat CTA -->
+            <div class="sidebar-action">
+                <button class="btn btn-primary btn-new-chat" id="newChatBtn">
+                    <i data-lucide="plus-circle"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#" id="navNewChat">
+                            <i data-lucide="message-square"></i>
+                            <span>Workspace Chat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="navHistory">
+                            <i data-lucide="history"></i>
+                            <span>Chat History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="navFavorites">
+                            <i data-lucide="star"></i>
+                            <span>Favorites</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="toggleConfigBtn">
+                            <i data-lucide="sliders"></i>
+                            <span>Settings Panel</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-spacer"></div>
+
+            <!-- API Status & Profile Controls -->
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <div class="status-ping">
+                        <span class="ping-dot" id="apiStatusDot"></span>
+                        <span class="ping-ring" id="apiStatusRing"></span>
+                    </div>
+                    <span class="status-label" id="apiStatusText">Initializing key...</span>
+                </div>
+
+                <div class="user-profile">
+                    <div class="avatar">M</div>
+                    <div class="user-details">
+                        <span class="username">Madhav</span>
+                        <span class="role">Developer Workspace</span>
+                    </div>
+                    <button class="icon-btn mini-btn">
+                        <i data-lucide="more-horizontal"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. MAIN CHAT AREA -->
+        <main class="chat-workspace">
+            
+            <!-- Top Navigation Bar -->
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <button class="icon-btn navbar-menu-btn" id="menuBtn">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="navbar-active-model">
+                        <div class="model-badge">
+                            <i data-lucide="cpu" class="badge-icon"></i>
+                            <span id="activeModelLabel">nvidia/nemotron-3-nano-omni-30b-a3b-reasoning</span>
+                            <span class="connected-badge"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="navbar-right">
+                    <button class="icon-btn" id="clearChatBtn" title="Clear conversation">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                    <button class="icon-btn" id="themeToggleBtn" title="Toggle theme mode">
+                        <i data-lucide="moon"></i>
+                    </button>
+                    <button class="icon-btn active" id="configDrawerBtn" title="Toggle Configuration Panel">
+                        <i data-lucide="settings"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Messages Area -->
+            <div class="chat-viewport" id="chatViewport">
+                <!-- Welcome Screen Landing State -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-logo-wrapper">
+                        <i data-lucide="sparkles"></i>
+                    </div>
+                    <h1>How can I help you today?</h1>
+                    <p class="welcome-subtext">Your intelligent AI workspace powered by high-performance NVIDIA NIM inference endpoints.</p>
+                    
+                    <div class="prompt-grid">
+                        <button class="prompt-card" data-prompt="Explain quantum physics simply">
+                            <div class="prompt-card-icon">
+                                <i data-lucide="atom"></i>
+                            </div>
+                            <div class="prompt-card-body">
+                                <h3>Explain quantum physics</h3>
+                                <p>Provide a simple, intuitive explanation.</p>
+                            </div>
+                        </button>
+                        <button class="prompt-card" data-prompt="Write a clean Python function to parse JSON">
+                            <div class="prompt-card-icon">
+                                <i data-lucide="code-2"></i>
+                            </div>
+                            <div class="prompt-card-body">
+                                <h3>Write a Python function</h3>
+                                <p>Create a clean script to parse raw JSON data.</p>
+                            </div>
+                        </button>
+                        <button class="prompt-card" data-prompt="Analyze the theory of relativity and black holes">
+                            <div class="prompt-card-icon">
+                                <i data-lucide="file-text"></i>
+                            </div>
+                            <div class="prompt-card-body">
+                                <h3>Analyze black holes</h3>
+                                <p>Deep dive into space-time relativity theories.</p>
+                            </div>
+                        </button>
+                        <button class="prompt-card" data-prompt="Help me brainstorm 5 SaaS business ideas">
+                            <div class="prompt-card-icon">
+                                <i data-lucide="lightbulb"></i>
+                            </div>
+                            <div class="prompt-card-body">
+                                <h3>Brainstorm SaaS ideas</h3>
+                                <p>Generate creative concepts for tech services.</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Stream Container -->
+                <div class="conversation-stream" id="conversationStream"></div>
+            </div>
+
+            <!-- Message Composer Area -->
+            <footer class="composer-container">
+                <div class="floating-composer">
+                    <div class="composer-input-row">
+                         <textarea id="composerInput" placeholder="Message GenZ AI..." rows="1"></textarea>
+                    </div>
+                    <div class="composer-actions-row">
+                        <div class="composer-left-actions">
+                            <button class="icon-btn composer-btn" title="Add attachment (placeholder)">
+                                <i data-lucide="paperclip"></i>
+                            </button>
+                            <button class="icon-btn composer-btn" title="Use microphone (placeholder)">
+                                <i data-lucide="mic"></i>
+                            </button>
+                            <button class="icon-btn composer-btn" id="composerConfigToggle" title="Target configurations">
+                                <i data-lucide="sliders"></i>
+                            </button>
+                        </div>
+                        <div class="composer-right-actions">
+                            <span class="composer-token-info" id="charCounter">0 chars</span>
+                            <button class="btn-send" id="sendBtn" disabled>
+                                <i data-lucide="arrow-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="composer-footer-info">
+                    GenZ AI can make mistakes. Verify important details.
+                </div>
+            </footer>
+        </main>
+
+        <!-- 3. RIGHT CONFIGURATION PANEL -->
+        <aside class="config-panel" id="configPanel">
+            <div class="config-header">
+                <div class="config-title">
+                    <i data-lucide="settings-2" class="config-title-icon"></i>
+                    <h3>Workspace Settings</h3>
+                </div>
+                <button class="icon-btn close-panel-btn" id="closeConfigPanelBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div class="config-scrollable-content">
+                <!-- Group 1: Model parameters -->
+                <div class="config-card">
+                    <div class="config-card-header">
+                        <i data-lucide="layers" class="card-icon"></i>
+                        <h4>Model Configuration</h4>
+                    </div>
+
+                    <div class="control-item">
+                        <label for="modelSelect">
+                            <span>Target Model</span>
+                            <i data-lucide="info" class="info-tip-icon" title="NVIDIA catalog model endpoint."></i>
+                        </label>
+                        <div class="select-wrapper">
+                            <select id="modelSelect">
+                                <option value="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning" selected>nvidia/nemotron-3-nano-omni-30b-a3b-reasoning</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="chevron-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div class="control-item">
+                        <label for="tempInput">
+                            <span>Temperature</span>
+                            <span class="slider-val-badge" id="tempValDisplay">0.7</span>
+                        </label>
+                        <div class="range-wrapper">
+                            <input type="range" id="tempInput" min="0" max="1" step="0.05" value="0.7">
+                        </div>
+                        <span class="control-subtext">Higher values increase randomness and creativity.</span>
+                    </div>
+
+                    <div class="control-row">
+                        <div class="control-item half-width">
+                            <label for="maxTokensInput">
+                                <span>Max Tokens</span>
+                            </label>
+                            <input type="number" id="maxTokensInput" value="1024" min="1" max="65536">
+                        </div>
+                        <div class="control-item half-width" id="reasoningBudgetWrapper">
+                            <label for="reasoningInput">
+                                <span>Reasoning Budget</span>
+                            </label>
+                            <input type="number" id="reasoningInput" value="1024" min="0" max="65536">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Instructions -->
+                <div class="config-card">
+                    <div class="config-card-header">
+                        <i data-lucide="user" class="card-icon"></i>
+                        <h4>System Persona</h4>
+                    </div>
+                    <div class="control-item">
+                        <label for="systemPrompt">
+                            <span>Directives & Context</span>
+                        </label>
+                        <textarea id="systemPrompt" placeholder="You are GenZ AI, a helpful, intelligent workspace assistant. Use formatting and be concise."></textarea>
+                        <span class="control-subtext">Guides the assistant's behavior, tone, and directives.</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+    
+    <!-- JS Bundle -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# Local environment secrets
+.env
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Python caches and local files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.DS_Store
