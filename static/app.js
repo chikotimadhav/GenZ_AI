@@ -353,9 +353,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         messages.push(...conversationHistory);
 
+        // Sanitize client messages to prevent sequential duplicate roles
+        const sanitizedMessages = [];
+        for (const m of messages) {
+            if (sanitizedMessages.length > 0 && sanitizedMessages[sanitizedMessages.length - 1].role === m.role) {
+                sanitizedMessages[sanitizedMessages.length - 1].content += "\n\n" + m.content;
+            } else {
+                sanitizedMessages.push({ ...m });
+            }
+        }
+
         const payload = {
             model: modelSelect.value,
-            messages: messages,
+            messages: sanitizedMessages,
             temperature: parseFloat(tempInput.value),
             max_tokens: parseInt(maxTokensInput.value),
             reasoning_budget: parseInt(reasoningInput.value)
@@ -380,8 +390,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const content = msg.content;
                 const reasoning = msg.reasoning_content || msg.reasoning;
 
+                let displayContent = content;
+                if (data.fallback_notice) {
+                    displayContent = `> ⚡ *${data.fallback_notice}*\n\n` + content;
+                }
+
                 // Append assistant reply bubble
-                appendMessageUI("assistant", content, reasoning);
+                appendMessageUI("assistant", displayContent, reasoning);
                 scrollToBottom();
 
                 // Save to history
@@ -390,12 +405,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     "content": content
                 });
             } else {
+                // Discard failed user message to prevent role desync
+                if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === "user") {
+                    conversationHistory.pop();
+                }
                 const errorText = extractErrorText(data) || "Unable to retrieve response from server.";
                 appendMessageUI("assistant", `<span class="accent-red">Error: ${errorText}</span>`);
                 scrollToBottom();
             }
         } catch (error) {
             removeTypingIndicatorUI(indicatorId);
+            // Discard failed user message to prevent role desync
+            if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === "user") {
+                conversationHistory.pop();
+            }
             appendMessageUI("assistant", `<span class="accent-red">Network Error: Failed to communicate with backend.</span>`);
             scrollToBottom();
         }
