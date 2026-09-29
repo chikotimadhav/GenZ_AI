@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // State Variables
     let conversationHistory = [];
-    const DEFAULT_MODEL = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning";
+    const DEFAULT_MODEL = "meta/llama-3.2-11b-vision-instruct";
 
     // Navigation & Layout Interactions
     menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
@@ -138,6 +138,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // Function Definitions
     // ----------------------------------------------------
 
+    // Extract user-friendly error messages from various API response formats
+    function extractErrorText(data) {
+        if (!data) return "";
+        let raw = "";
+        if (typeof data === "string") {
+            raw = data;
+        } else if (data.error) {
+            if (typeof data.error === "object" && data.error.message) {
+                raw = data.error.message;
+            } else {
+                raw = data.error;
+            }
+        } else if (data.detail) {
+            raw = data.title ? `${data.title}: ${data.detail}` : data.detail;
+        } else if (data.message) {
+            raw = data.message;
+        } else if (data.title) {
+            raw = data.title;
+        } else {
+            raw = JSON.stringify(data);
+        }
+
+        // Add helpful context for known NVIDIA API error states
+        if (raw.includes("Worker local total request limit reached") || raw.includes("ResourceExhausted") || raw.includes("503")) {
+            return `${raw} (NVIDIA server capacity temporarily reached. Please switch to a verified model like meta/llama-3.2-11b-vision-instruct or retry in a moment).`;
+        }
+        if (raw.includes("Not found for account")) {
+            return `${raw} (This model function is not enabled for your account tier on build.nvidia.com).`;
+        }
+        return raw;
+    }
+
     // Fetch catalog models dynamically
     async function fetchModels() {
         try {
@@ -147,10 +179,18 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (response.ok && data.models) {
                 modelSelect.innerHTML = "";
+                const VERIFIED_SET = new Set([
+                    "meta/llama-3.2-11b-vision-instruct",
+                    "moonshotai/kimi-k3",
+                    "nvidia/nemotron-3-ultra-550b-a55b",
+                    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+                    "nvidia/riva-translate-4b-instruct-v2"
+                ]);
+
                 data.models.forEach(modelId => {
                     const opt = document.createElement("option");
                     opt.value = modelId;
-                    opt.textContent = modelId;
+                    opt.textContent = VERIFIED_SET.has(modelId) ? `⚡ ${modelId} (Online)` : modelId;
                     if (modelId === DEFAULT_MODEL) {
                         opt.selected = true;
                     }
@@ -164,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Connected state
                 setAPIIndicatorState("connected", "Connected");
             } else {
-                setAPIIndicatorState("error", data.error || "Failed to load endpoints.");
+                setAPIIndicatorState("error", extractErrorText(data) || "Failed to load endpoints.");
             }
         } catch (error) {
             setAPIIndicatorState("error", "API Server offline.");
@@ -195,11 +235,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function formatMessageText(text) {
         if (!text) return "";
         
-        // Escape HTML for safety
+        // Escape HTML for safety, but preserve custom style spans
         let escaped = text
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
+            .replace(/>/g, "&gt;")
+            .replace(/&lt;span class="accent-red"&gt;/g, '<span class="accent-red">')
+            .replace(/&lt;\/span&gt;/g, '</span>');
 
         // Parse markdown tables first
         let lines = escaped.split("\n");
@@ -348,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "content": content
                 });
             } else {
-                const errorText = data.error?.message || data.error || "Unable to retrieve response from server.";
+                const errorText = extractErrorText(data) || "Unable to retrieve response from server.";
                 appendMessageUI("assistant", `<span class="accent-red">Error: ${errorText}</span>`);
                 scrollToBottom();
             }

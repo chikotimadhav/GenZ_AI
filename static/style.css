@@ -1249,3 +1249,11 @@ body, html {
         border-radius: var(--radius-md);
     }
 }
+
+/* Accent Utility Classes */
+.accent-red {
+    color: var(--accent-red) !important;
+}
+.accent-green {
+    color: var(--accent-green) !important;
+}

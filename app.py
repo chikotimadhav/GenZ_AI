@@ -36,15 +36,34 @@ def list_models():
             "Authorization": f"Bearer {API_KEY}",
             "Accept": "application/json"
         }
-        response = requests.get(f"{BASE_URL}/models", headers=headers)
+        response = requests.get(f"{BASE_URL}/models", headers=headers, timeout=15)
         if response.status_code == 200:
             data = response.json()
-            # Extract model IDs and sort them
-            model_ids = [m["id"] for m in data.get("data", [])]
-            model_ids.sort()
-            return jsonify({"models": model_ids})
+            # Non-chat models (embeddings, reward, parsers, vision detectors)
+            NON_CHAT_KEYWORDS = ["embed", "clip", "reward", "parse", "detector", "deplot", "kosmos-2"]
+            model_ids = [
+                m["id"] for m in data.get("data", [])
+                if not any(kw in m["id"].lower() for kw in NON_CHAT_KEYWORDS)
+            ]
+            
+            # Prioritize verified online models at the top
+            VERIFIED_MODELS = [
+                "meta/llama-3.2-11b-vision-instruct",
+                "moonshotai/kimi-k3",
+                "nvidia/nemotron-3-ultra-550b-a55b",
+                "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+                "nvidia/riva-translate-4b-instruct-v2"
+            ]
+            verified = [m for m in VERIFIED_MODELS if m in model_ids]
+            remaining = sorted([m for m in model_ids if m not in VERIFIED_MODELS])
+            ordered_models = verified + remaining
+            
+            return jsonify({"models": ordered_models})
         else:
-            return jsonify({"error": f"NVIDIA API responded with status {response.status_code}"}), response.status_code
+            try:
+                return jsonify(response.json()), response.status_code
+            except Exception:
+                return jsonify({"error": response.text or f"NVIDIA API responded with status {response.status_code}"}), response.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -54,7 +73,7 @@ def chat():
         return jsonify({"error": "NVIDIA_API_KEY is not set on the server."}), 500
     
     data = request.json
-    model = data.get("model", "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning")
+    model = data.get("model", "meta/llama-3.2-11b-vision-instruct")
     messages = data.get("messages", [])
     temperature = data.get("temperature", 0.7)
     max_tokens = data.get("max_tokens", 1024)
@@ -80,13 +99,18 @@ def chat():
             "Accept": "application/json"
         }
         
-        response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers)
+        response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers, timeout=45)
         
         if response.status_code == 200:
             return jsonify(response.json())
         else:
-            return jsonify(response.json()), response.status_code
+            try:
+                return jsonify(response.json()), response.status_code
+            except Exception:
+                return jsonify({"error": response.text or f"NVIDIA API responded with status {response.status_code}"}), response.status_code
             
+    except requests.exceptions.Timeout:
+        return jsonify({"error": "The model took too long to respond (>45s). It may be experiencing cold starts or heavy server queues on NVIDIA NIM."}), 504
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
