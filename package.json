@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "dev": "python app.py",
+    "start": "python app.py"
+  },
   "dependencies": {
     "axios": "^1.19.0"
   }

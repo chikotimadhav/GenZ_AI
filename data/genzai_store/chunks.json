@@ -1,0 +1,1115 @@
+[
+  {
+    "id": "starter_dataset.json (genZai Model Identity & Architecture)_1_c0",
+    "source": "starter_dataset.json (genZai Model Identity & Architecture)",
+    "page": 1,
+    "text": "genZai Model Identity & Architecture\ngenZai is a personalized, state-of-the-art AI model created and fine-tuned by Madhav. It features an integrated Knowledge Retrieval Engine (RAG) that allows it to learn directly from uploaded PDFs, text documents, research papers, and custom question-answer datasets. genZai is designed to provide authoritative, accurate, and context-aware responses with full source attribution.",
+    "char_count": 417
+  },
+  {
+    "id": "starter_dataset.json (Hardware and Acceleration Profile)_1_c0",
+    "source": "starter_dataset.json (Hardware and Acceleration Profile)",
+    "page": 1,
+    "text": "Hardware and Acceleration Profile\ngenZai runs on an optimized computing pipeline leveraging NVIDIA GPU acceleration (such as the NVIDIA GeForce RTX 2050 architecture with CUDA support) combined with ultra-low latency NVIDIA NIM inference endpoints for deep generative reasoning and language synthesis.",
+    "char_count": 301
+  },
+  {
+    "id": "starter_dataset.json (genZai Training and Ingestion Pipeline)_1_c0",
+    "source": "starter_dataset.json (genZai Training and Ingestion Pipeline)",
+    "page": 1,
+    "text": "genZai Training and Ingestion Pipeline\ngenZai uses a hybrid neural and semantic retrieval index to train on user data. When documents (PDFs, text files, notes, or JSON Q&A pairs) are uploaded to genZai, they are split into overlapping semantic chunks, vector-indexed using TF-IDF and n-gram lexical-semantic scoring, and stored in the local genZai store. When queried, genZai retrieves the most relevant knowledge chunks and incorporates them into its reasoning stream to provide answers backed by verified source citations.",
+    "char_count": 524
+  },
+  {
+    "id": "starter_dataset.json (Who created genZai?)_1_c0",
+    "source": "starter_dataset.json (Who created genZai?)",
+    "page": 1,
+    "text": "Who created genZai?\nQ: Who created genZai?\nA: genZai was created and trained by Madhav as a custom AI model powered by local document intelligence and NVIDIA NIM high-performance inference.",
+    "char_count": 189
+  },
+  {
+    "id": "starter_dataset.json (What can genZai do?)_1_c0",
+    "source": "starter_dataset.json (What can genZai do?)",
+    "page": 1,
+    "text": "What can genZai do?\nQ: What can genZai do?\nA: genZai can ingest your documents (PDF, TXT, Markdown, CSV, JSON), train on your custom datasets, answer complex technical and domain-specific questions with source citations, generate new training data, write code, analyze data, and perform multi-step reasoning.",
+    "char_count": 308
+  },
+  {
+    "id": "starter_dataset.json (How do I train genZai on new data?)_1_c0",
+    "source": "starter_dataset.json (How do I train genZai on new data?)",
+    "page": 1,
+    "text": "How do I train genZai on new data?\nQ: How do I train genZai on new data?\nA: Open the 'Train genZai' studio from the navigation bar or settings. You can upload PDF/TXT documents, paste custom text notes directly, or use the built-in AI Dataset Generator to create structured Q&A pairs. Once uploaded, click 'Train into genZai' to immediately index the data into the model.",
+    "char_count": 371
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c0",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "AI Model Evaluation — Questions & Answers\n Reasoning, mathematics, coding, understanding, instruction-following, and difficult logic\nPurpose: This PDF is designed as a simple evaluation/training reference. Answers include corrections for common reasoning\nand instruction-following mistakes.\nReasoning\n1. Question: If all roses are flowers and some flowers fade quickly, can we conclude that some roses fade quickly?\n Answer: No.",
+    "char_count": 428
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c1",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "re flowers and some flowers fade quickly, can we conclude that some roses fade quickly?\n Answer: No. We know that all roses are flowers, but we are not told that any roses are among the flowers that fade\nquickly.\n2. Question: A farmer has 17 sheep. All but 9 run away. How many remain?\n Answer: 9 sheep remain. “All but 9” means 9 stay.\n3. Question: If 5 machines make 5 products in 5 minutes, how long would 100 machines take to make 100 products?\n Answer: 5 minutes.",
+    "char_count": 468
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c2",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "5 products in 5 minutes, how long would 100 machines take to make 100 products?\n Answer: 5 minutes. Each machine makes one product in 5 minutes, so 100 machines can make 100 products in 5\nminutes.\n4. Question: What comes next: 2, 6, 12, 20, 30, ?\n Answer: 42. The differences are 4, 6, 8, 10, so the next difference is 12.\n5. Question: You have 8 balls and one is heavier. How can you find it using a balance scale in two weighings?\n Answer: Weigh 3 vs 3.",
+    "char_count": 455
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c3",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "d one is heavier. How can you find it using a balance scale in two weighings?\n Answer: Weigh 3 vs 3. If one side is heavier, the heavy ball is among those 3; weigh 1 vs 1 from those 3. If the first\nweighing balances, the heavy ball is among the remaining 2; weigh those 2 against each other.\nMath\n1. Question: What is 15% of 240?\n Answer: 36.\n2. Question: If a ■1,000 item is discounted by 20% and then another 10%, what is the final price?\n Answer: ■720.",
+    "char_count": 455
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c4",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "If a ■1,000 item is discounted by 20% and then another 10%, what is the final price?\n Answer: ■720. After 20%, the price is ■800; after another 10%, it is ■720.\n3. Question: Solve: 3x + 7 = 28.\n Answer: x = 7.\n4. Question: A train travels 180 km in 3 hours. What is its average speed?\n Answer: 60 km/h.\n5. Question: If a number is doubled and 15 is added, the result is 41. What is the number?\n Answer: 13, because 2x + 15 = 41, so 2x = 26 and x = 13.\nCoding\n1.",
+    "char_count": 461
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c5",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "esult is 41. What is the number?\n Answer: 13, because 2x + 15 = 41, so 2x = 26 and x = 13.\nCoding\n1. Question: What is a variable in programming?\n Answer: A variable is a named reference used to store or represent a value that a program can use.\n2. Question: What is the difference between a list and a dictionary in Python?\n Answer: A list is an ordered, index-based collection. A dictionary stores key-value pairs and is accessed by keys.\n3.",
+    "char_count": 443
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_1_c6",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 1,
+    "text": "an ordered, index-based collection. A dictionary stores key-value pairs and is accessed by keys.\n3. Question: Write Python code to check whether a number is even or odd.\n Answer: def is_even_or_odd(n):\nif n % 2 == 0:\n    return \"even\"",
+    "char_count": 234
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_2_c0",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 2,
+    "text": "else:\n    return \"odd\"\n4. Question: What does a for loop do?\n Answer: A for loop repeatedly executes a block of code for each item in an iterable or sequence.\n5. Question: Find the error in: if x = 10: print(x)\n Answer: The comparison operator should be ==. Correct form: if x == 10: print(x)\nUnderstanding\n1. Question: Explain artificial intelligence to a 10-year-old.\n Answer: AI is technology that lets computers perform tasks that normally require human-like abilities, such as",
+    "char_count": 481
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_2_c1",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 2,
+    "text": "is technology that lets computers perform tasks that normally require human-like abilities, such as\nrecognizing patterns, understanding language, or making predictions.\n2. Question: What is the difference between “I didn't go” and “I don't go”?\n Answer: “I didn't go” refers to a specific past event that did not happen. “I don't go” usually describes a present or\nhabitual situation.\n3. Question: Summarize: “The company postponed its launch because the product required additional testing.”",
+    "char_count": 492
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_2_c2",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 2,
+    "text": "ion: Summarize: “The company postponed its launch because the product required additional testing.”\n Answer: The company postponed its launch for additional testing.\n4. Question: Rewrite “Please give me the information” in a more polite way.\n Answer: Could you please provide me with the information?\n5. Question: What does “break a leg” mean?\n Answer: It is an idiom commonly used to wish someone good luck, especially before a performance.\nModel-following\n1.",
+    "char_count": 460
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_2_c3",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 2,
+    "text": "n idiom commonly used to wish someone good luck, especially before a performance.\nModel-following\n1. Question: Answer with exactly three words: What is the capital of India?\n Answer: India's capital: New Delhi.\n2. Question: Give me 5 fruits, but do not use bullet points.\n Answer: Apples, bananas, oranges, grapes, mangoes.\n3. Question: Explain photosynthesis using exactly 20 words.\n Answer: Plants use sunlight, water, and carbon dioxide to produce glucose and oxygen through chlorophyll during",
+    "char_count": 496
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_2_c4",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 2,
+    "text": "ts use sunlight, water, and carbon dioxide to produce glucose and oxygen through chlorophyll during\nphotosynthesis, supporting life on Earth.\n4. Question: Answer only YES or NO: Is 17 greater than 20?\n Answer: NO.\n5. Question: Give the answer first, then explain your reasoning.\n Answer: Answer: 17 is less than 20. Reason: 17 is numerically smaller than 20.\nMore Difficult Reasoning\n1. Question: A man walks 1 km south, then 1 km east, then 1 km north and ends exactly where he started. Where",
+    "char_count": 493
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_2_c5",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 2,
+    "text": "n: A man walks 1 km south, then 1 km east, then 1 km north and ends exactly where he started. Where\ncould he be?\n Answer: The North Pole is one valid answer. There are also locations near the South Pole that can satisfy the\nconditions, so the North Pole is not the only possible answer.\n2. Question: You have two ropes. Each takes exactly one hour to burn, but they burn at unpredictable rates. How\ncan you measure exactly 45 minutes?",
+    "char_count": 434
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_3_c0",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 3,
+    "text": "Answer: Light both ends of Rope 1 and one end of Rope 2 at the same time. Rope 1 burns out in 30 minutes. Then\nlight the other end of Rope 2. Its remaining burn time becomes 15 minutes, giving 45 minutes total.\n3. Question: There are 100 doors, initially closed. You toggle every door, then every second door, then every third\ndoor, and so on until 100. Which doors remain open?\n Answer: The perfect-square doors remain open: 1, 4, 9, 16, 25, 36, 49, 64, 81, and 100. There are 10 open doors.\n4.",
+    "char_count": 495
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_3_c1",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 3,
+    "text": "fect-square doors remain open: 1, 4, 9, 16, 25, 36, 49, 64, 81, and 100. There are 10 open doors.\n4. Question: A bat and ball cost ■110 together. The bat costs ■100 more than the ball. How much does the ball\ncost?\n Answer: ■5. If the ball costs x, the bat costs x + ■100. Then 2x + ■100 = ■110, so x = ■5.\n5. Question: If yesterday was two days before Thursday, what day is today?\n Answer: Wednesday. Two days before Thursday is Tuesday, so if yesterday was Tuesday, today is Wednesday.",
+    "char_count": 486
+  },
+  {
+    "id": "AI_Model_Questions_and_Answers.pdf_3_c2",
+    "source": "AI_Model_Questions_and_Answers.pdf",
+    "page": 3,
+    "text": "r: Wednesday. Two days before Thursday is Tuesday, so if yesterday was Tuesday, today is Wednesday.\nEvaluation tip: When testing a model, check not only whether the final answer is correct, but also whether the reasoning is valid\nand whether exact instructions such as word counts or response formats are followed.",
+    "char_count": 314
+  },
+  {
+    "id": "How_are_you.txt_1_c0",
+    "source": "How_are_you.txt",
+    "page": 1,
+    "text": "I'm doing well, thank you!",
+    "char_count": 26
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_1_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 1,
+    "text": "Telangana MLAs — Questions & Answers\n AI training dataset  119 Telangana Legislative Assembly members\nSource and date note: Names, parties and constituencies are based on the Telangana State Portal's current “Members of\nLegislative Assembly” directory retrieved in September 2026. The Telangana government states that the Assembly has 119\nelected-member seats. This document is intended as a simple training/reference dataset; political affiliations and officeholders",
+    "char_count": 468
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_1_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 1,
+    "text": "cument is intended as a simple training/reference dataset; political affiliations and officeholders\ncan change, so verify against the official portal before production use.\nTraining format\nQ: Who is the MLA of [Constituency]?\nA: [Name] is the MLA of [Constituency], representing the [Party].\nQ: Which constituency does [Name] represent?\nA: [Name] represents [Constituency].\nCurrent MLA Directory\n No.\nMLA\nParty\nConstituency\n1\nAnumula Revanth Reddy\nINC\nKodangal\n2\nPalvai Harish Babu\nBJP\nSirpur\n3",
+    "char_count": 494
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_1_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 1,
+    "text": "No.\nMLA\nParty\nConstituency\n1\nAnumula Revanth Reddy\nINC\nKodangal\n2\nPalvai Harish Babu\nBJP\nSirpur\n3\nKova Laxmi\nBRS\nAsifabad (ST)\n4\nVivek Venkat Swamy\nINC\nChennur (SC)\n5\nGaddam Vinod\nINC\nBellampalli (SC)\n6\nKokkirala Premsagar Rao\nINC\nMancherial\n7\nPayal Shanker\nBJP\nAdilabad\n8\nAnil Jadhav\nBRS\nBoath (ST)\n9\nVedma Bhojju\nINC\nKhanapur (ST)\n10\nAlleti Maheshwar Reddy\nBJP\nNirmal\n11\nRam Rao Pawar\nBJP\nMudhole\n12\nPaidi Rakesh Reddy\nBJP\nArmoor\n13\nP. Sudarshan Reddy\nINC\nBodhan\n14",
+    "char_count": 467
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_1_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 1,
+    "text": "l\n11\nRam Rao Pawar\nBJP\nMudhole\n12\nPaidi Rakesh Reddy\nBJP\nArmoor\n13\nP. Sudarshan Reddy\nINC\nBodhan\n14\nSrinivas Reddy Parige (Pocharam)\nBRS\nBanswada\n15\nDhanpal Suryanarayana\nBJP\nNizamabad (Urban)\n16\nBhoopathi Reddy Rekulapally\nINC\nNizamabad (Rural)\n17\nPrashanth Reddy Vemula\nBRS\nBalkonda\n18\nLaxmi Kantha Rao Thota\nINC\nJukkal (SC)\n19\nMadan Mohan Rao K.\nINC\nYellareddy\n20\nKatipally Venkata Ramana Reddy\nBJP\nKamareddy\n21\nKalvakuntla Sanjay\nBRS\nKoratla\n22\nDr. Sanjay\nBRS\nJagatial\n23\nAdluri Laxman Kumar\nINC",
+    "char_count": 499
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_1_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 1,
+    "text": "P\nKamareddy\n21\nKalvakuntla Sanjay\nBRS\nKoratla\n22\nDr. Sanjay\nBRS\nJagatial\n23\nAdluri Laxman Kumar\nINC\nDharmapuri (SC)\n24\nMakkan Singh Raj Thakur\nINC\nRamagundam\n25\nDuddilla Sridhar Babu\nINC\nManthani\n26\nChinthakunta Vijaya Ramana Rao\nINC\nPeddapalle\n27\nGangula Kamalakar\nBRS\nKarimnagar\n28\nMedipally Sathyam\nINC\nChoppadandi (SC)\n29\nKavvampally Satyanarayana\nINC\nManakondur (SC)\n30\nKaushik Reddy Padi\nBRS\nHuzurabad\n31\nAadi Srinivas\nINC\nVemulawada\n32\nKalvakuntla Taraka Rama Rao (K.T.R)\nBRS\nSircilla\n33",
+    "char_count": 494
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_1_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 1,
+    "text": "RS\nHuzurabad\n31\nAadi Srinivas\nINC\nVemulawada\n32\nKalvakuntla Taraka Rama Rao (K.T.R)\nBRS\nSircilla\n33\nPatlolla Sanjeeva Reddy\nINC\nNarayankhed\n34\nC. Damodar Rajanarsimha\nINC\nAndole (SC)\n35\nKoninty Manik Rao\nBRS\nZahirabad (SC)\n36\nChinta Prabhakar\nBRS\nSangareddy\n37\nGudem Mahipal Reddy\nBRS\nPatancheru",
+    "char_count": 295
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_2_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 2,
+    "text": "No.\nMLA\nParty\nConstituency\n38\nMynampally Rohith\nINC\nMedak\n39\nVakiti Sunitha Laxma Reddy\nBRS\nNarsapur\n40\nPonnam Prabhakar\nINC\nHusnabad\n41\nThanneeru Harish Rao\nBRS\nSiddipet\n42\nKotta Prabhakar Reddy\nBRS\nDubbak\n43\nKalvakuntla Chandrashekar Rao\nBRS\nGajwel\n44\nMalreddy Ranga Reddy\nINC\nIbrahimpatnam\n45\nDevireddy Sudhir Reddy\nBRS\nLal Bahadur Nagar\n46\nPatlolla Sabitha Indra Reddy\nBRS\nMaheswaram\n47\nT. Prakash Goud\nBRS\nRajendranagar\n48\nArekapudi Gandhi\nBRS\nSerilingampally\n49\nKale Yadaiah\nBRS\nChevella (SC)",
+    "char_count": 498
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_2_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 2,
+    "text": "sh Goud\nBRS\nRajendranagar\n48\nArekapudi Gandhi\nBRS\nSerilingampally\n49\nKale Yadaiah\nBRS\nChevella (SC)\n50\nKasireddy Narayan Reddy\nINC\nKalwakurthi\n51\nK. Shankaraiah\nINC\nShadnagar\n52\nT. Ram Mohan Reddy\nINC\nPargi\n53\nGaddam Prasad Kumar\nINC\nVicarabad (SC)\n54\nB. Manohar Reddy\nINC\nTandur\n55\nChamakura Malla Reddy\nBRS\nMedchal\n56\nMarri Rajashekar Reddy\nBRS\nMalkajgiri\n57\nK.P. Vivekanand\nBRS\nQuthabullapur\n58\nMadhavaram Krishna Rao\nBRS\nKukatpalle\n59\nBandari Lakshma Reddy\nBRS\nUppal\n60\nMuta Gopal\nBRS",
+    "char_count": 488
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_2_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 2,
+    "text": "lapur\n58\nMadhavaram Krishna Rao\nBRS\nKukatpalle\n59\nBandari Lakshma Reddy\nBRS\nUppal\n60\nMuta Gopal\nBRS\nMusheerabad\n61\nAhmed Bin Abdullah Balala\nAIMIM\nMalakpet\n62\nKaleru Venkatesh\nBRS\nAmberpet\n63\nDanam Nagender\nBRS\nKhairatabad\n64\nNaveen Yadav V.\nINC\nJubliee Hills\n65\nTalasani Srinivas Yadav\nBRS\nSanathnagar\n66\nMohammed Majid Hussain\nAIMIM\nNampally\n67\nKausar Mohiuddin\nAIMIM\nKarwan\n68\nT. Raja Singh\nBJP\nGoshamahal\n69\nMir Zulfeqar Ali\nAIMIM\nCharminar\n70\nAkbar Uddin Owaisi\nAIMIM\nChandrayangutta\n71",
+    "char_count": 491
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_2_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 2,
+    "text": "h\nBJP\nGoshamahal\n69\nMir Zulfeqar Ali\nAIMIM\nCharminar\n70\nAkbar Uddin Owaisi\nAIMIM\nChandrayangutta\n71\nJaffar Hussain\nAIMIM\nYakutpura\n72\nMohammed Mubeen\nAIMIM\nBahadurpura\n73\nPadma Rao T.\nBRS\nSecunderabad\n74\nNarayanan Sri Ganesh\nINC\nSecunderabad Cantonment (SC)\n75\nYennam Srinivas Reddy\nINC\nMahabubnagar\n76\nAnirudh Reddy Janampalli\nINC\nJadcharla\n77\nGavinolla Madhusudan Reddy (GMR)\nINC\nDevarakadra\n78\nKuch Kulla Rajesh Reddy\nINC\nNagarkurnool\n79\nChikkudu Vamshi Krishna\nINC\nAchampet (SC)\n80",
+    "char_count": 485
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_2_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 2,
+    "text": "rakadra\n78\nKuch Kulla Rajesh Reddy\nINC\nNagarkurnool\n79\nChikkudu Vamshi Krishna\nINC\nAchampet (SC)\n80\nJupally Krishna Rao\nINC\nKollapur\n81\nMegha Reddy Tudi\nINC\nWanaparthy\n82\nBandla Krishna Mohan Reddy\nBRS\nGadwal\n83\nVijayudu\nBRS\nAlampur (SC)\n84\nBalu Naik Nenavath\nINC\nDevarakonda (ST)\n85\nKunduru Jayaveer\nINC\nNagarjunasagar\n86\nBathula Laxma Reddy\nINC\nMiryaguda\n87\nKomati Reddy Venkat Reddy\nINC\nNalgonda\n88\nKomatireddy Raj Gopal Reddy\nINC\nMungode\n89\nVemula Veeresham\nINC\nNakrekal (SC)\n90",
+    "char_count": 482
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_2_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 2,
+    "text": "dy\nINC\nNalgonda\n88\nKomatireddy Raj Gopal Reddy\nINC\nMungode\n89\nVemula Veeresham\nINC\nNakrekal (SC)\n90\nUttam Kumar Reddy Nalamada\nINC\nHuzurnagar\n91\nNalamada Padmavathi Reddy\nINC\nKodad\n92\nGuntakandla Jagadish Reddy\nBRS\nSuryapet\n93\nMandula Samel\nINC\nThungathurthy (SC)",
+    "char_count": 263
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_3_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 3,
+    "text": "No.\nMLA\nParty\nConstituency\n94\nKumbam Anil Kumar Reddy\nINC\nBhongir\n95\nIlaiah Beerla\nINC\nAlair\n96\nPalla Rajeshwar Reddy\nBRS\nJangaon\n97\nKadiyam Srihari\nBRS\nGhanpur (SC)\n98\nYashaswini Mamidala\nINC\nPalakurthi\n99\nJatoth Ram Chander Naik\nINC\nDornakal (ST)\n100\nMurali Naik Bhukya\nINC\nMahabubabad (ST)\n101\nDonthi Madhava Reddy\nINC\nNarasampet\n102\nKonda Surekha\nINC\nWarangal East\n103\nK.R. Nagaraj\nINC\nWardhannapet (SC)\n104\nRevuri Prakash Reddy\nINC\nParkal\n105\nNaini Rajender Reddy\nINC\nWarangal West\n106",
+    "char_count": 490
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_3_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 3,
+    "text": "ardhannapet (SC)\n104\nRevuri Prakash Reddy\nINC\nParkal\n105\nNaini Rajender Reddy\nINC\nWarangal West\n106\nGandra Satyanarayana Rao\nINC\nBhupalpalle\n107\nPayam Venkateswarulu\nINC\nPinapaka (ST)\n108\nKoram Kanakaiah\nINC\nYellandu (ST)\n109\nKunamneni Sambasiva Rao\nCPI\nKothagudem\n110\nAdinarayana Jare\nINC\nAswaraopeta (ST)\n111\nTellam Venkata Rao\nBRS\nBhadrachalam (ST)\n112\nTummala Nageswara Rao\nINC\nKhammam\n113\nPonguleti Srinivasa Reddy\nINC\nPalair\n114\nBhatti Vikramarka Mallu\nINC\nMadhira (SC)\n115\nRamdas Maloth\nINC",
+    "char_count": 497
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_3_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 3,
+    "text": "uleti Srinivasa Reddy\nINC\nPalair\n114\nBhatti Vikramarka Mallu\nINC\nMadhira (SC)\n115\nRamdas Maloth\nINC\nWyra (ST)\n116\nMatta Ragamayee\nINC\nSathupalle (SC)\n117\nChittem Parnika Reddy\nINC\nNarayanpet\n118\nVakiti Srihari\nINC\nMakthal\n119\nAnasuya Seethakka Dansari\nINC\nMulug (ST)",
+    "char_count": 266
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "Question-and-Answer Pairs\n Q: Who is the MLA of Kodangal?\nA: Anumula Revanth Reddy is the MLA of Kodangal, representing the INC.\nQ: Which constituency does Anumula Revanth Reddy represent?\nA: Anumula Revanth Reddy represents Kodangal.\nQ: Which party does Anumula Revanth Reddy belong to in the Telangana Assembly directory?\nA: Anumula Revanth Reddy is listed under INC.\nQ: Who is the MLA of Sirpur?\nA: Palvai Harish Babu is the MLA of Sirpur, representing the BJP.",
+    "char_count": 464
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "INC.\nQ: Who is the MLA of Sirpur?\nA: Palvai Harish Babu is the MLA of Sirpur, representing the BJP.\nQ: Which constituency does Palvai Harish Babu represent?\nA: Palvai Harish Babu represents Sirpur.\nQ: Which party does Palvai Harish Babu belong to in the Telangana Assembly directory?\nA: Palvai Harish Babu is listed under BJP.\nQ: Who is the MLA of Asifabad (ST)?\nA: Kova Laxmi is the MLA of Asifabad (ST), representing the BRS.\nQ: Which constituency does Kova Laxmi represent?",
+    "char_count": 476
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "is the MLA of Asifabad (ST), representing the BRS.\nQ: Which constituency does Kova Laxmi represent?\nA: Kova Laxmi represents Asifabad (ST).\nQ: Which party does Kova Laxmi belong to in the Telangana Assembly directory?\nA: Kova Laxmi is listed under BRS.\nQ: Who is the MLA of Chennur (SC)?\nA: Vivek Venkat Swamy is the MLA of Chennur (SC), representing the INC.\nQ: Which constituency does Vivek Venkat Swamy represent?\nA: Vivek Venkat Swamy represents Chennur (SC).",
+    "char_count": 463
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "hich constituency does Vivek Venkat Swamy represent?\nA: Vivek Venkat Swamy represents Chennur (SC).\nQ: Which party does Vivek Venkat Swamy belong to in the Telangana Assembly directory?\nA: Vivek Venkat Swamy is listed under INC.\nQ: Who is the MLA of Bellampalli (SC)?\nA: Gaddam Vinod is the MLA of Bellampalli (SC), representing the INC.\nQ: Which constituency does Gaddam Vinod represent?\nA: Gaddam Vinod represents Bellampalli (SC).",
+    "char_count": 433
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "NC.\nQ: Which constituency does Gaddam Vinod represent?\nA: Gaddam Vinod represents Bellampalli (SC).\nQ: Which party does Gaddam Vinod belong to in the Telangana Assembly directory?\nA: Gaddam Vinod is listed under INC.\nQ: Who is the MLA of Mancherial?\nA: Kokkirala Premsagar Rao is the MLA of Mancherial, representing the INC.\nQ: Which constituency does Kokkirala Premsagar Rao represent?\nA: Kokkirala Premsagar Rao represents Mancherial.",
+    "char_count": 436
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "stituency does Kokkirala Premsagar Rao represent?\nA: Kokkirala Premsagar Rao represents Mancherial.\nQ: Which party does Kokkirala Premsagar Rao belong to in the Telangana Assembly directory?\nA: Kokkirala Premsagar Rao is listed under INC.\nQ: Who is the MLA of Adilabad?\nA: Payal Shanker is the MLA of Adilabad, representing the BJP.\nQ: Which constituency does Payal Shanker represent?\nA: Payal Shanker represents Adilabad.",
+    "char_count": 422
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "the BJP.\nQ: Which constituency does Payal Shanker represent?\nA: Payal Shanker represents Adilabad.\nQ: Which party does Payal Shanker belong to in the Telangana Assembly directory?\nA: Payal Shanker is listed under BJP.\nQ: Who is the MLA of Boath (ST)?\nA: Anil Jadhav is the MLA of Boath (ST), representing the BRS.\nQ: Which constituency does Anil Jadhav represent?\nA: Anil Jadhav represents Boath (ST).\nQ: Which party does Anil Jadhav belong to in the Telangana Assembly directory?",
+    "char_count": 480
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_4_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 4,
+    "text": "presents Boath (ST).\nQ: Which party does Anil Jadhav belong to in the Telangana Assembly directory?\nA: Anil Jadhav is listed under BRS.",
+    "char_count": 135
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "Q: Who is the MLA of Khanapur (ST)?\nA: Vedma Bhojju is the MLA of Khanapur (ST), representing the INC.\nQ: Which constituency does Vedma Bhojju represent?\nA: Vedma Bhojju represents Khanapur (ST).\nQ: Which party does Vedma Bhojju belong to in the Telangana Assembly directory?\nA: Vedma Bhojju is listed under INC.\nQ: Who is the MLA of Nirmal?\nA: Alleti Maheshwar Reddy is the MLA of Nirmal, representing the BJP.\nQ: Which constituency does Alleti Maheshwar Reddy represent?",
+    "char_count": 472
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "e MLA of Nirmal, representing the BJP.\nQ: Which constituency does Alleti Maheshwar Reddy represent?\nA: Alleti Maheshwar Reddy represents Nirmal.\nQ: Which party does Alleti Maheshwar Reddy belong to in the Telangana Assembly directory?\nA: Alleti Maheshwar Reddy is listed under BJP.\nQ: Who is the MLA of Mudhole?\nA: Ram Rao Pawar is the MLA of Mudhole, representing the BJP.\nQ: Which constituency does Ram Rao Pawar represent?\nA: Ram Rao Pawar represents Mudhole.",
+    "char_count": 462
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "g the BJP.\nQ: Which constituency does Ram Rao Pawar represent?\nA: Ram Rao Pawar represents Mudhole.\nQ: Which party does Ram Rao Pawar belong to in the Telangana Assembly directory?\nA: Ram Rao Pawar is listed under BJP.\nQ: Who is the MLA of Armoor?\nA: Paidi Rakesh Reddy is the MLA of Armoor, representing the BJP.\nQ: Which constituency does Paidi Rakesh Reddy represent?\nA: Paidi Rakesh Reddy represents Armoor.\nQ: Which party does Paidi Rakesh Reddy belong to in the Telangana Assembly directory?",
+    "char_count": 497
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "sents Armoor.\nQ: Which party does Paidi Rakesh Reddy belong to in the Telangana Assembly directory?\nA: Paidi Rakesh Reddy is listed under BJP.\nQ: Who is the MLA of Bodhan?\nA: P. Sudarshan Reddy is the MLA of Bodhan, representing the INC.\nQ: Which constituency does P. Sudarshan Reddy represent?\nA: P. Sudarshan Reddy represents Bodhan.\nQ: Which party does P. Sudarshan Reddy belong to in the Telangana Assembly directory?\nA: P. Sudarshan Reddy is listed under INC.\nQ: Who is the MLA of Banswada?",
+    "char_count": 495
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "ngana Assembly directory?\nA: P. Sudarshan Reddy is listed under INC.\nQ: Who is the MLA of Banswada?\nA: Srinivas Reddy Parige (Pocharam) is the MLA of Banswada, representing the BRS.\nQ: Which constituency does Srinivas Reddy Parige (Pocharam) represent?\nA: Srinivas Reddy Parige (Pocharam) represents Banswada.\nQ: Which party does Srinivas Reddy Parige (Pocharam) belong to in the Telangana Assembly directory?\nA: Srinivas Reddy Parige (Pocharam) is listed under BRS.",
+    "char_count": 466
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "ng to in the Telangana Assembly directory?\nA: Srinivas Reddy Parige (Pocharam) is listed under BRS.\nQ: Who is the MLA of Nizamabad (Urban)?\nA: Dhanpal Suryanarayana is the MLA of Nizamabad (Urban), representing the BJP.\nQ: Which constituency does Dhanpal Suryanarayana represent?\nA: Dhanpal Suryanarayana represents Nizamabad (Urban).\nQ: Which party does Dhanpal Suryanarayana belong to in the Telangana Assembly directory?\nA: Dhanpal Suryanarayana is listed under BJP.",
+    "char_count": 469
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "rayana belong to in the Telangana Assembly directory?\nA: Dhanpal Suryanarayana is listed under BJP.\nQ: Who is the MLA of Nizamabad (Rural)?\nA: Bhoopathi Reddy Rekulapally is the MLA of Nizamabad (Rural), representing the INC.\nQ: Which constituency does Bhoopathi Reddy Rekulapally represent?\nA: Bhoopathi Reddy Rekulapally represents Nizamabad (Rural).\nQ: Which party does Bhoopathi Reddy Rekulapally belong to in the Telangana Assembly directory?\nA: Bhoopathi Reddy Rekulapally is listed under INC.",
+    "char_count": 499
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_5_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 5,
+    "text": "belong to in the Telangana Assembly directory?\nA: Bhoopathi Reddy Rekulapally is listed under INC.\nQ: Who is the MLA of Balkonda?\nA: Prashanth Reddy Vemula is the MLA of Balkonda, representing the BRS.",
+    "char_count": 201
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "Q: Which constituency does Prashanth Reddy Vemula represent?\nA: Prashanth Reddy Vemula represents Balkonda.\nQ: Which party does Prashanth Reddy Vemula belong to in the Telangana Assembly directory?\nA: Prashanth Reddy Vemula is listed under BRS.\nQ: Who is the MLA of Jukkal (SC)?\nA: Laxmi Kantha Rao Thota is the MLA of Jukkal (SC), representing the INC.\nQ: Which constituency does Laxmi Kantha Rao Thota represent?\nA: Laxmi Kantha Rao Thota represents Jukkal (SC).",
+    "char_count": 464
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "nstituency does Laxmi Kantha Rao Thota represent?\nA: Laxmi Kantha Rao Thota represents Jukkal (SC).\nQ: Which party does Laxmi Kantha Rao Thota belong to in the Telangana Assembly directory?\nA: Laxmi Kantha Rao Thota is listed under INC.\nQ: Who is the MLA of Yellareddy?\nA: Madan Mohan Rao K. is the MLA of Yellareddy, representing the INC.\nQ: Which constituency does Madan Mohan Rao K. represent?\nA: Madan Mohan Rao K. represents Yellareddy.\nQ: Which party does Madan Mohan Rao K.",
+    "char_count": 480
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "ao K. represent?\nA: Madan Mohan Rao K. represents Yellareddy.\nQ: Which party does Madan Mohan Rao K. belong to in the Telangana Assembly directory?\nA: Madan Mohan Rao K. is listed under INC.\nQ: Who is the MLA of Kamareddy?\nA: Katipally Venkata Ramana Reddy is the MLA of Kamareddy, representing the BJP.\nQ: Which constituency does Katipally Venkata Ramana Reddy represent?\nA: Katipally Venkata Ramana Reddy represents Kamareddy.",
+    "char_count": 428
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "s Katipally Venkata Ramana Reddy represent?\nA: Katipally Venkata Ramana Reddy represents Kamareddy.\nQ: Which party does Katipally Venkata Ramana Reddy belong to in the Telangana Assembly directory?\nA: Katipally Venkata Ramana Reddy is listed under BJP.\nQ: Who is the MLA of Koratla?\nA: Kalvakuntla Sanjay is the MLA of Koratla, representing the BRS.\nQ: Which constituency does Kalvakuntla Sanjay represent?\nA: Kalvakuntla Sanjay represents Koratla.",
+    "char_count": 448
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "Q: Which constituency does Kalvakuntla Sanjay represent?\nA: Kalvakuntla Sanjay represents Koratla.\nQ: Which party does Kalvakuntla Sanjay belong to in the Telangana Assembly directory?\nA: Kalvakuntla Sanjay is listed under BRS.\nQ: Who is the MLA of Jagatial?\nA: Dr. Sanjay is the MLA of Jagatial, representing the BRS.\nQ: Which constituency does Dr. Sanjay represent?\nA: Dr. Sanjay represents Jagatial.\nQ: Which party does Dr. Sanjay belong to in the Telangana Assembly directory?\nA: Dr.",
+    "char_count": 487
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "sents Jagatial.\nQ: Which party does Dr. Sanjay belong to in the Telangana Assembly directory?\nA: Dr. Sanjay is listed under BRS.\nQ: Who is the MLA of Dharmapuri (SC)?\nA: Adluri Laxman Kumar is the MLA of Dharmapuri (SC), representing the INC.\nQ: Which constituency does Adluri Laxman Kumar represent?\nA: Adluri Laxman Kumar represents Dharmapuri (SC).\nQ: Which party does Adluri Laxman Kumar belong to in the Telangana Assembly directory?\nA: Adluri Laxman Kumar is listed under INC.",
+    "char_count": 482
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "an Kumar belong to in the Telangana Assembly directory?\nA: Adluri Laxman Kumar is listed under INC.\nQ: Who is the MLA of Ramagundam?\nA: Makkan Singh Raj Thakur is the MLA of Ramagundam, representing the INC.\nQ: Which constituency does Makkan Singh Raj Thakur represent?\nA: Makkan Singh Raj Thakur represents Ramagundam.\nQ: Which party does Makkan Singh Raj Thakur belong to in the Telangana Assembly directory?\nA: Makkan Singh Raj Thakur is listed under INC.\nQ: Who is the MLA of Manthani?",
+    "char_count": 489
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_6_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 6,
+    "text": "Assembly directory?\nA: Makkan Singh Raj Thakur is listed under INC.\nQ: Who is the MLA of Manthani?\nA: Duddilla Sridhar Babu is the MLA of Manthani, representing the INC.\nQ: Which constituency does Duddilla Sridhar Babu represent?\nA: Duddilla Sridhar Babu represents Manthani.",
+    "char_count": 275
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": "Q: Which party does Duddilla Sridhar Babu belong to in the Telangana Assembly directory?\nA: Duddilla Sridhar Babu is listed under INC.\nQ: Who is the MLA of Peddapalle?\nA: Chinthakunta Vijaya Ramana Rao is the MLA of Peddapalle, representing the INC.\nQ: Which constituency does Chinthakunta Vijaya Ramana Rao represent?\nA: Chinthakunta Vijaya Ramana Rao represents Peddapalle.\nQ: Which party does Chinthakunta Vijaya Ramana Rao belong to in the Telangana Assembly directory?",
+    "char_count": 473
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": ".\nQ: Which party does Chinthakunta Vijaya Ramana Rao belong to in the Telangana Assembly directory?\nA: Chinthakunta Vijaya Ramana Rao is listed under INC.\nQ: Who is the MLA of Karimnagar?\nA: Gangula Kamalakar is the MLA of Karimnagar, representing the BRS.\nQ: Which constituency does Gangula Kamalakar represent?\nA: Gangula Kamalakar represents Karimnagar.\nQ: Which party does Gangula Kamalakar belong to in the Telangana Assembly directory?\nA: Gangula Kamalakar is listed under BRS.",
+    "char_count": 483
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": "Kamalakar belong to in the Telangana Assembly directory?\nA: Gangula Kamalakar is listed under BRS.\nQ: Who is the MLA of Choppadandi (SC)?\nA: Medipally Sathyam is the MLA of Choppadandi (SC), representing the INC.\nQ: Which constituency does Medipally Sathyam represent?\nA: Medipally Sathyam represents Choppadandi (SC).\nQ: Which party does Medipally Sathyam belong to in the Telangana Assembly directory?\nA: Medipally Sathyam is listed under INC.\nQ: Who is the MLA of Manakondur (SC)?",
+    "char_count": 483
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": "Assembly directory?\nA: Medipally Sathyam is listed under INC.\nQ: Who is the MLA of Manakondur (SC)?\nA: Kavvampally Satyanarayana is the MLA of Manakondur (SC), representing the INC.\nQ: Which constituency does Kavvampally Satyanarayana represent?\nA: Kavvampally Satyanarayana represents Manakondur (SC).\nQ: Which party does Kavvampally Satyanarayana belong to in the Telangana Assembly directory?\nA: Kavvampally Satyanarayana is listed under INC.\nQ: Who is the MLA of Huzurabad?",
+    "char_count": 477
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": "sembly directory?\nA: Kavvampally Satyanarayana is listed under INC.\nQ: Who is the MLA of Huzurabad?\nA: Kaushik Reddy Padi is the MLA of Huzurabad, representing the BRS.\nQ: Which constituency does Kaushik Reddy Padi represent?\nA: Kaushik Reddy Padi represents Huzurabad.\nQ: Which party does Kaushik Reddy Padi belong to in the Telangana Assembly directory?\nA: Kaushik Reddy Padi is listed under BRS.\nQ: Who is the MLA of Vemulawada?\nA: Aadi Srinivas is the MLA of Vemulawada, representing the INC.",
+    "char_count": 496
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": ".\nQ: Who is the MLA of Vemulawada?\nA: Aadi Srinivas is the MLA of Vemulawada, representing the INC.\nQ: Which constituency does Aadi Srinivas represent?\nA: Aadi Srinivas represents Vemulawada.\nQ: Which party does Aadi Srinivas belong to in the Telangana Assembly directory?\nA: Aadi Srinivas is listed under INC.\nQ: Who is the MLA of Sircilla?\nA: Kalvakuntla Taraka Rama Rao (K.T.R) is the MLA of Sircilla, representing the BRS.",
+    "char_count": 426
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": "A of Sircilla?\nA: Kalvakuntla Taraka Rama Rao (K.T.R) is the MLA of Sircilla, representing the BRS.\nQ: Which constituency does Kalvakuntla Taraka Rama Rao (K.T.R) represent?\nA: Kalvakuntla Taraka Rama Rao (K.T.R) represents Sircilla.\nQ: Which party does Kalvakuntla Taraka Rama Rao (K.T.R) belong to in the Telangana Assembly directory?\nA: Kalvakuntla Taraka Rama Rao (K.T.R) is listed under BRS.\nQ: Who is the MLA of Narayankhed?",
+    "char_count": 430
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_7_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 7,
+    "text": "tory?\nA: Kalvakuntla Taraka Rama Rao (K.T.R) is listed under BRS.\nQ: Who is the MLA of Narayankhed?\nA: Patlolla Sanjeeva Reddy is the MLA of Narayankhed, representing the INC.\nQ: Which constituency does Patlolla Sanjeeva Reddy represent?\nA: Patlolla Sanjeeva Reddy represents Narayankhed.\nQ: Which party does Patlolla Sanjeeva Reddy belong to in the Telangana Assembly directory?\nA: Patlolla Sanjeeva Reddy is listed under INC.",
+    "char_count": 427
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "Q: Who is the MLA of Andole (SC)?\nA: C. Damodar Rajanarsimha is the MLA of Andole (SC), representing the INC.\nQ: Which constituency does C. Damodar Rajanarsimha represent?\nA: C. Damodar Rajanarsimha represents Andole (SC).\nQ: Which party does C. Damodar Rajanarsimha belong to in the Telangana Assembly directory?\nA: C. Damodar Rajanarsimha is listed under INC.\nQ: Who is the MLA of Zahirabad (SC)?\nA: Koninty Manik Rao is the MLA of Zahirabad (SC), representing the BRS.",
+    "char_count": 471
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "the MLA of Zahirabad (SC)?\nA: Koninty Manik Rao is the MLA of Zahirabad (SC), representing the BRS.\nQ: Which constituency does Koninty Manik Rao represent?\nA: Koninty Manik Rao represents Zahirabad (SC).\nQ: Which party does Koninty Manik Rao belong to in the Telangana Assembly directory?\nA: Koninty Manik Rao is listed under BRS.\nQ: Who is the MLA of Sangareddy?\nA: Chinta Prabhakar is the MLA of Sangareddy, representing the BRS.\nQ: Which constituency does Chinta Prabhakar represent?",
+    "char_count": 486
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "the MLA of Sangareddy, representing the BRS.\nQ: Which constituency does Chinta Prabhakar represent?\nA: Chinta Prabhakar represents Sangareddy.\nQ: Which party does Chinta Prabhakar belong to in the Telangana Assembly directory?\nA: Chinta Prabhakar is listed under BRS.\nQ: Who is the MLA of Patancheru?\nA: Gudem Mahipal Reddy is the MLA of Patancheru, representing the BRS.\nQ: Which constituency does Gudem Mahipal Reddy represent?\nA: Gudem Mahipal Reddy represents Patancheru.",
+    "char_count": 475
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "hich constituency does Gudem Mahipal Reddy represent?\nA: Gudem Mahipal Reddy represents Patancheru.\nQ: Which party does Gudem Mahipal Reddy belong to in the Telangana Assembly directory?\nA: Gudem Mahipal Reddy is listed under BRS.\nQ: Who is the MLA of Medak?\nA: Mynampally Rohith is the MLA of Medak, representing the INC.\nQ: Which constituency does Mynampally Rohith represent?\nA: Mynampally Rohith represents Medak.",
+    "char_count": 417
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "INC.\nQ: Which constituency does Mynampally Rohith represent?\nA: Mynampally Rohith represents Medak.\nQ: Which party does Mynampally Rohith belong to in the Telangana Assembly directory?\nA: Mynampally Rohith is listed under INC.\nQ: Who is the MLA of Narsapur?\nA: Vakiti Sunitha Laxma Reddy is the MLA of Narsapur, representing the BRS.\nQ: Which constituency does Vakiti Sunitha Laxma Reddy represent?\nA: Vakiti Sunitha Laxma Reddy represents Narsapur.",
+    "char_count": 449
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "uency does Vakiti Sunitha Laxma Reddy represent?\nA: Vakiti Sunitha Laxma Reddy represents Narsapur.\nQ: Which party does Vakiti Sunitha Laxma Reddy belong to in the Telangana Assembly directory?\nA: Vakiti Sunitha Laxma Reddy is listed under BRS.\nQ: Who is the MLA of Husnabad?\nA: Ponnam Prabhakar is the MLA of Husnabad, representing the INC.\nQ: Which constituency does Ponnam Prabhakar represent?\nA: Ponnam Prabhakar represents Husnabad.",
+    "char_count": 437
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "NC.\nQ: Which constituency does Ponnam Prabhakar represent?\nA: Ponnam Prabhakar represents Husnabad.\nQ: Which party does Ponnam Prabhakar belong to in the Telangana Assembly directory?\nA: Ponnam Prabhakar is listed under INC.\nQ: Who is the MLA of Siddipet?\nA: Thanneeru Harish Rao is the MLA of Siddipet, representing the BRS.\nQ: Which constituency does Thanneeru Harish Rao represent?\nA: Thanneeru Harish Rao represents Siddipet.",
+    "char_count": 429
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_8_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 8,
+    "text": "hich constituency does Thanneeru Harish Rao represent?\nA: Thanneeru Harish Rao represents Siddipet.\nQ: Which party does Thanneeru Harish Rao belong to in the Telangana Assembly directory?\nA: Thanneeru Harish Rao is listed under BRS.\nQ: Who is the MLA of Dubbak?\nA: Kotta Prabhakar Reddy is the MLA of Dubbak, representing the BRS.",
+    "char_count": 330
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "Q: Which constituency does Kotta Prabhakar Reddy represent?\nA: Kotta Prabhakar Reddy represents Dubbak.\nQ: Which party does Kotta Prabhakar Reddy belong to in the Telangana Assembly directory?\nA: Kotta Prabhakar Reddy is listed under BRS.\nQ: Who is the MLA of Gajwel?\nA: Kalvakuntla Chandrashekar Rao is the MLA of Gajwel, representing the BRS.\nQ: Which constituency does Kalvakuntla Chandrashekar Rao represent?\nA: Kalvakuntla Chandrashekar Rao represents Gajwel.",
+    "char_count": 464
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "y does Kalvakuntla Chandrashekar Rao represent?\nA: Kalvakuntla Chandrashekar Rao represents Gajwel.\nQ: Which party does Kalvakuntla Chandrashekar Rao belong to in the Telangana Assembly directory?\nA: Kalvakuntla Chandrashekar Rao is listed under BRS.\nQ: Who is the MLA of Ibrahimpatnam?\nA: Malreddy Ranga Reddy is the MLA of Ibrahimpatnam, representing the INC.\nQ: Which constituency does Malreddy Ranga Reddy represent?\nA: Malreddy Ranga Reddy represents Ibrahimpatnam.",
+    "char_count": 470
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "constituency does Malreddy Ranga Reddy represent?\nA: Malreddy Ranga Reddy represents Ibrahimpatnam.\nQ: Which party does Malreddy Ranga Reddy belong to in the Telangana Assembly directory?\nA: Malreddy Ranga Reddy is listed under INC.\nQ: Who is the MLA of Lal Bahadur Nagar?\nA: Devireddy Sudhir Reddy is the MLA of Lal Bahadur Nagar, representing the BRS.\nQ: Which constituency does Devireddy Sudhir Reddy represent?\nA: Devireddy Sudhir Reddy represents Lal Bahadur Nagar.",
+    "char_count": 470
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "ency does Devireddy Sudhir Reddy represent?\nA: Devireddy Sudhir Reddy represents Lal Bahadur Nagar.\nQ: Which party does Devireddy Sudhir Reddy belong to in the Telangana Assembly directory?\nA: Devireddy Sudhir Reddy is listed under BRS.\nQ: Who is the MLA of Maheswaram?\nA: Patlolla Sabitha Indra Reddy is the MLA of Maheswaram, representing the BRS.\nQ: Which constituency does Patlolla Sabitha Indra Reddy represent?\nA: Patlolla Sabitha Indra Reddy represents Maheswaram.",
+    "char_count": 471
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "does Patlolla Sabitha Indra Reddy represent?\nA: Patlolla Sabitha Indra Reddy represents Maheswaram.\nQ: Which party does Patlolla Sabitha Indra Reddy belong to in the Telangana Assembly directory?\nA: Patlolla Sabitha Indra Reddy is listed under BRS.\nQ: Who is the MLA of Rajendranagar?\nA: T. Prakash Goud is the MLA of Rajendranagar, representing the BRS.\nQ: Which constituency does T. Prakash Goud represent?\nA: T. Prakash Goud represents Rajendranagar.\nQ: Which party does T.",
+    "char_count": 476
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "does T. Prakash Goud represent?\nA: T. Prakash Goud represents Rajendranagar.\nQ: Which party does T. Prakash Goud belong to in the Telangana Assembly directory?\nA: T. Prakash Goud is listed under BRS.\nQ: Who is the MLA of Serilingampally?\nA: Arekapudi Gandhi is the MLA of Serilingampally, representing the BRS.\nQ: Which constituency does Arekapudi Gandhi represent?\nA: Arekapudi Gandhi represents Serilingampally.\nQ: Which party does Arekapudi Gandhi belong to in the Telangana Assembly directory?",
+    "char_count": 497
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "erilingampally.\nQ: Which party does Arekapudi Gandhi belong to in the Telangana Assembly directory?\nA: Arekapudi Gandhi is listed under BRS.\nQ: Who is the MLA of Chevella (SC)?\nA: Kale Yadaiah is the MLA of Chevella (SC), representing the BRS.\nQ: Which constituency does Kale Yadaiah represent?\nA: Kale Yadaiah represents Chevella (SC).\nQ: Which party does Kale Yadaiah belong to in the Telangana Assembly directory?\nA: Kale Yadaiah is listed under BRS.\nQ: Who is the MLA of Kalwakurthi?",
+    "char_count": 487
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_9_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 9,
+    "text": "elangana Assembly directory?\nA: Kale Yadaiah is listed under BRS.\nQ: Who is the MLA of Kalwakurthi?\nA: Kasireddy Narayan Reddy is the MLA of Kalwakurthi, representing the INC.\nQ: Which constituency does Kasireddy Narayan Reddy represent?\nA: Kasireddy Narayan Reddy represents Kalwakurthi.",
+    "char_count": 288
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "Q: Which party does Kasireddy Narayan Reddy belong to in the Telangana Assembly directory?\nA: Kasireddy Narayan Reddy is listed under INC.\nQ: Who is the MLA of Shadnagar?\nA: K. Shankaraiah is the MLA of Shadnagar, representing the INC.\nQ: Which constituency does K. Shankaraiah represent?\nA: K. Shankaraiah represents Shadnagar.\nQ: Which party does K. Shankaraiah belong to in the Telangana Assembly directory?\nA: K. Shankaraiah is listed under INC.\nQ: Who is the MLA of Pargi?\nA: T.",
+    "char_count": 483
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "langana Assembly directory?\nA: K. Shankaraiah is listed under INC.\nQ: Who is the MLA of Pargi?\nA: T. Ram Mohan Reddy is the MLA of Pargi, representing the INC.\nQ: Which constituency does T. Ram Mohan Reddy represent?\nA: T. Ram Mohan Reddy represents Pargi.\nQ: Which party does T. Ram Mohan Reddy belong to in the Telangana Assembly directory?\nA: T. Ram Mohan Reddy is listed under INC.\nQ: Who is the MLA of Vicarabad (SC)?\nA: Gaddam Prasad Kumar is the MLA of Vicarabad (SC), representing the INC.",
+    "char_count": 497
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "e MLA of Vicarabad (SC)?\nA: Gaddam Prasad Kumar is the MLA of Vicarabad (SC), representing the INC.\nQ: Which constituency does Gaddam Prasad Kumar represent?\nA: Gaddam Prasad Kumar represents Vicarabad (SC).\nQ: Which party does Gaddam Prasad Kumar belong to in the Telangana Assembly directory?\nA: Gaddam Prasad Kumar is listed under INC.\nQ: Who is the MLA of Tandur?\nA: B. Manohar Reddy is the MLA of Tandur, representing the INC.\nQ: Which constituency does B. Manohar Reddy represent?\nA: B.",
+    "char_count": 492
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "he MLA of Tandur, representing the INC.\nQ: Which constituency does B. Manohar Reddy represent?\nA: B. Manohar Reddy represents Tandur.\nQ: Which party does B. Manohar Reddy belong to in the Telangana Assembly directory?\nA: B. Manohar Reddy is listed under INC.\nQ: Who is the MLA of Medchal?\nA: Chamakura Malla Reddy is the MLA of Medchal, representing the BRS.\nQ: Which constituency does Chamakura Malla Reddy represent?\nA: Chamakura Malla Reddy represents Medchal.",
+    "char_count": 463
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "ich constituency does Chamakura Malla Reddy represent?\nA: Chamakura Malla Reddy represents Medchal.\nQ: Which party does Chamakura Malla Reddy belong to in the Telangana Assembly directory?\nA: Chamakura Malla Reddy is listed under BRS.\nQ: Who is the MLA of Malkajgiri?\nA: Marri Rajashekar Reddy is the MLA of Malkajgiri, representing the BRS.\nQ: Which constituency does Marri Rajashekar Reddy represent?\nA: Marri Rajashekar Reddy represents Malkajgiri.",
+    "char_count": 451
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "onstituency does Marri Rajashekar Reddy represent?\nA: Marri Rajashekar Reddy represents Malkajgiri.\nQ: Which party does Marri Rajashekar Reddy belong to in the Telangana Assembly directory?\nA: Marri Rajashekar Reddy is listed under BRS.\nQ: Who is the MLA of Quthabullapur?\nA: K.P. Vivekanand is the MLA of Quthabullapur, representing the BRS.\nQ: Which constituency does K.P. Vivekanand represent?\nA: K.P. Vivekanand represents Quthabullapur.\nQ: Which party does K.P.",
+    "char_count": 466
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "oes K.P. Vivekanand represent?\nA: K.P. Vivekanand represents Quthabullapur.\nQ: Which party does K.P. Vivekanand belong to in the Telangana Assembly directory?\nA: K.P. Vivekanand is listed under BRS.\nQ: Who is the MLA of Kukatpalle?\nA: Madhavaram Krishna Rao is the MLA of Kukatpalle, representing the BRS.\nQ: Which constituency does Madhavaram Krishna Rao represent?\nA: Madhavaram Krishna Rao represents Kukatpalle.",
+    "char_count": 415
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_10_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 10,
+    "text": "onstituency does Madhavaram Krishna Rao represent?\nA: Madhavaram Krishna Rao represents Kukatpalle.\nQ: Which party does Madhavaram Krishna Rao belong to in the Telangana Assembly directory?\nA: Madhavaram Krishna Rao is listed under BRS.",
+    "char_count": 236
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "Q: Who is the MLA of Uppal?\nA: Bandari Lakshma Reddy is the MLA of Uppal, representing the BRS.\nQ: Which constituency does Bandari Lakshma Reddy represent?\nA: Bandari Lakshma Reddy represents Uppal.\nQ: Which party does Bandari Lakshma Reddy belong to in the Telangana Assembly directory?\nA: Bandari Lakshma Reddy is listed under BRS.\nQ: Who is the MLA of Musheerabad?\nA: Muta Gopal is the MLA of Musheerabad, representing the BRS.\nQ: Which constituency does Muta Gopal represent?",
+    "char_count": 479
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "l is the MLA of Musheerabad, representing the BRS.\nQ: Which constituency does Muta Gopal represent?\nA: Muta Gopal represents Musheerabad.\nQ: Which party does Muta Gopal belong to in the Telangana Assembly directory?\nA: Muta Gopal is listed under BRS.\nQ: Who is the MLA of Malakpet?\nA: Ahmed Bin Abdullah Balala is the MLA of Malakpet, representing the AIMIM.\nQ: Which constituency does Ahmed Bin Abdullah Balala represent?\nA: Ahmed Bin Abdullah Balala represents Malakpet.",
+    "char_count": 472
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "ituency does Ahmed Bin Abdullah Balala represent?\nA: Ahmed Bin Abdullah Balala represents Malakpet.\nQ: Which party does Ahmed Bin Abdullah Balala belong to in the Telangana Assembly directory?\nA: Ahmed Bin Abdullah Balala is listed under AIMIM.\nQ: Who is the MLA of Amberpet?\nA: Kaleru Venkatesh is the MLA of Amberpet, representing the BRS.\nQ: Which constituency does Kaleru Venkatesh represent?\nA: Kaleru Venkatesh represents Amberpet.",
+    "char_count": 437
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "RS.\nQ: Which constituency does Kaleru Venkatesh represent?\nA: Kaleru Venkatesh represents Amberpet.\nQ: Which party does Kaleru Venkatesh belong to in the Telangana Assembly directory?\nA: Kaleru Venkatesh is listed under BRS.\nQ: Who is the MLA of Khairatabad?\nA: Danam Nagender is the MLA of Khairatabad, representing the BRS.\nQ: Which constituency does Danam Nagender represent?\nA: Danam Nagender represents Khairatabad.",
+    "char_count": 420
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "BRS.\nQ: Which constituency does Danam Nagender represent?\nA: Danam Nagender represents Khairatabad.\nQ: Which party does Danam Nagender belong to in the Telangana Assembly directory?\nA: Danam Nagender is listed under BRS.\nQ: Who is the MLA of Jubliee Hills?\nA: Naveen Yadav V. is the MLA of Jubliee Hills, representing the INC.\nQ: Which constituency does Naveen Yadav V. represent?\nA: Naveen Yadav V. represents Jubliee Hills.\nQ: Which party does Naveen Yadav V.",
+    "char_count": 461
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "Yadav V. represent?\nA: Naveen Yadav V. represents Jubliee Hills.\nQ: Which party does Naveen Yadav V. belong to in the Telangana Assembly directory?\nA: Naveen Yadav V. is listed under INC.\nQ: Who is the MLA of Sanathnagar?\nA: Talasani Srinivas Yadav is the MLA of Sanathnagar, representing the BRS.\nQ: Which constituency does Talasani Srinivas Yadav represent?\nA: Talasani Srinivas Yadav represents Sanathnagar.",
+    "char_count": 410
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "tituency does Talasani Srinivas Yadav represent?\nA: Talasani Srinivas Yadav represents Sanathnagar.\nQ: Which party does Talasani Srinivas Yadav belong to in the Telangana Assembly directory?\nA: Talasani Srinivas Yadav is listed under BRS.\nQ: Who is the MLA of Nampally?\nA: Mohammed Majid Hussain is the MLA of Nampally, representing the AIMIM.\nQ: Which constituency does Mohammed Majid Hussain represent?\nA: Mohammed Majid Hussain represents Nampally.",
+    "char_count": 451
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_11_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 11,
+    "text": "constituency does Mohammed Majid Hussain represent?\nA: Mohammed Majid Hussain represents Nampally.\nQ: Which party does Mohammed Majid Hussain belong to in the Telangana Assembly directory?\nA: Mohammed Majid Hussain is listed under AIMIM.\nQ: Who is the MLA of Karwan?\nA: Kausar Mohiuddin is the MLA of Karwan, representing the AIMIM.",
+    "char_count": 332
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "Q: Which constituency does Kausar Mohiuddin represent?\nA: Kausar Mohiuddin represents Karwan.\nQ: Which party does Kausar Mohiuddin belong to in the Telangana Assembly directory?\nA: Kausar Mohiuddin is listed under AIMIM.\nQ: Who is the MLA of Goshamahal?\nA: T. Raja Singh is the MLA of Goshamahal, representing the BJP.\nQ: Which constituency does T. Raja Singh represent?\nA: T. Raja Singh represents Goshamahal.\nQ: Which party does T. Raja Singh belong to in the Telangana Assembly directory?\nA: T.",
+    "char_count": 497
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "s Goshamahal.\nQ: Which party does T. Raja Singh belong to in the Telangana Assembly directory?\nA: T. Raja Singh is listed under BJP.\nQ: Who is the MLA of Charminar?\nA: Mir Zulfeqar Ali is the MLA of Charminar, representing the AIMIM.\nQ: Which constituency does Mir Zulfeqar Ali represent?\nA: Mir Zulfeqar Ali represents Charminar.\nQ: Which party does Mir Zulfeqar Ali belong to in the Telangana Assembly directory?\nA: Mir Zulfeqar Ali is listed under AIMIM.\nQ: Who is the MLA of Chandrayangutta?",
+    "char_count": 495
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "ssembly directory?\nA: Mir Zulfeqar Ali is listed under AIMIM.\nQ: Who is the MLA of Chandrayangutta?\nA: Akbar Uddin Owaisi is the MLA of Chandrayangutta, representing the AIMIM.\nQ: Which constituency does Akbar Uddin Owaisi represent?\nA: Akbar Uddin Owaisi represents Chandrayangutta.\nQ: Which party does Akbar Uddin Owaisi belong to in the Telangana Assembly directory?\nA: Akbar Uddin Owaisi is listed under AIMIM.\nQ: Who is the MLA of Yakutpura?",
+    "char_count": 446
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "na Assembly directory?\nA: Akbar Uddin Owaisi is listed under AIMIM.\nQ: Who is the MLA of Yakutpura?\nA: Jaffar Hussain is the MLA of Yakutpura, representing the AIMIM.\nQ: Which constituency does Jaffar Hussain represent?\nA: Jaffar Hussain represents Yakutpura.\nQ: Which party does Jaffar Hussain belong to in the Telangana Assembly directory?\nA: Jaffar Hussain is listed under AIMIM.\nQ: Who is the MLA of Bahadurpura?\nA: Mohammed Mubeen is the MLA of Bahadurpura, representing the AIMIM.",
+    "char_count": 486
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "ho is the MLA of Bahadurpura?\nA: Mohammed Mubeen is the MLA of Bahadurpura, representing the AIMIM.\nQ: Which constituency does Mohammed Mubeen represent?\nA: Mohammed Mubeen represents Bahadurpura.\nQ: Which party does Mohammed Mubeen belong to in the Telangana Assembly directory?\nA: Mohammed Mubeen is listed under AIMIM.\nQ: Who is the MLA of Secunderabad?\nA: Padma Rao T. is the MLA of Secunderabad, representing the BRS.\nQ: Which constituency does Padma Rao T. represent?\nA: Padma Rao T.",
+    "char_count": 489
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "cunderabad, representing the BRS.\nQ: Which constituency does Padma Rao T. represent?\nA: Padma Rao T. represents Secunderabad.\nQ: Which party does Padma Rao T. belong to in the Telangana Assembly directory?\nA: Padma Rao T. is listed under BRS.\nQ: Who is the MLA of Secunderabad Cantonment (SC)?\nA: Narayanan Sri Ganesh is the MLA of Secunderabad Cantonment (SC), representing the INC.\nQ: Which constituency does Narayanan Sri Ganesh represent?",
+    "char_count": 442
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "d Cantonment (SC), representing the INC.\nQ: Which constituency does Narayanan Sri Ganesh represent?\nA: Narayanan Sri Ganesh represents Secunderabad Cantonment (SC).\nQ: Which party does Narayanan Sri Ganesh belong to in the Telangana Assembly directory?\nA: Narayanan Sri Ganesh is listed under INC.\nQ: Who is the MLA of Mahabubnagar?\nA: Yennam Srinivas Reddy is the MLA of Mahabubnagar, representing the INC.\nQ: Which constituency does Yennam Srinivas Reddy represent?",
+    "char_count": 467
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_12_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 12,
+    "text": "of Mahabubnagar, representing the INC.\nQ: Which constituency does Yennam Srinivas Reddy represent?\nA: Yennam Srinivas Reddy represents Mahabubnagar.",
+    "char_count": 148
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "Q: Which party does Yennam Srinivas Reddy belong to in the Telangana Assembly directory?\nA: Yennam Srinivas Reddy is listed under INC.\nQ: Who is the MLA of Jadcharla?\nA: Anirudh Reddy Janampalli is the MLA of Jadcharla, representing the INC.\nQ: Which constituency does Anirudh Reddy Janampalli represent?\nA: Anirudh Reddy Janampalli represents Jadcharla.\nQ: Which party does Anirudh Reddy Janampalli belong to in the Telangana Assembly directory?\nA: Anirudh Reddy Janampalli is listed under INC.",
+    "char_count": 495
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "lli belong to in the Telangana Assembly directory?\nA: Anirudh Reddy Janampalli is listed under INC.\nQ: Who is the MLA of Devarakadra?\nA: Gavinolla Madhusudan Reddy (GMR) is the MLA of Devarakadra, representing the INC.\nQ: Which constituency does Gavinolla Madhusudan Reddy (GMR) represent?\nA: Gavinolla Madhusudan Reddy (GMR) represents Devarakadra.\nQ: Which party does Gavinolla Madhusudan Reddy (GMR) belong to in the Telangana Assembly directory?",
+    "char_count": 449
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "Q: Which party does Gavinolla Madhusudan Reddy (GMR) belong to in the Telangana Assembly directory?\nA: Gavinolla Madhusudan Reddy (GMR) is listed under INC.\nQ: Who is the MLA of Nagarkurnool?\nA: Kuch Kulla Rajesh Reddy is the MLA of Nagarkurnool, representing the INC.\nQ: Which constituency does Kuch Kulla Rajesh Reddy represent?\nA: Kuch Kulla Rajesh Reddy represents Nagarkurnool.\nQ: Which party does Kuch Kulla Rajesh Reddy belong to in the Telangana Assembly directory?",
+    "char_count": 473
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "kurnool.\nQ: Which party does Kuch Kulla Rajesh Reddy belong to in the Telangana Assembly directory?\nA: Kuch Kulla Rajesh Reddy is listed under INC.\nQ: Who is the MLA of Achampet (SC)?\nA: Chikkudu Vamshi Krishna is the MLA of Achampet (SC), representing the INC.\nQ: Which constituency does Chikkudu Vamshi Krishna represent?\nA: Chikkudu Vamshi Krishna represents Achampet (SC).\nQ: Which party does Chikkudu Vamshi Krishna belong to in the Telangana Assembly directory?",
+    "char_count": 467
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "et (SC).\nQ: Which party does Chikkudu Vamshi Krishna belong to in the Telangana Assembly directory?\nA: Chikkudu Vamshi Krishna is listed under INC.\nQ: Who is the MLA of Kollapur?\nA: Jupally Krishna Rao is the MLA of Kollapur, representing the INC.\nQ: Which constituency does Jupally Krishna Rao represent?\nA: Jupally Krishna Rao represents Kollapur.\nQ: Which party does Jupally Krishna Rao belong to in the Telangana Assembly directory?\nA: Jupally Krishna Rao is listed under INC.",
+    "char_count": 480
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "shna Rao belong to in the Telangana Assembly directory?\nA: Jupally Krishna Rao is listed under INC.\nQ: Who is the MLA of Wanaparthy?\nA: Megha Reddy Tudi is the MLA of Wanaparthy, representing the INC.\nQ: Which constituency does Megha Reddy Tudi represent?\nA: Megha Reddy Tudi represents Wanaparthy.\nQ: Which party does Megha Reddy Tudi belong to in the Telangana Assembly directory?\nA: Megha Reddy Tudi is listed under INC.\nQ: Who is the MLA of Gadwal?",
+    "char_count": 452
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "Telangana Assembly directory?\nA: Megha Reddy Tudi is listed under INC.\nQ: Who is the MLA of Gadwal?\nA: Bandla Krishna Mohan Reddy is the MLA of Gadwal, representing the BRS.\nQ: Which constituency does Bandla Krishna Mohan Reddy represent?\nA: Bandla Krishna Mohan Reddy represents Gadwal.\nQ: Which party does Bandla Krishna Mohan Reddy belong to in the Telangana Assembly directory?\nA: Bandla Krishna Mohan Reddy is listed under BRS.\nQ: Who is the MLA of Alampur (SC)?",
+    "char_count": 467
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_13_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 13,
+    "text": "ly directory?\nA: Bandla Krishna Mohan Reddy is listed under BRS.\nQ: Who is the MLA of Alampur (SC)?\nA: Vijayudu is the MLA of Alampur (SC), representing the BRS.\nQ: Which constituency does Vijayudu represent?\nA: Vijayudu represents Alampur (SC).\nQ: Which party does Vijayudu belong to in the Telangana Assembly directory?\nA: Vijayudu is listed under BRS.",
+    "char_count": 354
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "Q: Who is the MLA of Devarakonda (ST)?\nA: Balu Naik Nenavath is the MLA of Devarakonda (ST), representing the INC.\nQ: Which constituency does Balu Naik Nenavath represent?\nA: Balu Naik Nenavath represents Devarakonda (ST).\nQ: Which party does Balu Naik Nenavath belong to in the Telangana Assembly directory?\nA: Balu Naik Nenavath is listed under INC.\nQ: Who is the MLA of Nagarjunasagar?\nA: Kunduru Jayaveer is the MLA of Nagarjunasagar, representing the INC.",
+    "char_count": 460
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "the MLA of Nagarjunasagar?\nA: Kunduru Jayaveer is the MLA of Nagarjunasagar, representing the INC.\nQ: Which constituency does Kunduru Jayaveer represent?\nA: Kunduru Jayaveer represents Nagarjunasagar.\nQ: Which party does Kunduru Jayaveer belong to in the Telangana Assembly directory?\nA: Kunduru Jayaveer is listed under INC.\nQ: Who is the MLA of Miryaguda?\nA: Bathula Laxma Reddy is the MLA of Miryaguda, representing the INC.\nQ: Which constituency does Bathula Laxma Reddy represent?",
+    "char_count": 485
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "e MLA of Miryaguda, representing the INC.\nQ: Which constituency does Bathula Laxma Reddy represent?\nA: Bathula Laxma Reddy represents Miryaguda.\nQ: Which party does Bathula Laxma Reddy belong to in the Telangana Assembly directory?\nA: Bathula Laxma Reddy is listed under INC.\nQ: Who is the MLA of Nalgonda?\nA: Komati Reddy Venkat Reddy is the MLA of Nalgonda, representing the INC.\nQ: Which constituency does Komati Reddy Venkat Reddy represent?\nA: Komati Reddy Venkat Reddy represents Nalgonda.",
+    "char_count": 495
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "ituency does Komati Reddy Venkat Reddy represent?\nA: Komati Reddy Venkat Reddy represents Nalgonda.\nQ: Which party does Komati Reddy Venkat Reddy belong to in the Telangana Assembly directory?\nA: Komati Reddy Venkat Reddy is listed under INC.\nQ: Who is the MLA of Mungode?\nA: Komatireddy Raj Gopal Reddy is the MLA of Mungode, representing the INC.\nQ: Which constituency does Komatireddy Raj Gopal Reddy represent?\nA: Komatireddy Raj Gopal Reddy represents Mungode.",
+    "char_count": 465
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "ency does Komatireddy Raj Gopal Reddy represent?\nA: Komatireddy Raj Gopal Reddy represents Mungode.\nQ: Which party does Komatireddy Raj Gopal Reddy belong to in the Telangana Assembly directory?\nA: Komatireddy Raj Gopal Reddy is listed under INC.\nQ: Who is the MLA of Nakrekal (SC)?\nA: Vemula Veeresham is the MLA of Nakrekal (SC), representing the INC.\nQ: Which constituency does Vemula Veeresham represent?\nA: Vemula Veeresham represents Nakrekal (SC).",
+    "char_count": 454
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": ": Which constituency does Vemula Veeresham represent?\nA: Vemula Veeresham represents Nakrekal (SC).\nQ: Which party does Vemula Veeresham belong to in the Telangana Assembly directory?\nA: Vemula Veeresham is listed under INC.\nQ: Who is the MLA of Huzurnagar?\nA: Uttam Kumar Reddy Nalamada is the MLA of Huzurnagar, representing the INC.\nQ: Which constituency does Uttam Kumar Reddy Nalamada represent?\nA: Uttam Kumar Reddy Nalamada represents Huzurnagar.",
+    "char_count": 453
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "ncy does Uttam Kumar Reddy Nalamada represent?\nA: Uttam Kumar Reddy Nalamada represents Huzurnagar.\nQ: Which party does Uttam Kumar Reddy Nalamada belong to in the Telangana Assembly directory?\nA: Uttam Kumar Reddy Nalamada is listed under INC.\nQ: Who is the MLA of Kodad?\nA: Nalamada Padmavathi Reddy is the MLA of Kodad, representing the INC.\nQ: Which constituency does Nalamada Padmavathi Reddy represent?\nA: Nalamada Padmavathi Reddy represents Kodad.",
+    "char_count": 455
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_14_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 14,
+    "text": "nstituency does Nalamada Padmavathi Reddy represent?\nA: Nalamada Padmavathi Reddy represents Kodad.\nQ: Which party does Nalamada Padmavathi Reddy belong to in the Telangana Assembly directory?\nA: Nalamada Padmavathi Reddy is listed under INC.\nQ: Who is the MLA of Suryapet?\nA: Guntakandla Jagadish Reddy is the MLA of Suryapet, representing the BRS.",
+    "char_count": 349
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "Q: Which constituency does Guntakandla Jagadish Reddy represent?\nA: Guntakandla Jagadish Reddy represents Suryapet.\nQ: Which party does Guntakandla Jagadish Reddy belong to in the Telangana Assembly directory?\nA: Guntakandla Jagadish Reddy is listed under BRS.\nQ: Who is the MLA of Thungathurthy (SC)?\nA: Mandula Samel is the MLA of Thungathurthy (SC), representing the INC.\nQ: Which constituency does Mandula Samel represent?\nA: Mandula Samel represents Thungathurthy (SC).",
+    "char_count": 474
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "Q: Which constituency does Mandula Samel represent?\nA: Mandula Samel represents Thungathurthy (SC).\nQ: Which party does Mandula Samel belong to in the Telangana Assembly directory?\nA: Mandula Samel is listed under INC.\nQ: Who is the MLA of Bhongir?\nA: Kumbam Anil Kumar Reddy is the MLA of Bhongir, representing the INC.\nQ: Which constituency does Kumbam Anil Kumar Reddy represent?\nA: Kumbam Anil Kumar Reddy represents Bhongir.",
+    "char_count": 429
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "constituency does Kumbam Anil Kumar Reddy represent?\nA: Kumbam Anil Kumar Reddy represents Bhongir.\nQ: Which party does Kumbam Anil Kumar Reddy belong to in the Telangana Assembly directory?\nA: Kumbam Anil Kumar Reddy is listed under INC.\nQ: Who is the MLA of Alair?\nA: Ilaiah Beerla is the MLA of Alair, representing the INC.\nQ: Which constituency does Ilaiah Beerla represent?\nA: Ilaiah Beerla represents Alair.\nQ: Which party does Ilaiah Beerla belong to in the Telangana Assembly directory?",
+    "char_count": 494
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "represents Alair.\nQ: Which party does Ilaiah Beerla belong to in the Telangana Assembly directory?\nA: Ilaiah Beerla is listed under INC.\nQ: Who is the MLA of Jangaon?\nA: Palla Rajeshwar Reddy is the MLA of Jangaon, representing the BRS.\nQ: Which constituency does Palla Rajeshwar Reddy represent?\nA: Palla Rajeshwar Reddy represents Jangaon.\nQ: Which party does Palla Rajeshwar Reddy belong to in the Telangana Assembly directory?\nA: Palla Rajeshwar Reddy is listed under BRS.",
+    "char_count": 476
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "Reddy belong to in the Telangana Assembly directory?\nA: Palla Rajeshwar Reddy is listed under BRS.\nQ: Who is the MLA of Ghanpur (SC)?\nA: Kadiyam Srihari is the MLA of Ghanpur (SC), representing the BRS.\nQ: Which constituency does Kadiyam Srihari represent?\nA: Kadiyam Srihari represents Ghanpur (SC).\nQ: Which party does Kadiyam Srihari belong to in the Telangana Assembly directory?\nA: Kadiyam Srihari is listed under BRS.\nQ: Who is the MLA of Palakurthi?",
+    "char_count": 456
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "angana Assembly directory?\nA: Kadiyam Srihari is listed under BRS.\nQ: Who is the MLA of Palakurthi?\nA: Yashaswini Mamidala is the MLA of Palakurthi, representing the INC.\nQ: Which constituency does Yashaswini Mamidala represent?\nA: Yashaswini Mamidala represents Palakurthi.\nQ: Which party does Yashaswini Mamidala belong to in the Telangana Assembly directory?\nA: Yashaswini Mamidala is listed under INC.\nQ: Who is the MLA of Dornakal (ST)?",
+    "char_count": 441
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "Assembly directory?\nA: Yashaswini Mamidala is listed under INC.\nQ: Who is the MLA of Dornakal (ST)?\nA: Jatoth Ram Chander Naik is the MLA of Dornakal (ST), representing the INC.\nQ: Which constituency does Jatoth Ram Chander Naik represent?\nA: Jatoth Ram Chander Naik represents Dornakal (ST).\nQ: Which party does Jatoth Ram Chander Naik belong to in the Telangana Assembly directory?\nA: Jatoth Ram Chander Naik is listed under INC.\nQ: Who is the MLA of Mahabubabad (ST)?",
+    "char_count": 470
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_15_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 15,
+    "text": "y directory?\nA: Jatoth Ram Chander Naik is listed under INC.\nQ: Who is the MLA of Mahabubabad (ST)?\nA: Murali Naik Bhukya is the MLA of Mahabubabad (ST), representing the INC.\nQ: Which constituency does Murali Naik Bhukya represent?\nA: Murali Naik Bhukya represents Mahabubabad (ST).",
+    "char_count": 283
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "Q: Which party does Murali Naik Bhukya belong to in the Telangana Assembly directory?\nA: Murali Naik Bhukya is listed under INC.\nQ: Who is the MLA of Narasampet?\nA: Donthi Madhava Reddy is the MLA of Narasampet, representing the INC.\nQ: Which constituency does Donthi Madhava Reddy represent?\nA: Donthi Madhava Reddy represents Narasampet.\nQ: Which party does Donthi Madhava Reddy belong to in the Telangana Assembly directory?\nA: Donthi Madhava Reddy is listed under INC.",
+    "char_count": 472
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "a Reddy belong to in the Telangana Assembly directory?\nA: Donthi Madhava Reddy is listed under INC.\nQ: Who is the MLA of Warangal East?\nA: Konda Surekha is the MLA of Warangal East, representing the INC.\nQ: Which constituency does Konda Surekha represent?\nA: Konda Surekha represents Warangal East.\nQ: Which party does Konda Surekha belong to in the Telangana Assembly directory?\nA: Konda Surekha is listed under INC.\nQ: Who is the MLA of Wardhannapet (SC)?\nA: K.R.",
+    "char_count": 465
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "bly directory?\nA: Konda Surekha is listed under INC.\nQ: Who is the MLA of Wardhannapet (SC)?\nA: K.R. Nagaraj is the MLA of Wardhannapet (SC), representing the INC.\nQ: Which constituency does K.R. Nagaraj represent?\nA: K.R. Nagaraj represents Wardhannapet (SC).\nQ: Which party does K.R. Nagaraj belong to in the Telangana Assembly directory?\nA: K.R. Nagaraj is listed under INC.\nQ: Who is the MLA of Parkal?\nA: Revuri Prakash Reddy is the MLA of Parkal, representing the INC.",
+    "char_count": 474
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "C.\nQ: Who is the MLA of Parkal?\nA: Revuri Prakash Reddy is the MLA of Parkal, representing the INC.\nQ: Which constituency does Revuri Prakash Reddy represent?\nA: Revuri Prakash Reddy represents Parkal.\nQ: Which party does Revuri Prakash Reddy belong to in the Telangana Assembly directory?\nA: Revuri Prakash Reddy is listed under INC.\nQ: Who is the MLA of Warangal West?\nA: Naini Rajender Reddy is the MLA of Warangal West, representing the INC.",
+    "char_count": 445
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "he MLA of Warangal West?\nA: Naini Rajender Reddy is the MLA of Warangal West, representing the INC.\nQ: Which constituency does Naini Rajender Reddy represent?\nA: Naini Rajender Reddy represents Warangal West.\nQ: Which party does Naini Rajender Reddy belong to in the Telangana Assembly directory?\nA: Naini Rajender Reddy is listed under INC.\nQ: Who is the MLA of Bhupalpalle?\nA: Gandra Satyanarayana Rao is the MLA of Bhupalpalle, representing the INC.",
+    "char_count": 452
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "he MLA of Bhupalpalle?\nA: Gandra Satyanarayana Rao is the MLA of Bhupalpalle, representing the INC.\nQ: Which constituency does Gandra Satyanarayana Rao represent?\nA: Gandra Satyanarayana Rao represents Bhupalpalle.\nQ: Which party does Gandra Satyanarayana Rao belong to in the Telangana Assembly directory?\nA: Gandra Satyanarayana Rao is listed under INC.\nQ: Who is the MLA of Pinapaka (ST)?\nA: Payam Venkateswarulu is the MLA of Pinapaka (ST), representing the INC.",
+    "char_count": 466
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "he MLA of Pinapaka (ST)?\nA: Payam Venkateswarulu is the MLA of Pinapaka (ST), representing the INC.\nQ: Which constituency does Payam Venkateswarulu represent?\nA: Payam Venkateswarulu represents Pinapaka (ST).\nQ: Which party does Payam Venkateswarulu belong to in the Telangana Assembly directory?\nA: Payam Venkateswarulu is listed under INC.\nQ: Who is the MLA of Yellandu (ST)?\nA: Koram Kanakaiah is the MLA of Yellandu (ST), representing the INC.",
+    "char_count": 447
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_16_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 16,
+    "text": "is the MLA of Yellandu (ST)?\nA: Koram Kanakaiah is the MLA of Yellandu (ST), representing the INC.\nQ: Which constituency does Koram Kanakaiah represent?\nA: Koram Kanakaiah represents Yellandu (ST).\nQ: Which party does Koram Kanakaiah belong to in the Telangana Assembly directory?\nA: Koram Kanakaiah is listed under INC.",
+    "char_count": 320
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "Q: Who is the MLA of Kothagudem?\nA: Kunamneni Sambasiva Rao is the MLA of Kothagudem, representing the CPI.\nQ: Which constituency does Kunamneni Sambasiva Rao represent?\nA: Kunamneni Sambasiva Rao represents Kothagudem.\nQ: Which party does Kunamneni Sambasiva Rao belong to in the Telangana Assembly directory?\nA: Kunamneni Sambasiva Rao is listed under CPI.\nQ: Who is the MLA of Aswaraopeta (ST)?\nA: Adinarayana Jare is the MLA of Aswaraopeta (ST), representing the INC.",
+    "char_count": 471
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "MLA of Aswaraopeta (ST)?\nA: Adinarayana Jare is the MLA of Aswaraopeta (ST), representing the INC.\nQ: Which constituency does Adinarayana Jare represent?\nA: Adinarayana Jare represents Aswaraopeta (ST).\nQ: Which party does Adinarayana Jare belong to in the Telangana Assembly directory?\nA: Adinarayana Jare is listed under INC.\nQ: Who is the MLA of Bhadrachalam (ST)?\nA: Tellam Venkata Rao is the MLA of Bhadrachalam (ST), representing the BRS.",
+    "char_count": 444
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "of Bhadrachalam (ST)?\nA: Tellam Venkata Rao is the MLA of Bhadrachalam (ST), representing the BRS.\nQ: Which constituency does Tellam Venkata Rao represent?\nA: Tellam Venkata Rao represents Bhadrachalam (ST).\nQ: Which party does Tellam Venkata Rao belong to in the Telangana Assembly directory?\nA: Tellam Venkata Rao is listed under BRS.\nQ: Who is the MLA of Khammam?\nA: Tummala Nageswara Rao is the MLA of Khammam, representing the INC.\nQ: Which constituency does Tummala Nageswara Rao represent?",
+    "char_count": 496
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "e MLA of Khammam, representing the INC.\nQ: Which constituency does Tummala Nageswara Rao represent?\nA: Tummala Nageswara Rao represents Khammam.\nQ: Which party does Tummala Nageswara Rao belong to in the Telangana Assembly directory?\nA: Tummala Nageswara Rao is listed under INC.\nQ: Who is the MLA of Palair?\nA: Ponguleti Srinivasa Reddy is the MLA of Palair, representing the INC.\nQ: Which constituency does Ponguleti Srinivasa Reddy represent?\nA: Ponguleti Srinivasa Reddy represents Palair.",
+    "char_count": 493
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c4",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "stituency does Ponguleti Srinivasa Reddy represent?\nA: Ponguleti Srinivasa Reddy represents Palair.\nQ: Which party does Ponguleti Srinivasa Reddy belong to in the Telangana Assembly directory?\nA: Ponguleti Srinivasa Reddy is listed under INC.\nQ: Who is the MLA of Madhira (SC)?\nA: Bhatti Vikramarka Mallu is the MLA of Madhira (SC), representing the INC.\nQ: Which constituency does Bhatti Vikramarka Mallu represent?\nA: Bhatti Vikramarka Mallu represents Madhira (SC).",
+    "char_count": 468
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c5",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "ituency does Bhatti Vikramarka Mallu represent?\nA: Bhatti Vikramarka Mallu represents Madhira (SC).\nQ: Which party does Bhatti Vikramarka Mallu belong to in the Telangana Assembly directory?\nA: Bhatti Vikramarka Mallu is listed under INC.\nQ: Who is the MLA of Wyra (ST)?\nA: Ramdas Maloth is the MLA of Wyra (ST), representing the INC.\nQ: Which constituency does Ramdas Maloth represent?\nA: Ramdas Maloth represents Wyra (ST).",
+    "char_count": 425
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c6",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": "the INC.\nQ: Which constituency does Ramdas Maloth represent?\nA: Ramdas Maloth represents Wyra (ST).\nQ: Which party does Ramdas Maloth belong to in the Telangana Assembly directory?\nA: Ramdas Maloth is listed under INC.\nQ: Who is the MLA of Sathupalle (SC)?\nA: Matta Ragamayee is the MLA of Sathupalle (SC), representing the INC.\nQ: Which constituency does Matta Ragamayee represent?\nA: Matta Ragamayee represents Sathupalle (SC).",
+    "char_count": 429
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_17_c7",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 17,
+    "text": ": Which constituency does Matta Ragamayee represent?\nA: Matta Ragamayee represents Sathupalle (SC).\nQ: Which party does Matta Ragamayee belong to in the Telangana Assembly directory?\nA: Matta Ragamayee is listed under INC.\nQ: Who is the MLA of Narayanpet?\nA: Chittem Parnika Reddy is the MLA of Narayanpet, representing the INC.",
+    "char_count": 328
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_18_c0",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 18,
+    "text": "Q: Which constituency does Chittem Parnika Reddy represent?\nA: Chittem Parnika Reddy represents Narayanpet.\nQ: Which party does Chittem Parnika Reddy belong to in the Telangana Assembly directory?\nA: Chittem Parnika Reddy is listed under INC.\nQ: Who is the MLA of Makthal?\nA: Vakiti Srihari is the MLA of Makthal, representing the INC.\nQ: Which constituency does Vakiti Srihari represent?\nA: Vakiti Srihari represents Makthal.",
+    "char_count": 426
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_18_c1",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 18,
+    "text": "the INC.\nQ: Which constituency does Vakiti Srihari represent?\nA: Vakiti Srihari represents Makthal.\nQ: Which party does Vakiti Srihari belong to in the Telangana Assembly directory?\nA: Vakiti Srihari is listed under INC.\nQ: Who is the MLA of Mulug (ST)?\nA: Anasuya Seethakka Dansari is the MLA of Mulug (ST), representing the INC.\nQ: Which constituency does Anasuya Seethakka Dansari represent?\nA: Anasuya Seethakka Dansari represents Mulug (ST).",
+    "char_count": 446
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_18_c2",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 18,
+    "text": "uency does Anasuya Seethakka Dansari represent?\nA: Anasuya Seethakka Dansari represents Mulug (ST).\nQ: Which party does Anasuya Seethakka Dansari belong to in the Telangana Assembly directory?\nA: Anasuya Seethakka Dansari is listed under INC.\nSource\nTelangana State Portal — Members of Legislative Assembly: https://www.telangana.gov.in/legislature/members-of-legislative-assembly/\nTelangana State Portal — Legislative Affairs: the Assembly strength is stated as 119 members:",
+    "char_count": 475
+  },
+  {
+    "id": "Telangana_MLAs_QA_Training.pdf_18_c3",
+    "source": "Telangana_MLAs_QA_Training.pdf",
+    "page": 18,
+    "text": "mbly/\nTelangana State Portal — Legislative Affairs: the Assembly strength is stated as 119 members:\nhttps://www.telangana.gov.in/departments/legislative-affairs/",
+    "char_count": 161
+  },
+  {
+    "id": "What_can_you_do.txt_1_c0",
+    "source": "What_can_you_do.txt",
+    "page": 1,
+    "text": "I can answer questions, explain concepts, and help with simple tasks.",
+    "char_count": 69
+  },
+  {
+    "id": "What_is_2__2.txt_1_c0",
+    "source": "What_is_2__2.txt",
+    "page": 1,
+    "text": "2 + 2 equals 4.",
+    "char_count": 15
+  },
+  {
+    "id": "What_is_your_name.txt_1_c0",
+    "source": "What_is_your_name.txt",
+    "page": 1,
+    "text": "My name is genzai.",
+    "char_count": 18
+  },
+  {
+    "id": "Who_is_the_Chief_Minister_of_Telangana.txt_1_c0",
+    "source": "Who_is_the_Chief_Minister_of_Telangana.txt",
+    "page": 1,
+    "text": "Anumula Revanth Reddy is the Chief Minister of Telangana.",
+    "char_count": 57
+  },
+  {
+    "id": "Who_is_the_MLA_of_Sirpur_constituency.txt_1_c0",
+    "source": "Who_is_the_MLA_of_Sirpur_constituency.txt",
+    "page": 1,
+    "text": "madhav",
+    "char_count": 6
+  }
+]

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenZ AI — Workspace</title>
+    <title>GenZ AI — Custom Model Studio</title>
     <!-- Google Fonts: Instrument Serif (headings) and Inter (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="brand-info">
                         <h2>GenZ AI</h2>
-                        <span>Powered by NVIDIA NIM</span>
+                        <span>Custom Model Studio</span>
                     </div>
                 </div>
                 <button class="icon-btn mobile-only" id="closeSidebarBtn">
@@ -47,6 +47,13 @@
                         <a href="#" id="navNewChat">
                             <i data-lucide="message-square"></i>
                             <span>Workspace Chat</span>
+                        </a>
+                    </li>
+                    <li class="nav-highlight">
+                        <a href="#" id="navTrainGenzai">
+                            <i data-lucide="brain-circuit"></i>
+                            <span>Train genZai</span>
+                            <span class="nav-pill" id="genzaiDocBadge">1 Doc</span>
                         </a>
                     </li>
                     <li>
@@ -74,6 +81,14 @@
 
             <!-- API Status & Profile Controls -->
             <div class="sidebar-footer">
+                <div class="genzai-sidebar-status" id="sidebarGenzaiStatus">
+                    <div class="genzai-status-dot"></div>
+                    <div class="genzai-status-info">
+                        <span class="genzai-status-title">genZai Active</span>
+                        <span class="genzai-status-sub" id="sidebarDocChunkCount">6 Knowledge Chunks</span>
+                    </div>
+                </div>
+
                 <div class="status-indicator">
                     <div class="status-ping">
                         <span class="ping-dot" id="apiStatusDot"></span>
@@ -86,9 +101,9 @@
                     <div class="avatar">M</div>
                     <div class="user-details">
                         <span class="username">Madhav</span>
-                        <span class="role">Developer Workspace</span>
+                        <span class="role">Creator of genZai</span>
                     </div>
-                    <button class="icon-btn mini-btn">
+                    <button class="icon-btn mini-btn" id="profileSettingsBtn" title="Studio options">
                         <i data-lucide="more-horizontal"></i>
                     </button>
                 </div>
@@ -105,15 +120,19 @@
                         <i data-lucide="menu"></i>
                     </button>
                     <div class="navbar-active-model">
-                        <div class="model-badge">
-                            <i data-lucide="cpu" class="badge-icon"></i>
-                            <span id="activeModelLabel">nvidia/nemotron-3-nano-omni-30b-a3b-reasoning</span>
+                        <div class="model-badge genzai-badge" id="activeModelBadge">
+                            <i data-lucide="sparkles" class="badge-icon"></i>
+                            <span id="activeModelLabel">genZai (Custom Trained Model)</span>
                             <span class="connected-badge"></span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="navbar-right">
+                    <button class="btn btn-secondary btn-sm nav-train-btn" id="openTrainModalBtn" title="Train genZai with documents">
+                        <i data-lucide="brain-circuit"></i>
+                        <span>Train genZai</span>
+                    </button>
                     <button class="icon-btn" id="clearChatBtn" title="Clear conversation">
                         <i data-lucide="trash-2"></i>
                     </button>
@@ -133,44 +152,44 @@
                     <div class="welcome-logo-wrapper">
                         <i data-lucide="sparkles"></i>
                     </div>
-                    <h1>How can I help you today?</h1>
-                    <p class="welcome-subtext">Your intelligent AI workspace powered by high-performance NVIDIA NIM inference endpoints.</p>
+                    <h1>Welcome to genZai</h1>
+                    <p class="welcome-subtext">Your personalized AI model created and trained by Madhav with local document knowledge and NVIDIA high-performance inference.</p>
                     
                     <div class="prompt-grid">
-                        <button class="prompt-card" data-prompt="Explain quantum physics simply">
+                        <button class="prompt-card" data-prompt="Who created genZai and what is its architecture?">
                             <div class="prompt-card-icon">
-                                <i data-lucide="atom"></i>
+                                <i data-lucide="sparkles"></i>
                             </div>
                             <div class="prompt-card-body">
-                                <h3>Explain quantum physics</h3>
-                                <p>Provide a simple, intuitive explanation.</p>
+                                <h3>About genZai</h3>
+                                <p>Discover genZai's creator, architecture, and purpose.</p>
                             </div>
                         </button>
-                        <button class="prompt-card" data-prompt="Write a clean Python function to parse JSON">
+                        <button class="prompt-card" data-prompt="How do I train genZai on my own custom documents and PDFs?">
                             <div class="prompt-card-icon">
-                                <i data-lucide="code-2"></i>
+                                <i data-lucide="book-open"></i>
                             </div>
                             <div class="prompt-card-body">
-                                <h3>Write a Python function</h3>
-                                <p>Create a clean script to parse raw JSON data.</p>
+                                <h3>Train on Data</h3>
+                                <p>Learn how to connect PDFs, text notes, and datasets.</p>
                             </div>
                         </button>
-                        <button class="prompt-card" data-prompt="Analyze the theory of relativity and black holes">
+                        <button class="prompt-card" data-prompt="What hardware and GPU acceleration powers genZai?">
                             <div class="prompt-card-icon">
-                                <i data-lucide="file-text"></i>
+                                <i data-lucide="cpu"></i>
                             </div>
                             <div class="prompt-card-body">
-                                <h3>Analyze black holes</h3>
-                                <p>Deep dive into space-time relativity theories.</p>
+                                <h3>Hardware Specs</h3>
+                                <p>Check NVIDIA GPU acceleration and inference specs.</p>
                             </div>
                         </button>
-                        <button class="prompt-card" data-prompt="Help me brainstorm 5 SaaS business ideas">
+                        <button class="prompt-card" data-prompt="Brainstorm 5 innovative AI startup ideas using genZai">
                             <div class="prompt-card-icon">
                                 <i data-lucide="lightbulb"></i>
                             </div>
                             <div class="prompt-card-body">
-                                <h3>Brainstorm SaaS ideas</h3>
-                                <p>Generate creative concepts for tech services.</p>
+                                <h3>Brainstorm Ideas</h3>
+                                <p>Generate creative concepts powered by genZai.</p>
                             </div>
                         </button>
                     </div>
@@ -184,15 +203,15 @@
             <footer class="composer-container">
                 <div class="floating-composer">
                     <div class="composer-input-row">
-                         <textarea id="composerInput" placeholder="Message GenZ AI..." rows="1"></textarea>
+                         <textarea id="composerInput" placeholder="Message genZai (answers with your trained data)..." rows="1"></textarea>
                     </div>
                     <div class="composer-actions-row">
                         <div class="composer-left-actions">
-                            <button class="icon-btn composer-btn" title="Add attachment (placeholder)">
+                            <button class="icon-btn composer-btn" id="composerAttachBtn" title="Train or attach documents">
                                 <i data-lucide="paperclip"></i>
                             </button>
-                            <button class="icon-btn composer-btn" title="Use microphone (placeholder)">
-                                <i data-lucide="mic"></i>
+                            <button class="icon-btn composer-btn" id="composerTrainBtn" title="Open Train genZai Studio">
+                                <i data-lucide="brain-circuit"></i>
                             </button>
                             <button class="icon-btn composer-btn" id="composerConfigToggle" title="Target configurations">
                                 <i data-lucide="sliders"></i>
@@ -207,7 +226,7 @@
                     </div>
                 </div>
                 <div class="composer-footer-info">
-                    GenZ AI can make mistakes. Verify important details.
+                    genZai responses are grounded in your trained knowledge base. Verify critical information.
                 </div>
             </footer>
         </main>
@@ -229,20 +248,31 @@
                 <div class="config-card">
                     <div class="config-card-header">
                         <i data-lucide="layers" class="card-icon"></i>
-                        <h4>Model Configuration</h4>
+                        <h4>Active AI Model</h4>
                     </div>
 
                     <div class="control-item">
                         <label for="modelSelect">
-                            <span>Target Model</span>
-                            <i data-lucide="info" class="info-tip-icon" title="NVIDIA catalog model endpoint."></i>
+                            <span>Selected Endpoint</span>
+                            <i data-lucide="info" class="info-tip-icon" title="Choose genZai (your custom model) or an NVIDIA catalog model."></i>
                         </label>
                         <div class="select-wrapper">
                             <select id="modelSelect">
-                                <option value="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning" selected>nvidia/nemotron-3-nano-omni-30b-a3b-reasoning</option>
+                                <option value="genZai (Custom Trained Model)" selected>⚡ genZai (Custom Trained Model)</option>
                             </select>
                             <i data-lucide="chevron-down" class="chevron-arrow"></i>
                         </div>
+                    </div>
+
+                    <div class="genzai-action-box" id="genzaiConfigBox">
+                        <div class="action-box-desc">
+                            <strong>genZai Active</strong>
+                            <p>Trained with your documents and custom system directives.</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="configOpenTrainBtn">
+                            <i data-lucide="brain-circuit"></i>
+                            <span>Train genZai Data</span>
+                        </button>
                     </div>
 
                     <div class="control-item">
@@ -253,7 +283,7 @@
                         <div class="range-wrapper">
                             <input type="range" id="tempInput" min="0" max="1" step="0.05" value="0.7">
                         </div>
-                        <span class="control-subtext">Higher values increase randomness and creativity.</span>
+                        <span class="control-subtext">Higher values increase creativity. Lower values produce strict facts.</span>
                     </div>
 
                     <div class="control-row">
@@ -276,19 +306,195 @@
                 <div class="config-card">
                     <div class="config-card-header">
                         <i data-lucide="user" class="card-icon"></i>
-                        <h4>System Persona</h4>
+                        <h4>System Directives</h4>
                     </div>
                     <div class="control-item">
                         <label for="systemPrompt">
-                            <span>Directives & Context</span>
+                            <span>Persona & Rules</span>
                         </label>
-                        <textarea id="systemPrompt" placeholder="You are GenZ AI, a helpful, intelligent workspace assistant. Use formatting and be concise."></textarea>
-                        <span class="control-subtext">Guides the assistant's behavior, tone, and directives.</span>
+                        <textarea id="systemPrompt" placeholder="You are genZai, a specialized AI model created and fine-tuned by Madhav. Answer with precision."></textarea>
+                        <span class="control-subtext">Additional rules merged with genZai's knowledge prompt.</span>
                     </div>
                 </div>
             </div>
         </aside>
 
+    </div>
+
+    <!-- 4. TRAIN GENZAI STUDIO MODAL -->
+    <div class="modal-overlay" id="trainModalOverlay">
+        <div class="modal-container" id="trainModal">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-badge">
+                        <i data-lucide="brain-circuit"></i>
+                    </div>
+                    <div>
+                        <h2>Train genZai Studio</h2>
+                        <p>Train your custom model on PDFs, documents, text notes, or AI-synthesized datasets.</p>
+                    </div>
+                </div>
+                <button class="icon-btn modal-close-btn" id="closeTrainModalBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- Studio Navigation Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="tab-upload">
+                    <i data-lucide="upload-cloud"></i>
+                    <span>Upload Documents</span>
+                </button>
+                <button class="modal-tab" data-tab="tab-note">
+                    <i data-lucide="file-plus"></i>
+                    <span>Quick Knowledge Note</span>
+                </button>
+                <button class="modal-tab" data-tab="tab-generator">
+                    <i data-lucide="sparkles"></i>
+                    <span>AI Dataset Generator</span>
+                </button>
+                <button class="modal-tab" data-tab="tab-library">
+                    <i data-lucide="database"></i>
+                    <span>Trained Library & Status</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab 1: Upload Files -->
+                <div class="tab-content active" id="tab-upload">
+                    <div class="upload-dropzone" id="uploadDropzone">
+                        <input type="file" id="filePickerInput" accept=".pdf,.txt,.md,.json,.csv" multiple style="display:none;">
+                        <div class="dropzone-icon">
+                            <i data-lucide="file-up"></i>
+                        </div>
+                        <h3>Drag & drop documents here</h3>
+                        <p>Supports <strong>PDF, TXT, Markdown, CSV, and JSON (Q&A)</strong></p>
+                        <button class="btn btn-primary btn-sm" id="browseFilesBtn">
+                            <i data-lucide="folder-open"></i>
+                            <span>Browse Files</span>
+                        </button>
+                    </div>
+
+                    <div class="upload-progress-card" id="uploadProgressCard" style="display:none;">
+                        <div class="spinner-ring"></div>
+                        <span id="uploadProgressText">Indexing and training into genZai vector store...</span>
+                    </div>
+
+                    <div class="supported-formats-pills">
+                        <span class="fmt-pill">📄 PDF Documents</span>
+                        <span class="fmt-pill">📝 Text / Notes (.txt, .md)</span>
+                        <span class="fmt-pill">📊 CSV Tables</span>
+                        <span class="fmt-pill">🤖 JSON Q&A Datasets</span>
+                    </div>
+
+                    <div class="upload-notice" id="uploadNoticeBox" style="display:none;"></div>
+                </div>
+
+                <!-- Tab 2: Quick Knowledge Note -->
+                <div class="tab-content" id="tab-note">
+                    <div class="note-form">
+                        <div class="form-group">
+                            <label for="noteTitleInput">Knowledge Topic / Title</label>
+                            <input type="text" id="noteTitleInput" placeholder="e.g. My Project Facts, Medical Glossary, Company Policies" />
+                        </div>
+                        <div class="form-group">
+                            <label for="noteContentInput">Knowledge Content / Directives</label>
+                            <textarea id="noteContentInput" rows="7" placeholder="Type or paste facts, rules, guidelines, code snippets, or question-answers here. genZai will memorize and index this content immediately."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="saveNoteBtn">
+                                <i data-lucide="zap"></i>
+                                <span>Train Note into genZai</span>
+                            </button>
+                        </div>
+                        <div class="upload-notice" id="noteNoticeBox" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: AI Dataset Generator -->
+                <div class="tab-content" id="tab-generator">
+                    <div class="generator-card">
+                        <div class="generator-header">
+                            <h4>Synthesize Training Pairs with AI</h4>
+                            <p>Don't have training data yet? Enter any topic, domain, or raw text below, and genZai's synthesis tool will generate structured question-answer pairs and train them immediately.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="genTopicInput">Subject / Domain / Reference Text</label>
+                            <textarea id="genTopicInput" rows="3" placeholder="e.g. Modern Web Development with React and Python, or Space Exploration milestones..."></textarea>
+                        </div>
+                        <div class="generator-controls">
+                            <div class="control-pair">
+                                <label for="genCountSelect">Number of Pairs:</label>
+                                <select id="genCountSelect">
+                                    <option value="3">3 Pairs (Fast)</option>
+                                    <option value="5" selected>5 Pairs (Standard)</option>
+                                    <option value="8">8 Pairs (Deep)</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="startGenerateBtn">
+                                <i data-lucide="sparkles"></i>
+                                <span>Generate & Train into genZai</span>
+                            </button>
+                        </div>
+                        <div class="generator-loading" id="generatorLoading" style="display:none;">
+                            <div class="spinner-ring"></div>
+                            <span>Synthesizing training pairs using NVIDIA NIM...</span>
+                        </div>
+                        <div class="generated-preview" id="generatedPreview" style="display:none;">
+                            <div class="preview-header">
+                                <h5>Generated & Trained Pairs:</h5>
+                                <a href="/api/genzai/export-dataset" download="genzai_dataset.jsonl" class="btn btn-secondary btn-sm" id="exportGeneratedJsonlBtn">
+                                    <i data-lucide="download"></i>
+                                    <span>Download .JSONL</span>
+                                </a>
+                            </div>
+                            <div class="pairs-scroll" id="pairsScrollList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Trained Library & Status -->
+                <div class="tab-content" id="tab-library">
+                    <div class="library-stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-num" id="statDocCount">1</span>
+                            <span class="stat-label">Trained Documents</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-num" id="statChunkCount">6</span>
+                            <span class="stat-label">Knowledge Chunks</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-num text-green" id="statTrainedStatus">Active</span>
+                            <span class="stat-label">Status</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-num font-sm" id="statLastTrained">Just now</span>
+                            <span class="stat-label">Last Retrained</span>
+                        </div>
+                    </div>
+
+                    <div class="library-list-wrapper">
+                        <div class="library-list-header">
+                            <h4>Active Knowledge Files</h4>
+                            <div class="library-header-actions">
+                                <button class="btn btn-secondary btn-sm" id="retrainAllBtn" title="Re-index all documents">
+                                    <i data-lucide="rotate-cw"></i>
+                                    <span>Retrain All</span>
+                                </button>
+                                <a href="/api/genzai/export-dataset" download="genzai_training_data.jsonl" class="btn btn-secondary btn-sm" title="Export JSONL dataset for fine-tuning">
+                                    <i data-lucide="download"></i>
+                                    <span>Export .JSONL</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="library-items" id="libraryItemsList">
+                            <!-- Dynamic items inserted via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- JS Bundle -->

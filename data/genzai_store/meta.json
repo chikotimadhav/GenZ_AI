@@ -1,0 +1,9 @@
+{
+  "model_name": "genZai",
+  "version": "1.0.0",
+  "creator": "Madhav",
+  "trained": true,
+  "trained_at": "2026-09-30 15:08:29",
+  "total_documents": 9,
+  "total_chunks": 159
+}

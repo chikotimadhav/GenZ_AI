@@ -1,10 +1,10 @@
-// GenZ AI Premium Workspace Script
+// GenZ AI Premium Workspace Script — Custom Model Studio
 
 document.addEventListener("DOMContentLoaded", () => {
     // Instantiate Lucide Icons
     lucide.createIcons();
 
-    // DOM References
+    // DOM References - Core Workspace
     const sidebar = document.getElementById("sidebar");
     const menuBtn = document.getElementById("menuBtn");
     const closeSidebarBtn = document.getElementById("closeSidebarBtn");
@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearChatBtn = document.getElementById("clearChatBtn");
     const themeToggleBtn = document.getElementById("themeToggleBtn");
     const activeModelLabel = document.getElementById("activeModelLabel");
+    const activeModelBadge = document.getElementById("activeModelBadge");
     const chatViewport = document.getElementById("chatViewport");
     const welcomeScreen = document.getElementById("welcomeScreen");
     const conversationStream = document.getElementById("conversationStream");
@@ -34,13 +35,45 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleConfigBtn = document.getElementById("toggleConfigBtn");
     const composerConfigToggle = document.getElementById("composerConfigToggle");
 
+    // DOM References - Train genZai Studio Modal
+    const trainModalOverlay = document.getElementById("trainModalOverlay");
+    const closeTrainModalBtn = document.getElementById("closeTrainModalBtn");
+    const openTrainModalBtn = document.getElementById("openTrainModalBtn");
+    const navTrainGenzai = document.getElementById("navTrainGenzai");
+    const configOpenTrainBtn = document.getElementById("configOpenTrainBtn");
+    const composerTrainBtn = document.getElementById("composerTrainBtn");
+    const composerAttachBtn = document.getElementById("composerAttachBtn");
+    const uploadDropzone = document.getElementById("uploadDropzone");
+    const filePickerInput = document.getElementById("filePickerInput");
+    const browseFilesBtn = document.getElementById("browseFilesBtn");
+    const uploadProgressCard = document.getElementById("uploadProgressCard");
+    const uploadNoticeBox = document.getElementById("uploadNoticeBox");
+    const noteTitleInput = document.getElementById("noteTitleInput");
+    const noteContentInput = document.getElementById("noteContentInput");
+    const saveNoteBtn = document.getElementById("saveNoteBtn");
+    const noteNoticeBox = document.getElementById("noteNoticeBox");
+    const genTopicInput = document.getElementById("genTopicInput");
+    const genCountSelect = document.getElementById("genCountSelect");
+    const startGenerateBtn = document.getElementById("startGenerateBtn");
+    const generatorLoading = document.getElementById("generatorLoading");
+    const generatedPreview = document.getElementById("generatedPreview");
+    const pairsScrollList = document.getElementById("pairsScrollList");
+    const statDocCount = document.getElementById("statDocCount");
+    const statChunkCount = document.getElementById("statChunkCount");
+    const statTrainedStatus = document.getElementById("statTrainedStatus");
+    const statLastTrained = document.getElementById("statLastTrained");
+    const libraryItemsList = document.getElementById("libraryItemsList");
+    const retrainAllBtn = document.getElementById("retrainAllBtn");
+    const genzaiDocBadge = document.getElementById("genzaiDocBadge");
+    const sidebarDocChunkCount = document.getElementById("sidebarDocChunkCount");
+
     // State Variables
     let conversationHistory = [];
-    const DEFAULT_MODEL = "meta/llama-3.2-11b-vision-instruct";
+    const DEFAULT_MODEL = "genZai (Custom Trained Model)";
 
     // Navigation & Layout Interactions
-    menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
-    closeSidebarBtn.addEventListener("click", () => sidebar.classList.remove("active"));
+    if (menuBtn) menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", () => sidebar.classList.remove("active"));
     
     // Config panel togglers
     function toggleConfigPanel() {
@@ -48,49 +81,73 @@ document.addEventListener("DOMContentLoaded", () => {
         const isCollapsed = configPanel.classList.contains("collapsed");
         if (isCollapsed) {
             configDrawerBtn.classList.remove("active");
-            toggleConfigBtn.parentElement.classList.remove("active");
+            if (toggleConfigBtn) toggleConfigBtn.parentElement.classList.remove("active");
         } else {
             configDrawerBtn.classList.add("active");
-            toggleConfigBtn.parentElement.classList.add("active");
+            if (toggleConfigBtn) toggleConfigBtn.parentElement.classList.add("active");
         }
     }
     
-    configDrawerBtn.addEventListener("click", toggleConfigPanel);
-    closeConfigPanelBtn.addEventListener("click", toggleConfigPanel);
-    toggleConfigBtn.addEventListener("click", (e) => {
+    if (configDrawerBtn) configDrawerBtn.addEventListener("click", toggleConfigPanel);
+    if (closeConfigPanelBtn) closeConfigPanelBtn.addEventListener("click", toggleConfigPanel);
+    if (toggleConfigBtn) toggleConfigBtn.addEventListener("click", (e) => {
         e.preventDefault();
         toggleConfigPanel();
     });
-    composerConfigToggle.addEventListener("click", toggleConfigPanel);
+    if (composerConfigToggle) composerConfigToggle.addEventListener("click", toggleConfigPanel);
 
     // Dynamic temperature display
-    tempInput.addEventListener("input", (e) => {
-        tempValDisplay.textContent = e.target.value;
-    });
+    if (tempInput) {
+        tempInput.addEventListener("input", (e) => {
+            tempValDisplay.textContent = e.target.value;
+        });
+    }
 
     // Auto-grow message input box
-    composerInput.addEventListener("input", () => {
-        composerInput.style.height = "auto";
-        composerInput.style.height = (composerInput.scrollHeight) + "px";
-        
-        const count = composerInput.value.length;
-        charCounter.textContent = `${count} chars`;
-        
-        if (count > 0) {
-            sendBtn.disabled = false;
-            sendBtn.classList.add("active");
-        } else {
-            sendBtn.disabled = true;
-            sendBtn.classList.remove("active");
-        }
-    });
+    if (composerInput) {
+        composerInput.addEventListener("input", () => {
+            composerInput.style.height = "auto";
+            composerInput.style.height = (composerInput.scrollHeight) + "px";
+            
+            const count = composerInput.value.length;
+            charCounter.textContent = `${count} chars`;
+            
+            if (count > 0) {
+                sendBtn.disabled = false;
+                sendBtn.classList.add("active");
+            } else {
+                sendBtn.disabled = true;
+                sendBtn.classList.remove("active");
+            }
+        });
+
+        // Keyboard support: Enter key submits
+        composerInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
 
     // Model selection changes header info
-    modelSelect.addEventListener("change", () => {
-        const val = modelSelect.value;
-        activeModelLabel.textContent = val;
-        toggleReasoningBudgetVisibility(val);
-    });
+    if (modelSelect) {
+        modelSelect.addEventListener("change", () => {
+            const val = modelSelect.value;
+            activeModelLabel.textContent = val;
+            updateActiveModelBadge(val);
+            toggleReasoningBudgetVisibility(val);
+        });
+    }
+
+    function updateActiveModelBadge(modelName) {
+        if (!activeModelBadge) return;
+        if (modelName.toLowerCase().includes("genzai")) {
+            activeModelBadge.classList.add("genzai-badge");
+        } else {
+            activeModelBadge.classList.remove("genzai-badge");
+        }
+    }
 
     // Setup prompt card clicks
     document.querySelectorAll(".prompt-card").forEach(card => {
@@ -107,13 +164,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // New Chat / Clear Chat CTA
-    newChatBtn.addEventListener("click", resetConversation);
-    clearChatBtn.addEventListener("click", resetConversation);
+    if (newChatBtn) newChatBtn.addEventListener("click", resetConversation);
+    if (clearChatBtn) clearChatBtn.addEventListener("click", resetConversation);
     
-    document.getElementById("navNewChat").addEventListener("click", (e) => {
-        e.preventDefault();
-        resetConversation();
-    });
+    const navNewChat = document.getElementById("navNewChat");
+    if (navNewChat) {
+        navNewChat.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetConversation();
+        });
+    }
 
     function resetConversation() {
         conversationHistory = [];
@@ -121,56 +181,344 @@ document.addEventListener("DOMContentLoaded", () => {
         welcomeScreen.style.display = "flex";
     }
 
-    // Keyboard support: Enter key submits
-    composerInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-
-    sendBtn.addEventListener("click", sendMessage);
+    if (sendBtn) sendBtn.addEventListener("click", sendMessage);
 
     // Initial load
     fetchModels();
+    fetchGenzaiStatus();
 
-    // ----------------------------------------------------
-    // Function Definitions
-    // ----------------------------------------------------
-
-    // Extract user-friendly error messages from various API response formats
-    function extractErrorText(data) {
-        if (!data) return "";
-        let raw = "";
-        if (typeof data === "string") {
-            raw = data;
-        } else if (data.error) {
-            if (typeof data.error === "object" && data.error.message) {
-                raw = data.error.message;
-            } else {
-                raw = data.error;
-            }
-        } else if (data.detail) {
-            raw = data.title ? `${data.title}: ${data.detail}` : data.detail;
-        } else if (data.message) {
-            raw = data.message;
-        } else if (data.title) {
-            raw = data.title;
-        } else {
-            raw = JSON.stringify(data);
-        }
-
-        // Add helpful context for known NVIDIA API error states
-        if (raw.includes("Worker local total request limit reached") || raw.includes("ResourceExhausted") || raw.includes("503")) {
-            return `${raw} (NVIDIA server capacity temporarily reached. Please switch to a verified model like meta/llama-3.2-11b-vision-instruct or retry in a moment).`;
-        }
-        if (raw.includes("Not found for account")) {
-            return `${raw} (This model function is not enabled for your account tier on build.nvidia.com).`;
-        }
-        return raw;
+    // =========================================================================
+    // Train genZai Studio Modal Controls
+    // =========================================================================
+    function openTrainModal(initialTab = "tab-upload") {
+        if (!trainModalOverlay) return;
+        trainModalOverlay.classList.add("active");
+        switchModalTab(initialTab);
+        fetchGenzaiStatus();
     }
 
-    // Fetch catalog models dynamically
+    function closeTrainModal() {
+        if (!trainModalOverlay) return;
+        trainModalOverlay.classList.remove("active");
+    }
+
+    function switchModalTab(tabId) {
+        document.querySelectorAll(".modal-tab").forEach(tab => {
+            tab.classList.toggle("active", tab.getAttribute("data-tab") === tabId);
+        });
+        document.querySelectorAll(".tab-content").forEach(content => {
+            content.classList.toggle("active", content.id === tabId);
+        });
+    }
+
+    if (openTrainModalBtn) openTrainModalBtn.addEventListener("click", () => openTrainModal("tab-upload"));
+    if (navTrainGenzai) navTrainGenzai.addEventListener("click", (e) => {
+        e.preventDefault();
+        openTrainModal("tab-upload");
+    });
+    if (configOpenTrainBtn) configOpenTrainBtn.addEventListener("click", () => openTrainModal("tab-library"));
+    if (composerTrainBtn) composerTrainBtn.addEventListener("click", () => openTrainModal("tab-upload"));
+    if (composerAttachBtn) composerAttachBtn.addEventListener("click", () => openTrainModal("tab-upload"));
+    if (closeTrainModalBtn) closeTrainModalBtn.addEventListener("click", closeTrainModal);
+
+    if (trainModalOverlay) {
+        trainModalOverlay.addEventListener("click", (e) => {
+            if (e.target === trainModalOverlay) closeTrainModal();
+        });
+    }
+
+    document.querySelectorAll(".modal-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const targetTab = tab.getAttribute("data-tab");
+            switchModalTab(targetTab);
+            if (targetTab === "tab-library") fetchGenzaiStatus();
+        });
+    });
+
+    // ----------------------------------------------------
+    // Tab 1: File Dropzone & Uploads
+    // ----------------------------------------------------
+    if (browseFilesBtn && filePickerInput) {
+        browseFilesBtn.addEventListener("click", () => filePickerInput.click());
+    }
+
+    if (uploadDropzone && filePickerInput) {
+        uploadDropzone.addEventListener("click", (e) => {
+            if (e.target !== browseFilesBtn && !browseFilesBtn.contains(e.target)) {
+                filePickerInput.click();
+            }
+        });
+
+        uploadDropzone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            uploadDropzone.classList.add("dragover");
+        });
+
+        uploadDropzone.addEventListener("dragleave", () => {
+            uploadDropzone.classList.remove("dragover");
+        });
+
+        uploadDropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            uploadDropzone.classList.remove("dragover");
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleFileUploads(e.dataTransfer.files);
+            }
+        });
+
+        filePickerInput.addEventListener("change", () => {
+            if (filePickerInput.files && filePickerInput.files.length > 0) {
+                handleFileUploads(filePickerInput.files);
+            }
+        });
+    }
+
+    async function handleFileUploads(files) {
+        uploadNoticeBox.style.display = "none";
+        uploadProgressCard.style.display = "flex";
+
+        let successCount = 0;
+        let lastMsg = "";
+
+        for (const file of files) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch("/api/genzai/upload", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    successCount++;
+                    lastMsg = data.message;
+                } else {
+                    lastMsg = data.error || "Upload failed";
+                }
+            } catch (err) {
+                lastMsg = `Error uploading ${file.name}: ${err.message}`;
+            }
+        }
+
+        uploadProgressCard.style.display = "none";
+        uploadNoticeBox.style.display = "block";
+        if (successCount > 0) {
+            uploadNoticeBox.className = "upload-notice";
+            uploadNoticeBox.textContent = `⚡ Success: Trained ${successCount} document(s) into genZai!`;
+            fetchGenzaiStatus();
+        } else {
+            uploadNoticeBox.className = "upload-notice error";
+            uploadNoticeBox.textContent = lastMsg;
+        }
+    }
+
+    // ----------------------------------------------------
+    // Tab 2: Quick Knowledge Note
+    // ----------------------------------------------------
+    if (saveNoteBtn) {
+        saveNoteBtn.addEventListener("click", async () => {
+            const title = noteTitleInput.value.trim();
+            const content = noteContentInput.value.trim();
+
+            if (!content) {
+                noteNoticeBox.style.display = "block";
+                noteNoticeBox.className = "upload-notice error";
+                noteNoticeBox.textContent = "Please enter knowledge content to train.";
+                return;
+            }
+
+            saveNoteBtn.disabled = true;
+            saveNoteBtn.innerHTML = `<span class="spinner-ring" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Training...`;
+
+            try {
+                const res = await fetch("/api/genzai/note", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, content })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    noteNoticeBox.style.display = "block";
+                    noteNoticeBox.className = "upload-notice";
+                    noteNoticeBox.textContent = `⚡ Knowledge note trained into genZai!`;
+                    noteTitleInput.value = "";
+                    noteContentInput.value = "";
+                    fetchGenzaiStatus();
+                } else {
+                    noteNoticeBox.style.display = "block";
+                    noteNoticeBox.className = "upload-notice error";
+                    noteNoticeBox.textContent = data.error || "Failed to train note.";
+                }
+            } catch (err) {
+                noteNoticeBox.style.display = "block";
+                noteNoticeBox.className = "upload-notice error";
+                noteNoticeBox.textContent = `Error: ${err.message}`;
+            } finally {
+                saveNoteBtn.disabled = false;
+                saveNoteBtn.innerHTML = `<i data-lucide="zap"></i><span>Train Note into genZai</span>`;
+                lucide.createIcons();
+            }
+        });
+    }
+
+    // ----------------------------------------------------
+    // Tab 3: AI Dataset Generator
+    // ----------------------------------------------------
+    if (startGenerateBtn) {
+        startGenerateBtn.addEventListener("click", async () => {
+            const topic = genTopicInput.value.trim();
+            const count = parseInt(genCountSelect.value) || 5;
+
+            if (!topic) {
+                alert("Please provide a subject or reference text to synthesize training pairs.");
+                return;
+            }
+
+            generatorLoading.style.display = "flex";
+            generatedPreview.style.display = "none";
+            startGenerateBtn.disabled = true;
+
+            try {
+                const res = await fetch("/api/genzai/generate-dataset", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ topic, count, auto_train: true })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.pairs && data.pairs.length > 0) {
+                    pairsScrollList.innerHTML = "";
+                    data.pairs.forEach((pair, idx) => {
+                        const card = document.createElement("div");
+                        card.className = "pair-card";
+                        card.innerHTML = `
+                            <div class="pair-q">#${idx+1}: ${pair.question}</div>
+                            <div class="pair-a">${pair.answer}</div>
+                        `;
+                        pairsScrollList.appendChild(card);
+                    });
+                    generatedPreview.style.display = "flex";
+                    fetchGenzaiStatus();
+                } else {
+                    alert(data.error || "Failed to generate dataset.");
+                }
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+            } finally {
+                generatorLoading.style.display = "none";
+                startGenerateBtn.disabled = false;
+            }
+        });
+    }
+
+    // ----------------------------------------------------
+    // Tab 4: Trained Library & Status
+    // ----------------------------------------------------
+    async function fetchGenzaiStatus() {
+        try {
+            const res = await fetch("/api/genzai/status");
+            const data = await res.json();
+
+            if (res.ok) {
+                if (statDocCount) statDocCount.textContent = data.total_documents || 0;
+                if (statChunkCount) statChunkCount.textContent = data.total_chunks || 0;
+                if (statTrainedStatus) statTrainedStatus.textContent = data.trained ? "Active" : "Unindexed";
+                if (statLastTrained) statLastTrained.textContent = data.trained_at ? data.trained_at.split(" ")[1] || data.trained_at : "Never";
+
+                // Update badges
+                if (genzaiDocBadge) {
+                    const count = data.total_documents || 0;
+                    genzaiDocBadge.textContent = `${count} Doc${count === 1 ? '' : 's'}`;
+                }
+                if (sidebarDocChunkCount) {
+                    sidebarDocChunkCount.textContent = `${data.total_chunks || 0} Knowledge Chunks`;
+                }
+
+                // Render library documents list
+                if (libraryItemsList && data.documents) {
+                    libraryItemsList.innerHTML = "";
+                    data.documents.forEach(doc => {
+                        const item = document.createElement("div");
+                        item.className = "doc-item";
+                        item.innerHTML = `
+                            <div class="doc-info">
+                                <span class="doc-type-badge">${doc.type}</span>
+                                <div>
+                                    <div class="doc-name">${doc.name}</div>
+                                    <div class="doc-size">${doc.size_formatted}</div>
+                                </div>
+                            </div>
+                            <div class="doc-actions">
+                                ${doc.is_removable ? `
+                                    <button class="btn-delete-doc" data-file="${doc.name}" title="Delete document from genZai">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                ` : `
+                                    <span style="font-size:11px;color:var(--text-muted);">Built-in</span>
+                                `}
+                            </div>
+                        `;
+
+                        if (doc.is_removable) {
+                            const delBtn = item.querySelector(".btn-delete-doc");
+                            delBtn.addEventListener("click", async () => {
+                                if (confirm(`Delete '${doc.name}' and retrain genZai?`)) {
+                                    await deleteDocument(doc.name);
+                                }
+                            });
+                        }
+
+                        libraryItemsList.appendChild(item);
+                    });
+                    lucide.createIcons();
+                }
+            }
+        } catch (e) {
+            console.error("Failed to fetch genZai status", e);
+        }
+    }
+
+    async function deleteDocument(filename) {
+        try {
+            const res = await fetch(`/api/genzai/document/${encodeURIComponent(filename)}`, {
+                method: "DELETE"
+            });
+            if (res.ok) {
+                fetchGenzaiStatus();
+            } else {
+                const data = await res.json();
+                alert(data.error || "Failed to delete document.");
+            }
+        } catch (err) {
+            alert(`Error: ${err.message}`);
+        }
+    }
+
+    if (retrainAllBtn) {
+        retrainAllBtn.addEventListener("click", async () => {
+            retrainAllBtn.disabled = true;
+            retrainAllBtn.innerHTML = `<span class="spinner-ring" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:4px;"></span> Retraining...`;
+            try {
+                const res = await fetch("/api/genzai/train", { method: "POST" });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(`⚡ ${data.message} (${data.total_chunks} chunks indexed)`);
+                    fetchGenzaiStatus();
+                }
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+            } finally {
+                retrainAllBtn.disabled = false;
+                retrainAllBtn.innerHTML = `<i data-lucide="rotate-cw"></i><span>Retrain All</span>`;
+                lucide.createIcons();
+            }
+        });
+    }
+
+    // =========================================================================
+    // Catalog Models Fetching
+    // =========================================================================
     async function fetchModels() {
         try {
             apiStatusText.textContent = "Connecting to server...";
@@ -180,6 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok && data.models) {
                 modelSelect.innerHTML = "";
                 const VERIFIED_SET = new Set([
+                    "genZai (Custom Trained Model)",
                     "meta/llama-3.2-11b-vision-instruct",
                     "moonshotai/kimi-k3",
                     "nvidia/nemotron-3-ultra-550b-a55b",
@@ -190,8 +539,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.models.forEach(modelId => {
                     const opt = document.createElement("option");
                     opt.value = modelId;
-                    opt.textContent = VERIFIED_SET.has(modelId) ? `⚡ ${modelId} (Online)` : modelId;
-                    if (modelId === DEFAULT_MODEL) {
+                    if (modelId.toLowerCase().includes("genzai")) {
+                        opt.textContent = `✦ ${modelId}`;
+                    } else if (VERIFIED_SET.has(modelId)) {
+                        opt.textContent = `⚡ ${modelId} (Online)`;
+                    } else {
+                        opt.textContent = modelId;
+                    }
+
+                    if (modelId === DEFAULT_MODEL || (modelId.toLowerCase().includes("genzai") && !modelSelect.value)) {
                         opt.selected = true;
                     }
                     modelSelect.appendChild(opt);
@@ -199,6 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 // Align active headers
                 activeModelLabel.textContent = modelSelect.value;
+                updateActiveModelBadge(modelSelect.value);
                 toggleReasoningBudgetVisibility(modelSelect.value);
                 
                 // Connected state
@@ -224,6 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function toggleReasoningBudgetVisibility(modelId) {
+        if (!reasoningBudgetWrapper) return;
         if (modelId.includes("reasoning") || modelId.includes("gpt-oss")) {
             reasoningBudgetWrapper.style.display = "flex";
         } else {
@@ -231,108 +589,60 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Custom Lightweight Markdown Compiler
-    function formatMessageText(text) {
-        if (!text) return "";
-        
-        // Escape HTML for safety, but preserve custom style spans
-        let escaped = text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/&lt;span class="accent-red"&gt;/g, '<span class="accent-red">')
-            .replace(/&lt;\/span&gt;/g, '</span>');
-
-        // Parse markdown tables first
-        let lines = escaped.split("\n");
-        let inTable = false;
-        let tableHtml = "";
-        let processedLines = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i].trim();
-            if (line.startsWith("|") && line.endsWith("|")) {
-                if (!inTable) {
-                    inTable = true;
-                    tableHtml = "<table>";
-                }
-                let cells = line.split("|").slice(1, -1).map(c => c.trim());
-                if (cells.every(c => c.startsWith("-") || c.endsWith("-"))) {
-                    continue; // Skip table header separator row
-                }
-                let isHeader = tableHtml === "<table>";
-                tableHtml += "<tr>" + cells.map(c => isHeader ? `<th>${c}</th>` : `<td>${c}</td>`).join("") + "</tr>";
+    function extractErrorText(data) {
+        if (!data) return "";
+        let raw = "";
+        if (typeof data === "string") {
+            raw = data;
+        } else if (data.error) {
+            if (typeof data.error === "object" && data.error.message) {
+                raw = data.error.message;
             } else {
-                if (inTable) {
-                    inTable = false;
-                    tableHtml += "</table>";
-                    processedLines.push(tableHtml);
-                    tableHtml = "";
-                }
-                processedLines.push(lines[i]);
+                raw = data.error;
             }
+        } else if (data.detail) {
+            raw = data.title ? `${data.title}: ${data.detail}` : data.detail;
+        } else if (data.message) {
+            raw = data.message;
+        } else if (data.title) {
+            raw = data.title;
+        } else {
+            raw = JSON.stringify(data);
         }
-        if (inTable) {
-            tableHtml += "</table>";
-            processedLines.push(tableHtml);
+
+        if (raw.includes("Worker local total request limit reached") || raw.includes("ResourceExhausted") || raw.includes("503")) {
+            return `${raw} (NVIDIA server capacity temporarily reached. Please retry in a moment).`;
         }
-
-        let parsedText = processedLines.join("\n");
-
-        // Fenced code blocks with language wrapper
-        parsedText = parsedText.replace(/```(?:[a-zA-Z0-9]+)?([\s\S]*?)```/g, (match, code) => {
-            return `<pre><code>${code.trim()}</code></pre>`;
-        });
-
-        // Inline code blocks
-        parsedText = parsedText.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-        // Quotes blockquotes
-        parsedText = parsedText.replace(/^(?:&gt;)\s?(.*)$/gm, "<blockquote>$1</blockquote>");
-
-        // Bullets (Unordered lists)
-        parsedText = parsedText.replace(/^\s*[\*\-]\s(.*)$/gm, "<li>$1</li>");
-        parsedText = parsedText.replace(/(<li>.*<\/li>)/g, "<ul>$1</ul>");
-        parsedText = parsedText.replace(/<\/ul>\s*<ul>/g, "");
-
-        // Numbers (Ordered lists)
-        parsedText = parsedText.replace(/^\s*\d+\.\s(.*)$/gm, "<ol-item>$1</ol-item>");
-        parsedText = parsedText.replace(/(<ol-item>.*<\/ol-item>)/g, "<ol>$1</ol>");
-        parsedText = parsedText.replace(/<\/ol>\s*<ol>/g, "");
-        parsedText = parsedText.replace(/ol-item/g, "li");
-
-        // Group regular text blocks into paragraphs
-        let blocks = parsedText.split("\n\n");
-        for (let j = 0; j < blocks.length; j++) {
-            let b = blocks[j].trim();
-            if (b && !b.startsWith("<pre>") && !b.startsWith("<table>") && !b.startsWith("<blockquote>") && !b.startsWith("<ul>") && !b.startsWith("<ol>")) {
-                blocks[j] = `<p>${b.replace(/\n/g, "<br>")}</p>`;
-            }
+        if (raw.includes("Not found for account")) {
+            return `${raw} (This model function is not enabled for your account tier).`;
         }
-        
-        return blocks.join("\n");
+        return raw;
     }
 
-    // Main send message dispatcher
+    // =========================================================================
+    // Chat Message Processing & Citations
+    // =========================================================================
     async function sendMessage() {
         const text = composerInput.value.trim();
         if (!text) return;
 
-        // Reset input state
+        // Hide welcome screen
+        if (welcomeScreen.style.display !== "none") {
+            welcomeScreen.style.display = "none";
+        }
+
+        // Append user bubble
+        appendMessageUI("user", text);
+        scrollToBottom();
+
+        // Clear composer
         composerInput.value = "";
         composerInput.style.height = "auto";
         charCounter.textContent = "0 chars";
         sendBtn.disabled = true;
         sendBtn.classList.remove("active");
 
-        // Hide landing screen
-        welcomeScreen.style.display = "none";
-
-        // Append user prompt to list
-        appendMessageUI("user", text);
-        scrollToBottom();
-
-        // Save conversation history
+        // Save to history
         conversationHistory.push({
             "role": "user",
             "content": text
@@ -344,7 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Build messages pipeline
         const messages = [];
-        const systemDirectives = systemPrompt.value.trim();
+        const systemDirectives = systemPrompt ? systemPrompt.value.trim() : "";
         if (systemDirectives) {
             messages.push({
                 "role": "system",
@@ -353,7 +663,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         messages.push(...conversationHistory);
 
-        // Sanitize client messages to prevent sequential duplicate roles
+        // Sanitize messages
         const sanitizedMessages = [];
         for (const m of messages) {
             if (sanitizedMessages.length > 0 && sanitizedMessages[sanitizedMessages.length - 1].role === m.role) {
@@ -374,9 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
 
@@ -395,8 +703,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     displayContent = `> ⚡ *${data.fallback_notice}*\n\n` + content;
                 }
 
-                // Append assistant reply bubble
-                appendMessageUI("assistant", displayContent, reasoning);
+                // Append assistant reply bubble with citations if genZai
+                appendMessageUI("assistant", displayContent, reasoning, data.citations);
                 scrollToBottom();
 
                 // Save to history
@@ -405,7 +713,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     "content": content
                 });
             } else {
-                // Discard failed user message to prevent role desync
                 if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === "user") {
                     conversationHistory.pop();
                 }
@@ -415,7 +722,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             removeTypingIndicatorUI(indicatorId);
-            // Discard failed user message to prevent role desync
             if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === "user") {
                 conversationHistory.pop();
             }
@@ -424,8 +730,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Append Message Bubble with Action Bar to UI
-    function appendMessageUI(role, text, reasoning = null) {
+    // Append Message Bubble with Action Bar and Citations
+    function appendMessageUI(role, text, reasoning = null, citations = null) {
         const row = document.createElement("div");
         row.className = `message-row ${role}`;
 
@@ -443,7 +749,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const bubble = document.createElement("div");
         bubble.className = "message-bubble";
 
-        // Prepend reasoning accordion if reasoning exists
+        // Prepend reasoning accordion if present
         if (reasoning && reasoning.trim()) {
             const reasoningBox = document.createElement("div");
             reasoningBox.className = "reasoning-box collapsed";
@@ -475,6 +781,49 @@ document.addEventListener("DOMContentLoaded", () => {
         textDiv.className = "text-markdown";
         textDiv.innerHTML = formatMessageText(text);
         bubble.appendChild(textDiv);
+
+        // Prepend citations chips if genZai returned verified source citations
+        if (citations && citations.length > 0) {
+            const citationsContainer = document.createElement("div");
+            citationsContainer.className = "citations-container";
+
+            const label = document.createElement("div");
+            label.className = "citations-label";
+            label.innerHTML = `<i data-lucide="book-check" style="width:14px;height:14px;"></i><span>genZai Verified Sources (${citations.length})</span>`;
+            citationsContainer.appendChild(label);
+
+            const chipsWrap = document.createElement("div");
+            chipsWrap.className = "citations-chips";
+
+            citations.forEach(c => {
+                const chipItem = document.createElement("div");
+                chipItem.style.display = "flex";
+                chipItem.style.flexDirection = "column";
+
+                const chip = document.createElement("div");
+                chip.className = "citation-chip";
+                chip.innerHTML = `
+                    <i data-lucide="file-text" style="width:12px;height:12px;"></i>
+                    <span>${c.source}</span>
+                `;
+
+                const popup = document.createElement("div");
+                popup.className = "citation-snippet-popup";
+                popup.textContent = c.snippet || "Knowledge chunk referenced by genZai.";
+
+                chip.addEventListener("click", () => {
+                    chip.classList.toggle("active");
+                });
+
+                chipItem.appendChild(chip);
+                chipItem.appendChild(popup);
+                chipsWrap.appendChild(chipItem);
+            });
+
+            citationsContainer.appendChild(chipsWrap);
+            bubble.appendChild(citationsContainer);
+        }
+
         wrapper.appendChild(bubble);
 
         // Prepend action menu under assistant replies
@@ -494,12 +843,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="action-btn btn-dislike" title="Bad response">
                     <i data-lucide="thumbs-down"></i>
                 </button>
-                <button class="action-btn" title="More options">
-                    <i data-lucide="more-horizontal"></i>
-                </button>
             `;
 
-            // Action: Copy to clipboard
+            // Action: Copy
             actions.querySelector(".btn-copy").addEventListener("click", function() {
                 navigator.clipboard.writeText(text).then(() => {
                     const icon = this.querySelector("i");
@@ -514,19 +860,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Action: Regenerate
             actions.querySelector(".btn-regenerate").addEventListener("click", () => {
-                // Find last user query
                 const userMessages = conversationHistory.filter(m => m.role === "user");
                 if (userMessages.length > 0) {
                     const lastUserText = userMessages[userMessages.length - 1].content;
-                    // Remove last items from array
                     conversationHistory = conversationHistory.slice(0, -2);
-                    // Remove elements from DOM
                     const domRows = conversationStream.querySelectorAll(".message-row");
                     if (domRows.length >= 2) {
                         domRows[domRows.length - 1].remove();
                         domRows[domRows.length - 2].remove();
                     }
-                    // Insert into composer and execute
                     composerInput.value = lastUserText;
                     composerInput.style.height = "auto";
                     composerInput.style.height = (composerInput.scrollHeight) + "px";
@@ -537,15 +879,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Action: Like/Dislike state
+            // Action: Like/Dislike
             const likeBtn = actions.querySelector(".btn-like");
             const dislikeBtn = actions.querySelector(".btn-dislike");
-            
             likeBtn.addEventListener("click", () => {
                 likeBtn.classList.toggle("active");
                 dislikeBtn.classList.remove("active");
             });
-
             dislikeBtn.addEventListener("click", () => {
                 dislikeBtn.classList.toggle("active");
                 likeBtn.classList.remove("active");
@@ -559,7 +899,39 @@ document.addEventListener("DOMContentLoaded", () => {
         lucide.createIcons();
     }
 
-    // UI Typing indicators
+    // Markdown Parser
+    function formatMessageText(text) {
+        if (!text) return "";
+        let escaped = text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/&lt;span class="accent-red"&gt;/g, '<span class="accent-red">')
+            .replace(/&lt;\/span&gt;/g, '</span>');
+
+        // Simple code blocks
+        escaped = escaped.replace(/```([a-zA-Z0-9_\-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+            return `<div class="code-block-wrapper"><div class="code-header"><span>${lang || 'code'}</span><button class="code-copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').innerText)"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copy</button></div><pre><code class="language-${lang}">${code.trim()}</code></pre></div>`;
+        });
+
+        // Inline code
+        escaped = escaped.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+
+        // Bold & Italic
+        escaped = escaped.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+        escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+        // Blockquotes
+        escaped = escaped.replace(/^>\s*(.+)$/gm, '<blockquote class="quote-block">$1</blockquote>');
+
+        // Paragraph line breaks
+        escaped = escaped.replace(/\n\n+/g, '<br><br>');
+        escaped = escaped.replace(/\n/g, '<br>');
+
+        return escaped;
+    }
+
     function appendTypingIndicatorUI() {
         const id = "indicator_" + Date.now();
         const row = document.createElement("div");
