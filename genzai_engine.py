@@ -135,17 +135,27 @@ class GenZaiEngine:
             })
             seen_names.add("starter_dataset.json")
             
+        IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+        
         # Files in writable DOCS_DIR
         if os.path.exists(DOCS_DIR):
             for fname in sorted(os.listdir(DOCS_DIR)):
                 if fname in self.deleted_docs or fname in seen_names:
                     continue
+                # If this is an image knowledge companion file and the image exists, avoid listing duplicate
+                if fname.startswith("image_knowledge_"):
+                    base_img_name = fname.replace("image_knowledge_", "").replace(".txt", "")
+                    if any(os.path.exists(os.path.join(DOCS_DIR, f"{base_img_name}{ext}")) for ext in IMAGE_EXTS):
+                        continue
+                        
                 fpath = os.path.join(DOCS_DIR, fname)
                 if os.path.isfile(fpath):
                     size = os.path.getsize(fpath)
+                    ext = os.path.splitext(fname)[1].lower()
+                    doc_type = "image" if ext in IMAGE_EXTS or fname.startswith("image_knowledge_") else ext.replace(".", "")
                     doc_list.append({
                         "name": fname,
-                        "type": os.path.splitext(fname)[1].lower().replace(".", ""),
+                        "type": doc_type,
                         "size_bytes": size,
                         "size_formatted": self._format_size(size),
                         "is_removable": True
@@ -157,12 +167,18 @@ class GenZaiEngine:
             for fname in sorted(os.listdir(BUNDLED_DOCS_DIR)):
                 if fname in self.deleted_docs or fname in seen_names:
                     continue
+                if fname.startswith("image_knowledge_"):
+                    base_img_name = fname.replace("image_knowledge_", "").replace(".txt", "")
+                    if any(os.path.exists(os.path.join(BUNDLED_DOCS_DIR, f"{base_img_name}{ext}")) for ext in IMAGE_EXTS):
+                        continue
                 fpath = os.path.join(BUNDLED_DOCS_DIR, fname)
                 if os.path.isfile(fpath):
                     size = os.path.getsize(fpath)
+                    ext = os.path.splitext(fname)[1].lower()
+                    doc_type = "image" if ext in IMAGE_EXTS or fname.startswith("image_knowledge_") else ext.replace(".", "")
                     doc_list.append({
                         "name": fname,
-                        "type": os.path.splitext(fname)[1].lower().replace(".", ""),
+                        "type": doc_type,
                         "size_bytes": size,
                         "size_formatted": self._format_size(size),
                         "is_removable": True
@@ -172,9 +188,11 @@ class GenZaiEngine:
         # Virtual in-memory documents
         for fname, info in self.virtual_documents.items():
             if fname not in seen_names and fname not in self.deleted_docs:
+                ext = os.path.splitext(fname)[1].lower()
+                doc_type = "image" if info.get("is_image") or ext in IMAGE_EXTS else (ext.replace(".", "") or "txt")
                 doc_list.append({
                     "name": fname,
-                    "type": os.path.splitext(fname)[1].lower().replace(".", "") or "txt",
+                    "type": doc_type,
                     "size_bytes": info["size"],
                     "size_formatted": self._format_size(info["size"]),
                     "is_removable": True
@@ -210,6 +228,29 @@ class GenZaiEngine:
             self.deleted_docs.add(filename)
             deleted = True
 
+        # Clean up any companion image knowledge file if an image was deleted
+        IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+        ext = os.path.splitext(filename)[1].lower()
+        if ext in IMAGE_EXTS:
+            companion_name = f"image_knowledge_{os.path.splitext(filename)[0]}.txt"
+            comp_path = os.path.join(DOCS_DIR, companion_name)
+            if companion_name in self.virtual_documents:
+                del self.virtual_documents[companion_name]
+            if os.path.exists(comp_path):
+                try:
+                    os.remove(comp_path)
+                except Exception:
+                    pass
+        elif filename.startswith("image_knowledge_"):
+            base_img = filename.replace("image_knowledge_", "").replace(".txt", "")
+            for img_ext in IMAGE_EXTS:
+                img_path = os.path.join(DOCS_DIR, f"{base_img}{img_ext}")
+                if os.path.exists(img_path):
+                    try:
+                        os.remove(img_path)
+                    except Exception:
+                        pass
+
         if deleted:
             self.train_model()
             return True
@@ -244,11 +285,44 @@ class GenZaiEngine:
         self.train_model()
         return filename
 
+    def add_image_knowledge(self, image_filename: str, title: str, vision_analysis: str) -> str:
+        """Saves and indexes multimodal visual intelligence extracted from an image into genZai."""
+        safe_name = os.path.splitext(image_filename)[0]
+        safe_name = re.sub(r'[^a-zA-Z0-9_\- ]', '', safe_name).strip().replace(" ", "_") or "image_asset"
+        knowledge_fname = f"image_knowledge_{safe_name}.txt"
+        filepath = os.path.join(DOCS_DIR, knowledge_fname)
+
+        full_content = (
+            f"[Image Source: {image_filename}]\n"
+            f"Topic: {title or image_filename}\n\n"
+            f"Visual Intelligence, Text & Key Facts:\n"
+            f"{vision_analysis}"
+        )
+
+        self.virtual_documents[knowledge_fname] = {
+            "title": f"Image: {title or image_filename}",
+            "content": full_content,
+            "size": len(full_content.encode("utf-8")),
+            "is_image": True,
+            "image_filename": image_filename
+        }
+        if knowledge_fname in self.deleted_docs:
+            self.deleted_docs.remove(knowledge_fname)
+
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(full_content)
+        except Exception as e:
+            print(f"[genZai] Warning writing image knowledge file {filepath}: {e}")
+
+        self.train_model()
+        return knowledge_fname
+
     # ==========================================
     # Text Extraction & Chunking Pipeline
     # ==========================================
     def extract_text_from_file(self, filepath: str) -> List[Dict[str, Any]]:
-        """Extracts text content and metadata from PDF, TXT, MD, JSON, CSV."""
+        """Extracts text content and metadata from PDF, TXT, MD, JSON, CSV, and Images."""
         ext = os.path.splitext(filepath)[1].lower()
         filename = os.path.basename(filepath)
         items = []
@@ -266,13 +340,33 @@ class GenZaiEngine:
                             "text": text
                         })
 
+            elif ext in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]:
+                safe_name = os.path.splitext(filename)[0]
+                companion = os.path.join(os.path.dirname(filepath), f"image_knowledge_{safe_name}.txt")
+                if os.path.exists(companion):
+                    with open(companion, "r", encoding="utf-8", errors="replace") as f:
+                        content = self._clean_text(f.read())
+                        if content.strip():
+                            items.append({
+                                "source": f"Image: {filename}",
+                                "page": 1,
+                                "text": content
+                            })
+                else:
+                    items.append({
+                        "source": f"Image: {filename}",
+                        "page": 1,
+                        "text": f"[Image Source: {filename}] Visual document trained into genZai."
+                    })
+
             elif ext in [".txt", ".md", ".py", ".js", ".html"]:
                 with open(filepath, "r", encoding="utf-8", errors="replace") as f:
                     content = f.read()
                     content = self._clean_text(content)
                     if content.strip():
+                        source_name = f"Image: {filename.replace('image_knowledge_', '').replace('.txt', '')}" if filename.startswith("image_knowledge_") else filename
                         items.append({
-                            "source": filename,
+                            "source": source_name,
                             "page": 1,
                             "text": content
                         })

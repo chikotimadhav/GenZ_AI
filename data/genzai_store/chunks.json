@@ -1113,6 +1113,13 @@
     "char_count": 6
   },
   {
+    "id": "Image: test_microchip.png_1_c0",
+    "source": "Image: test_microchip.png",
+    "page": 1,
+    "text": "[Image Source: test_microchip.png] Visual document trained into genZai.",
+    "char_count": 71
+  },
+  {
     "id": "what_is_madhav_number.txt_1_c0",
     "source": "what_is_madhav_number.txt",
     "page": 1,

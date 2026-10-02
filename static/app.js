@@ -67,9 +67,48 @@ document.addEventListener("DOMContentLoaded", () => {
     const genzaiDocBadge = document.getElementById("genzaiDocBadge");
     const sidebarDocChunkCount = document.getElementById("sidebarDocChunkCount");
 
+    // DOM References - Admin Option & Admin Modal
+    const adminConfigCard = document.getElementById("adminConfigCard");
+    const adminStatusPill = document.getElementById("adminStatusPill");
+    const adminCardHeaderIcon = document.getElementById("adminCardHeaderIcon");
+    const adminLoginView = document.getElementById("adminLoginView");
+    const adminActiveView = document.getElementById("adminActiveView");
+    const adminIdInput = document.getElementById("adminIdInput");
+    const adminPasswordInput = document.getElementById("adminPasswordInput");
+    const adminLoginBtn = document.getElementById("adminLoginBtn");
+    const adminLoginNotice = document.getElementById("adminLoginNotice");
+    const adminActiveUsername = document.getElementById("adminActiveUsername");
+    const adminOpenTrainBtn = document.getElementById("adminOpenTrainBtn");
+    const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+
+    const adminLoginModalOverlay = document.getElementById("adminLoginModalOverlay");
+    const closeAdminModalBtn = document.getElementById("closeAdminModalBtn");
+    const modalAdminIdInput = document.getElementById("modalAdminIdInput");
+    const modalAdminPasswordInput = document.getElementById("modalAdminPasswordInput");
+    const modalAdminLoginBtn = document.getElementById("modalAdminLoginBtn");
+    const modalAdminNotice = document.getElementById("modalAdminNotice");
+
+    // DOM References - Image Training Tab
+    const imageDropzone = document.getElementById("imageDropzone");
+    const imagePickerInput = document.getElementById("imagePickerInput");
+    const browseImagesBtn = document.getElementById("browseImagesBtn");
+    const imagePreviewCard = document.getElementById("imagePreviewCard");
+    const imagePreviewImg = document.getElementById("imagePreviewImg");
+    const imageMetaName = document.getElementById("imageMetaName");
+    const imageMetaSize = document.getElementById("imageMetaSize");
+    const removeSelectedImageBtn = document.getElementById("removeSelectedImageBtn");
+    const imageTopicInput = document.getElementById("imageTopicInput");
+    const imageDirectivesInput = document.getElementById("imageDirectivesInput");
+    const trainImageBtn = document.getElementById("trainImageBtn");
+    const imageTrainingProgress = document.getElementById("imageTrainingProgress");
+    const imageNoticeBox = document.getElementById("imageNoticeBox");
+
     // State Variables
     let conversationHistory = [];
     const DEFAULT_MODEL = "genZai (Custom Trained Model)";
+    let isAdminAuthenticated = false;
+    let currentAdminId = "";
+    let selectedImageFile = null;
 
     // Safe JSON Fetch helper preventing "Unexpected token < in JSON"
     async function safeFetchJson(url, options = {}) {
@@ -211,10 +250,222 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial load
     fetchModels();
     fetchGenzaiStatus();
+    checkAdminStatus();
 
     // =========================================================================
-    // Train genZai Studio Modal Controls
+    // Admin RBAC & Authentication Handlers
     // =========================================================================
+    async function checkAdminStatus() {
+        try {
+            const { res, data } = await safeFetchJson("/api/admin/status");
+            if (res.ok && data) {
+                isAdminAuthenticated = !!data.is_admin;
+                currentAdminId = data.admin_id || "";
+                updateAdminUI();
+            }
+        } catch (e) {
+            console.warn("Admin status check failed", e);
+        }
+    }
+
+    function updateAdminUI() {
+        if (isAdminAuthenticated) {
+            if (adminStatusPill) {
+                adminStatusPill.className = "admin-status-pill admin-mode";
+                adminStatusPill.textContent = "Admin Mode";
+            }
+            if (adminLoginView) adminLoginView.style.display = "none";
+            if (adminActiveView) adminActiveView.style.display = "block";
+            if (adminActiveUsername) adminActiveUsername.textContent = currentAdminId || "admin";
+            if (adminPasswordInput) adminPasswordInput.value = "";
+            if (modalAdminPasswordInput) modalAdminPasswordInput.value = "";
+
+            if (navTrainGenzai) {
+                navTrainGenzai.classList.remove("user-locked");
+                navTrainGenzai.title = "Open genZai Training Studio";
+            }
+            if (composerTrainBtn) {
+                composerTrainBtn.title = "genZai Training Studio (Admin Active)";
+            }
+        } else {
+            if (adminStatusPill) {
+                adminStatusPill.className = "admin-status-pill user-mode";
+                adminStatusPill.textContent = "User Mode";
+            }
+            if (adminLoginView) adminLoginView.style.display = "block";
+            if (adminActiveView) adminActiveView.style.display = "none";
+            if (adminPasswordInput) adminPasswordInput.value = "";
+            if (modalAdminPasswordInput) modalAdminPasswordInput.value = "";
+
+            if (navTrainGenzai) {
+                navTrainGenzai.classList.add("user-locked");
+                navTrainGenzai.title = "Model training is restricted to Admin";
+            }
+            if (composerTrainBtn) {
+                composerTrainBtn.title = "Model training restricted to Admin";
+            }
+        }
+        lucide.createIcons();
+    }
+
+    function openAdminModal(customMessage) {
+        if (!adminLoginModalOverlay) return;
+        if (modalAdminNotice) {
+            if (customMessage) {
+                modalAdminNotice.style.display = "block";
+                modalAdminNotice.className = "admin-login-feedback";
+                modalAdminNotice.textContent = customMessage;
+            } else {
+                modalAdminNotice.style.display = "none";
+            }
+        }
+        adminLoginModalOverlay.classList.add("active");
+        if (modalAdminIdInput) modalAdminIdInput.focus();
+    }
+
+    function closeAdminModal() {
+        if (!adminLoginModalOverlay) return;
+        adminLoginModalOverlay.classList.remove("active");
+        if (modalAdminNotice) modalAdminNotice.style.display = "none";
+    }
+
+    async function handleAdminLogin(adminId, password, noticeEl, isFromModal = false) {
+        if (!adminId || !password) {
+            if (noticeEl) {
+                noticeEl.style.display = "block";
+                noticeEl.className = "admin-login-feedback error";
+                noticeEl.textContent = "Please enter both Admin ID and Password.";
+            }
+            return;
+        }
+
+        if (noticeEl) {
+            noticeEl.style.display = "block";
+            noticeEl.className = "admin-login-feedback";
+            noticeEl.innerHTML = `<span class="spinner-ring" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Verifying credentials...`;
+        }
+
+        try {
+            const { res, data } = await safeFetchJson("/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ admin_id: adminId, password: password })
+            });
+
+            if (res.ok && data.success) {
+                isAdminAuthenticated = true;
+                currentAdminId = data.admin_id;
+                updateAdminUI();
+
+                if (noticeEl) {
+                    noticeEl.className = "admin-login-feedback success";
+                    noticeEl.textContent = `⚡ Welcome, ${data.admin_id}! Admin access granted.`;
+                }
+
+                setTimeout(() => {
+                    if (isFromModal) {
+                        closeAdminModal();
+                    }
+                    if (noticeEl) noticeEl.style.display = "none";
+                    // Open training studio immediately upon admin login
+                    openTrainModal("tab-upload");
+                }, 400);
+            } else {
+                if (noticeEl) {
+                    noticeEl.className = "admin-login-feedback error";
+                    noticeEl.textContent = data.error || "Invalid Admin ID or Password.";
+                }
+            }
+        } catch (err) {
+            if (noticeEl) {
+                noticeEl.className = "admin-login-feedback error";
+                noticeEl.textContent = `Login failed: ${err.message}`;
+            }
+        }
+    }
+
+    async function handleAdminLogout() {
+        try {
+            await safeFetchJson("/api/admin/logout", { method: "POST" });
+        } catch (e) {
+            console.error("Logout request error", e);
+        }
+        isAdminAuthenticated = false;
+        currentAdminId = "";
+        updateAdminUI();
+        closeTrainModal();
+    }
+
+    // Connect Admin Options in Settings Panel
+    if (adminLoginBtn) {
+        adminLoginBtn.addEventListener("click", () => {
+            const id = adminIdInput ? adminIdInput.value.trim() : "";
+            const pass = adminPasswordInput ? adminPasswordInput.value : "";
+            handleAdminLogin(id, pass, adminLoginNotice, false);
+        });
+    }
+
+    if (adminPasswordInput) {
+        adminPasswordInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                const id = adminIdInput ? adminIdInput.value.trim() : "";
+                const pass = adminPasswordInput ? adminPasswordInput.value : "";
+                handleAdminLogin(id, pass, adminLoginNotice, false);
+            }
+        });
+    }
+
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener("click", handleAdminLogout);
+    }
+
+    if (adminOpenTrainBtn) {
+        adminOpenTrainBtn.addEventListener("click", () => {
+            if (isAdminAuthenticated) {
+                openTrainModal("tab-upload");
+            } else {
+                openAdminModal("Admin authorization required to open training studio.");
+            }
+        });
+    }
+
+    // Connect Admin Login Modal Controls
+    if (modalAdminLoginBtn) {
+        modalAdminLoginBtn.addEventListener("click", () => {
+            const id = modalAdminIdInput ? modalAdminIdInput.value.trim() : "";
+            const pass = modalAdminPasswordInput ? modalAdminPasswordInput.value : "";
+            handleAdminLogin(id, pass, modalAdminNotice, true);
+        });
+    }
+
+    if (modalAdminPasswordInput) {
+        modalAdminPasswordInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                const id = modalAdminIdInput ? modalAdminIdInput.value.trim() : "";
+                const pass = modalAdminPasswordInput ? modalAdminPasswordInput.value : "";
+                handleAdminLogin(id, pass, modalAdminNotice, true);
+            }
+        });
+    }
+
+    if (closeAdminModalBtn) closeAdminModalBtn.addEventListener("click", closeAdminModal);
+    if (adminLoginModalOverlay) {
+        adminLoginModalOverlay.addEventListener("click", (e) => {
+            if (e.target === adminLoginModalOverlay) closeAdminModal();
+        });
+    }
+
+    // =========================================================================
+    // Train genZai Studio Modal Controls (Admin Guarded)
+    // =========================================================================
+    function requestOpenTrainStudio(initialTab = "tab-upload") {
+        if (isAdminAuthenticated) {
+            openTrainModal(initialTab);
+        } else {
+            openAdminModal("Model training is restricted to Admin. Log in with your Admin ID and Password to train genZai.");
+        }
+    }
+
     function openTrainModal(initialTab = "tab-upload") {
         if (!trainModalOverlay) return;
         trainModalOverlay.classList.add("active");
@@ -236,14 +487,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (openTrainModalBtn) openTrainModalBtn.addEventListener("click", () => openTrainModal("tab-upload"));
+    if (openTrainModalBtn) openTrainModalBtn.addEventListener("click", () => requestOpenTrainStudio("tab-upload"));
     if (navTrainGenzai) navTrainGenzai.addEventListener("click", (e) => {
         e.preventDefault();
-        openTrainModal("tab-upload");
+        requestOpenTrainStudio("tab-upload");
     });
-    if (configOpenTrainBtn) configOpenTrainBtn.addEventListener("click", () => openTrainModal("tab-library"));
-    if (composerTrainBtn) composerTrainBtn.addEventListener("click", () => openTrainModal("tab-upload"));
-    if (composerAttachBtn) composerAttachBtn.addEventListener("click", () => openTrainModal("tab-upload"));
+    if (configOpenTrainBtn) configOpenTrainBtn.addEventListener("click", () => requestOpenTrainStudio("tab-library"));
+    if (composerTrainBtn) composerTrainBtn.addEventListener("click", () => requestOpenTrainStudio("tab-upload"));
+    if (composerAttachBtn) composerAttachBtn.addEventListener("click", () => requestOpenTrainStudio("tab-upload"));
     if (closeTrainModalBtn) closeTrainModalBtn.addEventListener("click", closeTrainModal);
 
     if (trainModalOverlay) {
@@ -299,6 +550,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function handleFileUploads(files) {
+        if (!isAdminAuthenticated) {
+            openAdminModal("Admin authorization required to upload and train files into genZai.");
+            return;
+        }
+
         uploadNoticeBox.style.display = "none";
         uploadProgressCard.style.display = "flex";
 
@@ -338,10 +594,169 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ----------------------------------------------------
+    // Tab 1.5: Train by Images (Multimodal Vision Intelligence)
+    // ----------------------------------------------------
+    if (browseImagesBtn && imagePickerInput) {
+        browseImagesBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            imagePickerInput.click();
+        });
+    }
+
+    if (imageDropzone && imagePickerInput) {
+        imageDropzone.addEventListener("click", (e) => {
+            if (e.target !== browseImagesBtn && !browseImagesBtn?.contains(e.target)) {
+                imagePickerInput.click();
+            }
+        });
+
+        imageDropzone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            imageDropzone.classList.add("dragover");
+        });
+
+        imageDropzone.addEventListener("dragleave", () => {
+            imageDropzone.classList.remove("dragover");
+        });
+
+        imageDropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            imageDropzone.classList.remove("dragover");
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleImageFileSelected(e.dataTransfer.files[0]);
+            }
+        });
+
+        imagePickerInput.addEventListener("change", () => {
+            if (imagePickerInput.files && imagePickerInput.files.length > 0) {
+                handleImageFileSelected(imagePickerInput.files[0]);
+            }
+        });
+    }
+
+    function handleImageFileSelected(file) {
+        if (!file) return;
+        if (!file.type.startsWith("image/") && !/\.(png|jpe?g|webp|bmp)$/i.test(file.name)) {
+            alert("Please select a supported image file (PNG, JPG, WEBP, or BMP).");
+            return;
+        }
+
+        selectedImageFile = file;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (imagePreviewImg) imagePreviewImg.src = e.target.result;
+            if (imageMetaName) imageMetaName.textContent = file.name;
+            if (imageMetaSize) imageMetaSize.textContent = formatBytes(file.size);
+            if (imagePreviewCard) imagePreviewCard.style.display = "flex";
+            if (trainImageBtn) trainImageBtn.disabled = false;
+
+            if (imageTopicInput && !imageTopicInput.value.trim()) {
+                const autoName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+                imageTopicInput.value = autoName.charAt(0).toUpperCase() + autoName.slice(1);
+            }
+            if (imageNoticeBox) imageNoticeBox.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+    }
+
+    if (removeSelectedImageBtn) {
+        removeSelectedImageBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            clearSelectedImage();
+        });
+    }
+
+    function clearSelectedImage() {
+        selectedImageFile = null;
+        if (imagePickerInput) imagePickerInput.value = "";
+        if (imagePreviewCard) imagePreviewCard.style.display = "none";
+        if (imagePreviewImg) imagePreviewImg.src = "";
+        if (trainImageBtn) trainImageBtn.disabled = true;
+        if (imageNoticeBox) imageNoticeBox.style.display = "none";
+    }
+
+    if (trainImageBtn) {
+        trainImageBtn.addEventListener("click", async () => {
+            if (!selectedImageFile) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            if (!isAdminAuthenticated) {
+                openAdminModal("Admin authorization required to train images into genZai.");
+                return;
+            }
+
+            const title = (imageTopicInput ? imageTopicInput.value.trim() : "") || selectedImageFile.name;
+            const directives = imageDirectivesInput ? imageDirectivesInput.value.trim() : "";
+
+            trainImageBtn.disabled = true;
+            if (imageTrainingProgress) imageTrainingProgress.style.display = "flex";
+            if (imageNoticeBox) imageNoticeBox.style.display = "none";
+
+            const formData = new FormData();
+            formData.append("image", selectedImageFile);
+            formData.append("title", title);
+            if (directives) {
+                formData.append("directives", directives);
+            }
+
+            try {
+                const { res, data } = await safeFetchJson("/api/genzai/image", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (res.ok) {
+                    if (imageNoticeBox) {
+                        imageNoticeBox.style.display = "block";
+                        imageNoticeBox.className = "upload-notice";
+                        imageNoticeBox.innerHTML = `⚡ <strong>Vision Intelligence Trained!</strong> Llama 3.2 Vision analyzed the visual data and indexed ${data.extracted_chars || 0} characters of knowledge into genZai.`;
+                    }
+                    clearSelectedImage();
+                    if (imageTopicInput) imageTopicInput.value = "";
+                    if (imageDirectivesInput) imageDirectivesInput.value = "";
+                    fetchGenzaiStatus();
+                } else {
+                    if (imageNoticeBox) {
+                        imageNoticeBox.style.display = "block";
+                        imageNoticeBox.className = "upload-notice error";
+                        imageNoticeBox.textContent = data.error || "Failed to train image into genZai.";
+                    }
+                }
+            } catch (err) {
+                if (imageNoticeBox) {
+                    imageNoticeBox.style.display = "block";
+                    imageNoticeBox.className = "upload-notice error";
+                    imageNoticeBox.textContent = `Error: ${err.message}`;
+                }
+            } finally {
+                if (imageTrainingProgress) imageTrainingProgress.style.display = "none";
+                trainImageBtn.disabled = !selectedImageFile;
+                lucide.createIcons();
+            }
+        });
+    }
+
+    function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // ----------------------------------------------------
     // Tab 2: Quick Knowledge Note
     // ----------------------------------------------------
     if (saveNoteBtn) {
         saveNoteBtn.addEventListener("click", async () => {
+            if (!isAdminAuthenticated) {
+                openAdminModal("Admin authorization required to train notes into genZai.");
+                return;
+            }
+
             const title = noteTitleInput.value.trim();
             const content = noteContentInput.value.trim();
 
@@ -390,6 +805,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------------------------------
     if (startGenerateBtn) {
         startGenerateBtn.addEventListener("click", async () => {
+            if (!isAdminAuthenticated) {
+                openAdminModal("Admin authorization required to generate AI datasets.");
+                return;
+            }
+
             const topic = genTopicInput.value.trim();
             const count = parseInt(genCountSelect.value) || 5;
 
@@ -464,7 +884,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         item.className = "doc-item";
                         item.innerHTML = `
                             <div class="doc-info">
-                                <span class="doc-type-badge">${doc.type}</span>
+                                <span class="doc-type-badge ${doc.type === 'image' ? 'image' : ''}">${doc.type}</span>
                                 <div>
                                     <div class="doc-name">${doc.name}</div>
                                     <div class="doc-size">${doc.size_formatted}</div>
@@ -484,6 +904,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (doc.is_removable) {
                             const delBtn = item.querySelector(".btn-delete-doc");
                             delBtn.addEventListener("click", async () => {
+                                if (!isAdminAuthenticated) {
+                                    openAdminModal("Admin authorization required to delete documents from genZai.");
+                                    return;
+                                }
                                 if (confirm(`Delete '${doc.name}' and retrain genZai?`)) {
                                     await deleteDocument(doc.name);
                                 }
@@ -501,6 +925,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function deleteDocument(filename) {
+        if (!isAdminAuthenticated) {
+            openAdminModal("Admin authorization required to delete documents.");
+            return;
+        }
+
         try {
             const { res, data } = await safeFetchJson(`/api/genzai/document/${encodeURIComponent(filename)}`, {
                 method: "DELETE"
@@ -517,6 +946,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (retrainAllBtn) {
         retrainAllBtn.addEventListener("click", async () => {
+            if (!isAdminAuthenticated) {
+                openAdminModal("Admin authorization required to retrain genZai.");
+                return;
+            }
+
             retrainAllBtn.disabled = true;
             retrainAllBtn.innerHTML = `<span class="spinner-ring" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:4px;"></span> Retraining...`;
             try {

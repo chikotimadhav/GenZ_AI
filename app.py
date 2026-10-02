@@ -1,6 +1,9 @@
 import os
 import re
 import json
+import base64
+import hashlib
+from functools import wraps
 import requests
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
@@ -26,19 +29,124 @@ def get_api_key():
 
 API_KEY = get_api_key()
 BASE_URL = "https://integrate.api.nvidia.com/v1"
+SECRET_KEY = os.getenv("SESSION_SECRET", "genzai_studio_secret_2026")
+
+# ==========================================
+# Admin Authentication & RBAC System
+# ==========================================
+def check_admin_credentials(admin_id: str, password: str) -> bool:
+    """Verifies admin credentials against environment variables or default studio access."""
+    valid_id = os.getenv("ADMIN_ID", "admin")
+    valid_pw = os.getenv("ADMIN_PASSWORD", "admin123")
+    
+    # Check .env file fallback
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip().startswith("ADMIN_ID="):
+                    valid_id = line.strip().split("=", 1)[1].strip('"\' ')
+                elif line.strip().startswith("ADMIN_PASSWORD="):
+                    valid_pw = line.strip().split("=", 1)[1].strip('"\' ')
+
+    norm_id = admin_id.strip()
+    norm_pw = password.strip()
+
+    # Matches configured admin OR creator credentials (madhav)
+    if (norm_id == valid_id and norm_pw == valid_pw) or \
+       (norm_id.lower() == "madhav" and norm_pw in ["madhav123", valid_pw]) or \
+       (norm_id.lower() == "admin" and norm_pw in ["admin123", valid_pw]):
+        return True
+    return False
+
+def make_admin_token(admin_id: str) -> str:
+    return hashlib.sha256(f"{admin_id}:{SECRET_KEY}".encode()).hexdigest()
+
+def is_authenticated_admin():
+    """Checks cookie or Bearer token for admin session."""
+    token = request.cookies.get("genzai_admin_token")
+    if not token and "Authorization" in request.headers:
+        auth_hdr = request.headers["Authorization"]
+        if auth_hdr.startswith("Bearer "):
+            token = auth_hdr.split(" ", 1)[1].strip()
+
+    if not token:
+        return False, None
+
+    for candidate_id in [os.getenv("ADMIN_ID", "admin"), "madhav", "admin"]:
+        if make_admin_token(candidate_id) == token:
+            return True, candidate_id
+    return False, None
+
+def admin_required(f):
+    """Decorator requiring admin authentication for model training actions."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        is_admin, admin_id = is_authenticated_admin()
+        if not is_admin:
+            return jsonify({
+                "error": "Admin access required. Please log in as Admin in Settings to access the model training studio."
+            }), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route("/")
 def index():
     return send_from_directory("templates", "index.html")
 
 # ==========================================
-# genZai Knowledge & Training APIs
+# Admin Authentication API Endpoints
+# ==========================================
+@app.route("/api/admin/login", methods=["POST"])
+def admin_login():
+    data = request.json or {}
+    admin_id = data.get("admin_id", "").strip()
+    password = data.get("password", "").strip()
+
+    if not admin_id or not password:
+        return jsonify({"error": "Admin ID and Password are required."}), 400
+
+    if check_admin_credentials(admin_id, password):
+        token = make_admin_token(admin_id)
+        resp = jsonify({
+            "success": True,
+            "message": f"Welcome back, {admin_id}! Admin access granted.",
+            "admin_id": admin_id,
+            "token": token
+        })
+        resp.set_cookie("genzai_admin_token", token, httponly=False, samesite="Lax", max_age=86400 * 7)
+        return resp
+    else:
+        return jsonify({"error": "Invalid Admin ID or Password. Access denied."}), 401
+
+@app.route("/api/admin/logout", methods=["POST"])
+def admin_logout():
+    resp = jsonify({
+        "success": True,
+        "message": "Logged out of Admin mode. Switched to User Interface."
+    })
+    resp.delete_cookie("genzai_admin_token")
+    return resp
+
+@app.route("/api/admin/status", methods=["GET"])
+def admin_status():
+    is_admin, admin_id = is_authenticated_admin()
+    return jsonify({
+        "is_admin": is_admin,
+        "admin_id": admin_id or "Guest User",
+        "mode": "admin" if is_admin else "user"
+    })
+
+# ==========================================
+# genZai Knowledge & Training APIs (Admin Only)
 # ==========================================
 @app.route("/api/genzai/status", methods=["GET"])
 def genzai_status():
+    """Status endpoint is readable by all users."""
     return jsonify(engine.get_status())
 
 @app.route("/api/genzai/train", methods=["POST"])
+@admin_required
 def genzai_train():
     try:
         res = engine.train_model()
@@ -47,6 +155,7 @@ def genzai_train():
         return jsonify({"error": f"Training failed: {str(e)}"}), 500
 
 @app.route("/api/genzai/upload", methods=["POST"])
+@admin_required
 def genzai_upload():
     try:
         if "file" not in request.files:
@@ -55,16 +164,50 @@ def genzai_upload():
         if not file.filename:
             return jsonify({"error": "Empty filename"}), 400
         
-        # Allowed extensions
-        allowed_extensions = {".pdf", ".txt", ".md", ".json", ".csv", ".py", ".html"}
+        # Allowed extensions (including images)
+        IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+        allowed_extensions = {".pdf", ".txt", ".md", ".json", ".csv", ".py", ".html"} | IMAGE_EXTS
         ext = os.path.splitext(file.filename)[1].lower()
         if ext not in allowed_extensions:
-            return jsonify({"error": f"Unsupported file type '{ext}'. Supported: PDF, TXT, MD, JSON, CSV"}), 400
+            return jsonify({"error": f"Unsupported file type '{ext}'. Supported: PDF, TXT, MD, JSON, CSV, PNG, JPG, WEBP"}), 400
 
         filename = secure_filename(file.filename)
         os.makedirs(DOCS_DIR, exist_ok=True)
         filepath = os.path.join(DOCS_DIR, filename)
         file.save(filepath)
+
+        # If it's an image, run visual analysis and index
+        if ext in IMAGE_EXTS and API_KEY:
+            try:
+                with open(filepath, "rb") as img_f:
+                    b64_str = base64.b64encode(img_f.read()).decode("utf-8")
+                mime_map = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".bmp": "image/bmp"}
+                mime_type = mime_map.get(ext, "image/jpeg")
+
+                vision_prompt = (
+                    "Analyze this image thoroughly for AI model knowledge training. "
+                    "1) Describe visual elements in detail. 2) Transcribe all text, numbers, and labels verbatim. "
+                    "3) Explain diagrams or concepts. 4) List 3-5 high-yield question-answer facts."
+                )
+                headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+                payload = {
+                    "model": "meta/llama-3.2-11b-vision-instruct",
+                    "messages": [{
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": vision_prompt},
+                            {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{b64_str}"}}
+                        ]
+                    }],
+                    "max_tokens": 1200,
+                    "temperature": 0.3
+                }
+                v_resp = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers, timeout=60)
+                if v_resp.status_code == 200:
+                    v_text = v_resp.json()["choices"][0]["message"]["content"]
+                    engine.add_image_knowledge(filename, filename, v_text)
+            except Exception as v_err:
+                print(f"[genZai] Vision analysis background notice: {v_err}")
         
         train_res = engine.train_model()
         return jsonify({
@@ -76,7 +219,98 @@ def genzai_upload():
     except Exception as e:
         return jsonify({"error": f"Upload failed: {str(e)}"}), 500
 
+@app.route("/api/genzai/image", methods=["POST"])
+@admin_required
+def genzai_train_image():
+    """Dedicated endpoint to train genZai on images with vision intelligence extraction."""
+    if not API_KEY:
+        return jsonify({"error": "NVIDIA_API_KEY is not set on the server."}), 500
+
+    file = request.files.get("image") or request.files.get("file")
+    if not file:
+        return jsonify({"error": "No image file provided."}), 400
+    if not file.filename:
+        return jsonify({"error": "Empty filename."}), 400
+
+    IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in IMAGE_EXTS:
+        return jsonify({"error": f"Unsupported image format '{ext}'. Supported: PNG, JPG, JPEG, WEBP, BMP"}), 400
+
+    title = request.form.get("title", "").strip() or os.path.splitext(file.filename)[0].replace("_", " ").title()
+    directives = request.form.get("directives", "").strip()
+
+    filename = secure_filename(file.filename)
+    os.makedirs(DOCS_DIR, exist_ok=True)
+    filepath = os.path.join(DOCS_DIR, filename)
+
+    try:
+        file.seek(0)
+        file.save(filepath)
+
+        with open(filepath, "rb") as img_f:
+            img_bytes = img_f.read()
+        b64_str = base64.b64encode(img_bytes).decode("utf-8")
+
+        mime_map = {
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".webp": "image/webp",
+            ".bmp": "image/bmp"
+        }
+        mime_type = mime_map.get(ext, "image/jpeg")
+
+        prompt = (
+            f"You are a multimodal intelligence engine training the custom AI model 'genZai'. "
+            f"Thoroughly analyze and extract all knowledge from this image:\n"
+            f"1. Detailed Visual Description: What is depicted? (people, objects, diagrams, charts, UI, environments, architecture)\n"
+            f"2. Comprehensive Text Extraction (OCR): Transcribe all text, numbers, codes, labels, and titles visible in the image.\n"
+            f"3. Conceptual Meaning & Context: What is the significance or key takeaway of this image?\n"
+            f"4. Structured Q&A Training Pairs: Write 3-5 specific questions and detailed answers derived directly from this image."
+        )
+        if directives:
+            prompt += f"\n\nAdditional Directives from Admin:\n{directives}"
+
+        headers = {
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "meta/llama-3.2-11b-vision-instruct",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{b64_str}"}}
+                    ]
+                }
+            ],
+            "max_tokens": 1500,
+            "temperature": 0.3
+        }
+
+        resp = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers, timeout=90)
+        if resp.status_code == 200:
+            vision_text = resp.json()["choices"][0]["message"]["content"]
+            knowledge_fname = engine.add_image_knowledge(filename, title, vision_text)
+
+            return jsonify({
+                "message": f"Successfully analyzed and trained image '{filename}' into genZai!",
+                "filename": filename,
+                "knowledge_file": knowledge_fname,
+                "analysis_preview": (vision_text[:280] + "...") if len(vision_text) > 280 else vision_text,
+                "status": engine.get_status()
+            })
+        else:
+            return jsonify({"error": f"NVIDIA Vision NIM responded with status {resp.status_code}: {resp.text}"}), resp.status_code
+
+    except Exception as e:
+        return jsonify({"error": f"Image training error: {str(e)}"}), 500
+
 @app.route("/api/genzai/note", methods=["POST"])
+@admin_required
 def genzai_add_note():
     try:
         data = request.json or {}
@@ -95,6 +329,7 @@ def genzai_add_note():
         return jsonify({"error": f"Failed to train note: {str(e)}"}), 500
 
 @app.route("/api/genzai/document/<path:filename>", methods=["DELETE"])
+@admin_required
 def genzai_delete_doc(filename):
     try:
         success = engine.delete_document(filename)
@@ -108,6 +343,7 @@ def genzai_delete_doc(filename):
         return jsonify({"error": f"Failed to delete document: {str(e)}"}), 500
 
 @app.route("/api/genzai/generate-dataset", methods=["POST"])
+@admin_required
 def genzai_generate_dataset():
     if not API_KEY:
         return jsonify({"error": "NVIDIA_API_KEY is not set on the server."}), 500

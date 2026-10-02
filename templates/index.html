@@ -244,6 +244,61 @@
             </div>
 
             <div class="config-scrollable-content">
+                <!-- Group 0: Admin Option & Model Training Authorization -->
+                <div class="config-card admin-config-card" id="adminConfigCard">
+                    <div class="config-card-header">
+                        <i data-lucide="shield" class="card-icon" id="adminCardHeaderIcon"></i>
+                        <h4>Admin Portal</h4>
+                        <span class="admin-status-pill user-mode" id="adminStatusPill">User Mode</span>
+                    </div>
+
+                    <!-- Logged Out View (User Mode) -->
+                    <div class="admin-login-view" id="adminLoginView">
+                        <p class="admin-card-desc">Model training is restricted to Admin. Log in with your Admin ID and Password to unlock training permissions.</p>
+                        <div class="control-item">
+                            <label for="adminIdInput">
+                                <span>Admin ID</span>
+                            </label>
+                            <input type="text" id="adminIdInput" placeholder="Admin ID (e.g. admin or madhav)" autocomplete="username">
+                        </div>
+                        <div class="control-item">
+                            <label for="adminPasswordInput">
+                                <span>Admin Password</span>
+                            </label>
+                            <input type="password" id="adminPasswordInput" placeholder="Enter password" autocomplete="current-password">
+                        </div>
+                        <button class="btn btn-primary btn-sm btn-block" id="adminLoginBtn" type="button">
+                            <i data-lucide="key-round"></i>
+                            <span>Login as Admin</span>
+                        </button>
+                        <div class="admin-login-feedback" id="adminLoginNotice" style="display:none;"></div>
+                    </div>
+
+                    <!-- Logged In View (Admin Mode) -->
+                    <div class="admin-active-view" id="adminActiveView" style="display:none;">
+                        <div class="admin-active-banner">
+                            <div class="admin-badge-avatar">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <div class="admin-badge-info">
+                                <span class="admin-name" id="adminActiveUsername">admin</span>
+                                <span class="admin-role-tag">Studio Administrator</span>
+                            </div>
+                        </div>
+                        <p class="admin-card-desc success">You have full admin privileges to train genZai on documents, images, notes, and AI datasets.</p>
+                        <div class="admin-actions-grid">
+                            <button class="btn btn-primary btn-sm" id="adminOpenTrainBtn" type="button">
+                                <i data-lucide="brain-circuit"></i>
+                                <span>Open Training Studio</span>
+                            </button>
+                            <button class="btn btn-secondary btn-sm" id="adminLogoutBtn" type="button">
+                                <i data-lucide="log-out"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Group 1: Model parameters -->
                 <div class="config-card">
                     <div class="config-card-header">
@@ -345,6 +400,10 @@
                     <i data-lucide="upload-cloud"></i>
                     <span>Upload Documents</span>
                 </button>
+                <button class="modal-tab" data-tab="tab-image">
+                    <i data-lucide="image"></i>
+                    <span>Train by Images</span>
+                </button>
                 <button class="modal-tab" data-tab="tab-note">
                     <i data-lucide="file-plus"></i>
                     <span>Quick Knowledge Note</span>
@@ -363,12 +422,12 @@
                 <!-- Tab 1: Upload Files -->
                 <div class="tab-content active" id="tab-upload">
                     <div class="upload-dropzone" id="uploadDropzone">
-                        <input type="file" id="filePickerInput" accept=".pdf,.txt,.md,.json,.csv" multiple style="display:none;">
+                        <input type="file" id="filePickerInput" accept=".pdf,.txt,.md,.json,.csv,.png,.jpg,.jpeg,.webp,.bmp" multiple style="display:none;">
                         <div class="dropzone-icon">
                             <i data-lucide="file-up"></i>
                         </div>
-                        <h3>Drag & drop documents here</h3>
-                        <p>Supports <strong>PDF, TXT, Markdown, CSV, and JSON (Q&A)</strong></p>
+                        <h3>Drag & drop documents & images here</h3>
+                        <p>Supports <strong>PDF, TXT, Markdown, CSV, JSON, and Images (PNG/JPG/WEBP)</strong></p>
                         <button class="btn btn-primary btn-sm" id="browseFilesBtn">
                             <i data-lucide="folder-open"></i>
                             <span>Browse Files</span>
@@ -383,11 +442,70 @@
                     <div class="supported-formats-pills">
                         <span class="fmt-pill">📄 PDF Documents</span>
                         <span class="fmt-pill">📝 Text / Notes (.txt, .md)</span>
+                        <span class="fmt-pill">🖼️ Vision Images (.png, .jpg, .webp)</span>
                         <span class="fmt-pill">📊 CSV Tables</span>
                         <span class="fmt-pill">🤖 JSON Q&A Datasets</span>
                     </div>
 
                     <div class="upload-notice" id="uploadNoticeBox" style="display:none;"></div>
+                </div>
+
+                <!-- Tab 1.5: Train by Images (Multimodal Vision Intelligence) -->
+                <div class="tab-content" id="tab-image">
+                    <div class="image-train-container">
+                        <div class="image-dropzone" id="imageDropzone">
+                            <input type="file" id="imagePickerInput" accept="image/png,image/jpeg,image/webp,image/bmp" style="display:none;">
+                            <div class="dropzone-icon">
+                                <i data-lucide="image-plus"></i>
+                            </div>
+                            <h3>Select or drop an image to train</h3>
+                            <p>Powered by <strong>Llama 3.2 Vision NIM</strong> — extracts full visual context, diagrams, labels, and text.</p>
+                            <button class="btn btn-primary btn-sm" id="browseImagesBtn" type="button">
+                                <i data-lucide="upload"></i>
+                                <span>Choose Image</span>
+                            </button>
+                        </div>
+
+                        <!-- Live Selected Image Preview -->
+                        <div class="image-preview-card" id="imagePreviewCard" style="display:none;">
+                            <div class="image-preview-wrapper">
+                                <img id="imagePreviewImg" src="" alt="Selected Image Preview">
+                            </div>
+                            <div class="image-meta-info">
+                                <div>
+                                    <div class="image-meta-name" id="imageMetaName">image.png</div>
+                                    <div class="image-meta-size" id="imageMetaSize">0 KB</div>
+                                </div>
+                                <button class="icon-btn mini-btn" id="removeSelectedImageBtn" type="button" title="Remove selected image">
+                                    <i data-lucide="x"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 14px;">
+                            <label for="imageTopicInput">Image Title / Subject</label>
+                            <input type="text" id="imageTopicInput" placeholder="e.g. System Architecture Diagram, Madhav ID Facts, Product Specification" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imageDirectivesInput">Custom Training Directives (Optional)</label>
+                            <textarea id="imageDirectivesInput" rows="3" placeholder="Provide extra guidance for the vision extractor: e.g. 'Memorize the exact contact numbers', 'Explain the system flowchart', or 'Transcribe all table rows'."></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="trainImageBtn" type="button" disabled>
+                                <i data-lucide="sparkles"></i>
+                                <span>Train Image into genZai</span>
+                            </button>
+                        </div>
+
+                        <div class="upload-progress-card" id="imageTrainingProgress" style="display:none;">
+                            <div class="spinner-ring"></div>
+                            <span>Analyzing image with Llama 3.2 Vision NIM & training into genZai memory...</span>
+                        </div>
+
+                        <div class="upload-notice" id="imageNoticeBox" style="display:none;"></div>
+                    </div>
                 </div>
 
                 <!-- Tab 2: Quick Knowledge Note -->
@@ -493,6 +611,47 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. ADMIN LOGIN MODAL (When clicking restricted training in User Mode) -->
+    <div class="modal-overlay" id="adminLoginModalOverlay">
+        <div class="modal-container admin-modal-container">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-badge admin-badge">
+                        <i data-lucide="lock"></i>
+                    </div>
+                    <div>
+                        <h2>Admin Authorization Required</h2>
+                        <p>Model training is restricted to Admin. Log in to access genZai Model Training Studio.</p>
+                    </div>
+                </div>
+                <button class="icon-btn modal-close-btn" id="closeAdminModalBtn" type="button">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div class="admin-modal-info-box">
+                    <i data-lucide="info"></i>
+                    <span>In <strong>User Mode</strong>, you can chat with genZai and any targeted NVIDIA models. To train the model with new documents, images, or notes, please enter your Admin credentials.</span>
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label for="modalAdminIdInput">Admin ID</label>
+                    <input type="text" id="modalAdminIdInput" placeholder="Admin ID (e.g. admin or madhav)" autocomplete="username" />
+                </div>
+                <div class="form-group">
+                    <label for="modalAdminPasswordInput">Admin Password</label>
+                    <input type="password" id="modalAdminPasswordInput" placeholder="Enter password" autocomplete="current-password" />
+                </div>
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button class="btn btn-primary btn-block" id="modalAdminLoginBtn" type="button">
+                        <i data-lucide="key-round"></i>
+                        <span>Unlock Training Studio</span>
+                    </button>
+                </div>
+                <div class="admin-login-feedback" id="modalAdminNotice" style="display:none;margin-top:14px;"></div>
             </div>
         </div>
     </div>

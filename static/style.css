@@ -1896,3 +1896,251 @@ body, html {
 .citation-chip.active + .citation-snippet-popup {
     display: block;
 }
+
+/* =========================================================================
+   Admin Portal & Role-Based UI Styles
+   ========================================================================= */
+.admin-config-card {
+    border: 1px solid rgba(99, 102, 241, 0.28);
+    background: linear-gradient(180deg, rgba(17, 18, 22, 0.95) 0%, rgba(20, 22, 32, 0.9) 100%);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+.admin-config-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #6366f1, #a855f7, #6366f1);
+}
+.admin-status-pill {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.3px;
+}
+.admin-status-pill.user-mode {
+    background: rgba(107, 114, 128, 0.18);
+    color: #9ca3af;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+}
+.admin-status-pill.admin-mode {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.admin-card-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+.admin-card-desc.success {
+    color: #a7f3d0;
+}
+.btn-block {
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+}
+.admin-login-feedback {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+.admin-login-feedback.success {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+.admin-active-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+}
+.admin-badge-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #9333ea);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+.admin-badge-info {
+    display: flex;
+    flex-direction: column;
+}
+.admin-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+}
+.admin-role-tag {
+    font-size: 11px;
+    color: #c4b5fd;
+}
+.admin-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+/* Admin Modal Dialog */
+.admin-modal-container {
+    max-width: 440px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.15);
+}
+.admin-modal-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: #c7d2fe;
+    line-height: 1.45;
+}
+.admin-modal-info-box i {
+    width: 18px;
+    height: 18px;
+    color: #818cf8;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.modal-icon-badge.admin-badge {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+}
+
+/* User Mode Locked CTA Buttons */
+.nav-train-btn.user-locked {
+    opacity: 0.85;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+.nav-train-btn.user-locked:hover {
+    border-color: #818cf8;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+}
+.nav-train-badge.locked-badge {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* =========================================================================
+   Image Training Tab Styles
+   ========================================================================= */
+.image-train-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.image-dropzone {
+    border: 2px dashed rgba(99, 102, 241, 0.3);
+    background: rgba(17, 18, 24, 0.6);
+    border-radius: var(--radius-md);
+    padding: 28px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+.image-dropzone:hover, .image-dropzone.dragover {
+    border-color: #818cf8;
+    background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.12);
+}
+.image-dropzone .dropzone-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.12);
+    color: #818cf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+.image-dropzone h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.image-dropzone p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    max-width: 420px;
+}
+.image-preview-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: rgba(22, 25, 34, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: var(--radius-md);
+}
+.image-preview-wrapper {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #2d3345;
+}
+.image-preview-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.image-meta-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.image-meta-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+.image-meta-size {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.doc-type-badge.image {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
