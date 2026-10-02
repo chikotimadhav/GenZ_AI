@@ -2,6 +2,8 @@ import os
 import json
 import re
 import pickle
+import shutil
+import tempfile
 import datetime
 from typing import List, Dict, Any, Optional
 import numpy as np
@@ -11,19 +13,81 @@ import pypdf
 
 # Directory paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-DOCS_DIR = os.path.join(DATA_DIR, "documents")
-STORE_DIR = os.path.join(DATA_DIR, "genzai_store")
-STARTER_FILE = os.path.join(DATA_DIR, "starter_dataset.json")
+BUNDLED_DATA_DIR = os.path.join(BASE_DIR, "data")
+BUNDLED_DOCS_DIR = os.path.join(BUNDLED_DATA_DIR, "documents")
+BUNDLED_STORE_DIR = os.path.join(BUNDLED_DATA_DIR, "genzai_store")
+BUNDLED_STARTER_FILE = os.path.join(BUNDLED_DATA_DIR, "starter_dataset.json")
 
-os.makedirs(DOCS_DIR, exist_ok=True)
-os.makedirs(STORE_DIR, exist_ok=True)
+def _init_writable_dirs():
+    """
+    Ensures data, documents, and store directories are located in a writable location.
+    In serverless environments (like Vercel or AWS Lambda), the deployment root is read-only,
+    so we dynamically use /tmp/genzai_data and seed initial bundled assets.
+    """
+    is_writable = False
+    try:
+        os.makedirs(BUNDLED_DOCS_DIR, exist_ok=True)
+        test_file = os.path.join(BUNDLED_DATA_DIR, f".write_test_{os.getpid()}")
+        with open(test_file, "w") as f:
+            f.write("ok")
+        if os.path.exists(test_file):
+            os.remove(test_file)
+        is_writable = True
+    except Exception:
+        is_writable = False
+
+    # If Vercel env var is present or bundled dir is not writable, use /tmp
+    if is_writable and not os.environ.get("VERCEL"):
+        data_dir = BUNDLED_DATA_DIR
+    else:
+        data_dir = os.path.join(tempfile.gettempdir(), "genzai_data")
+
+    docs_dir = os.path.join(data_dir, "documents")
+    store_dir = os.path.join(data_dir, "genzai_store")
+    starter_file = os.path.join(data_dir, "starter_dataset.json")
+
+    os.makedirs(docs_dir, exist_ok=True)
+    os.makedirs(store_dir, exist_ok=True)
+
+    # Seed files from bundled repository if using separate temp data directory
+    if os.path.abspath(data_dir) != os.path.abspath(BUNDLED_DATA_DIR):
+        if os.path.exists(BUNDLED_STARTER_FILE) and not os.path.exists(starter_file):
+            try:
+                shutil.copy2(BUNDLED_STARTER_FILE, starter_file)
+            except Exception as e:
+                print(f"[genZai] Starter copy notice: {e}")
+
+        if os.path.exists(BUNDLED_DOCS_DIR):
+            for fname in os.listdir(BUNDLED_DOCS_DIR):
+                src = os.path.join(BUNDLED_DOCS_DIR, fname)
+                dst = os.path.join(docs_dir, fname)
+                if os.path.isfile(src) and not os.path.exists(dst):
+                    try:
+                        shutil.copy2(src, dst)
+                    except Exception as e:
+                        print(f"[genZai] Doc copy notice {fname}: {e}")
+
+        if os.path.exists(BUNDLED_STORE_DIR):
+            for fname in os.listdir(BUNDLED_STORE_DIR):
+                src = os.path.join(BUNDLED_STORE_DIR, fname)
+                dst = os.path.join(store_dir, fname)
+                if os.path.isfile(src) and not os.path.exists(dst):
+                    try:
+                        shutil.copy2(src, dst)
+                    except Exception as e:
+                        print(f"[genZai] Store copy notice {fname}: {e}")
+
+    return data_dir, docs_dir, store_dir, starter_file
+
+DATA_DIR, DOCS_DIR, STORE_DIR, STARTER_FILE = _init_writable_dirs()
 
 class GenZaiEngine:
     def __init__(self):
         self.chunks: List[Dict[str, Any]] = []
         self.vectorizer: Optional[TfidfVectorizer] = None
         self.matrix = None
+        self.virtual_documents: Dict[str, Dict[str, Any]] = {}
+        self.deleted_docs: set = set()
         self.meta: Dict[str, Any] = {
             "model_name": "genZai",
             "version": "1.0.0",
@@ -36,29 +100,32 @@ class GenZaiEngine:
         }
         self.load_store()
         
-        # If no store exists yet, auto-train on starter dataset
-        if not self.chunks and os.path.exists(STARTER_FILE):
+        # If no store exists yet, auto-train on starter dataset and docs
+        if not self.chunks and (os.path.exists(STARTER_FILE) or os.path.exists(BUNDLED_STARTER_FILE)):
             self.train_model()
 
     def get_status(self) -> Dict[str, Any]:
         """Returns the current training and knowledge state of genZai."""
+        docs = self.list_documents()
         return {
             "model_name": "genZai",
             "creator": "Madhav",
             "trained": self.meta.get("trained", False),
             "trained_at": self.meta.get("trained_at"),
-            "total_documents": len(self.list_documents()),
+            "total_documents": len(docs),
             "total_chunks": len(self.chunks),
-            "documents": self.list_documents()
+            "documents": docs
         }
 
     def list_documents(self) -> List[Dict[str, Any]]:
-        """Lists all files in the documents directory + starter dataset."""
+        """Lists all files in the documents directory + starter dataset + virtual documents."""
         doc_list = []
+        seen_names = set()
         
         # Starter dataset
-        if os.path.exists(STARTER_FILE):
-            size = os.path.getsize(STARTER_FILE)
+        starter_path = STARTER_FILE if os.path.exists(STARTER_FILE) else BUNDLED_STARTER_FILE
+        if os.path.exists(starter_path):
+            size = os.path.getsize(starter_path)
             doc_list.append({
                 "name": "starter_dataset.json",
                 "type": "starter",
@@ -66,10 +133,13 @@ class GenZaiEngine:
                 "size_formatted": self._format_size(size),
                 "is_removable": False
             })
+            seen_names.add("starter_dataset.json")
             
-        # User uploaded documents
+        # Files in writable DOCS_DIR
         if os.path.exists(DOCS_DIR):
             for fname in sorted(os.listdir(DOCS_DIR)):
+                if fname in self.deleted_docs or fname in seen_names:
+                    continue
                 fpath = os.path.join(DOCS_DIR, fname)
                 if os.path.isfile(fpath):
                     size = os.path.getsize(fpath)
@@ -80,6 +150,37 @@ class GenZaiEngine:
                         "size_formatted": self._format_size(size),
                         "is_removable": True
                     })
+                    seen_names.add(fname)
+
+        # Files in BUNDLED_DOCS_DIR (if not already counted)
+        if os.path.exists(BUNDLED_DOCS_DIR):
+            for fname in sorted(os.listdir(BUNDLED_DOCS_DIR)):
+                if fname in self.deleted_docs or fname in seen_names:
+                    continue
+                fpath = os.path.join(BUNDLED_DOCS_DIR, fname)
+                if os.path.isfile(fpath):
+                    size = os.path.getsize(fpath)
+                    doc_list.append({
+                        "name": fname,
+                        "type": os.path.splitext(fname)[1].lower().replace(".", ""),
+                        "size_bytes": size,
+                        "size_formatted": self._format_size(size),
+                        "is_removable": True
+                    })
+                    seen_names.add(fname)
+
+        # Virtual in-memory documents
+        for fname, info in self.virtual_documents.items():
+            if fname not in seen_names and fname not in self.deleted_docs:
+                doc_list.append({
+                    "name": fname,
+                    "type": os.path.splitext(fname)[1].lower().replace(".", "") or "txt",
+                    "size_bytes": info["size"],
+                    "size_formatted": self._format_size(info["size"]),
+                    "is_removable": True
+                })
+                seen_names.add(fname)
+
         return doc_list
 
     def _format_size(self, size_bytes: int) -> str:
@@ -91,9 +192,25 @@ class GenZaiEngine:
 
     def delete_document(self, filename: str) -> bool:
         """Deletes a document from the documents folder and retrains."""
+        deleted = False
+        if filename in self.virtual_documents:
+            del self.virtual_documents[filename]
+            deleted = True
+
         target = os.path.join(DOCS_DIR, filename)
         if os.path.exists(target) and os.path.isfile(target):
-            os.remove(target)
+            try:
+                os.remove(target)
+                deleted = True
+            except Exception as e:
+                print(f"[genZai] Notice removing target {target}: {e}")
+                self.deleted_docs.add(filename)
+                deleted = True
+        else:
+            self.deleted_docs.add(filename)
+            deleted = True
+
+        if deleted:
             self.train_model()
             return True
         return False
@@ -105,8 +222,25 @@ class GenZaiEngine:
             safe_title = f"note_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
         filename = f"{safe_title}.txt"
         filepath = os.path.join(DOCS_DIR, filename)
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(content)
+
+        # Include title in content body if not already present
+        full_note_content = f"{title}\n\n{content}".strip() if title and title.lower() not in content.lower() else content
+
+        # Store in virtual_documents so it is always present even if disk write has issues
+        self.virtual_documents[filename] = {
+            "title": title,
+            "content": full_note_content,
+            "size": len(full_note_content.encode("utf-8"))
+        }
+        if filename in self.deleted_docs:
+            self.deleted_docs.remove(filename)
+
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(full_note_content)
+        except Exception as e:
+            print(f"[genZai] Warning: could not write note file to disk ({filepath}): {e}")
+
         self.train_model()
         return filename
 
@@ -264,21 +398,51 @@ class GenZaiEngine:
     def train_model(self) -> Dict[str, Any]:
         """Indexes all documents and builds the vector search store for genZai."""
         all_chunks: List[Dict[str, Any]] = []
+        processed_sources = set()
 
         # 1. Process starter dataset
-        if os.path.exists(STARTER_FILE):
-            raw_items = self.extract_text_from_file(STARTER_FILE)
+        starter_path = STARTER_FILE if os.path.exists(STARTER_FILE) else BUNDLED_STARTER_FILE
+        if os.path.exists(starter_path):
+            raw_items = self.extract_text_from_file(starter_path)
             for item in raw_items:
                 all_chunks.extend(self._chunk_text(item))
+            processed_sources.add("starter_dataset.json")
 
-        # 2. Process all uploaded documents
+        # 2. Process all uploaded documents in writable DOCS_DIR
         if os.path.exists(DOCS_DIR):
-            for fname in os.listdir(DOCS_DIR):
+            for fname in sorted(os.listdir(DOCS_DIR)):
+                if fname in self.deleted_docs or fname in processed_sources:
+                    continue
                 fpath = os.path.join(DOCS_DIR, fname)
                 if os.path.isfile(fpath):
                     raw_items = self.extract_text_from_file(fpath)
                     for item in raw_items:
                         all_chunks.extend(self._chunk_text(item))
+                    processed_sources.add(fname)
+
+        # 3. Process any documents in BUNDLED_DOCS_DIR (if not already read from DOCS_DIR)
+        if os.path.exists(BUNDLED_DOCS_DIR):
+            for fname in sorted(os.listdir(BUNDLED_DOCS_DIR)):
+                if fname in self.deleted_docs or fname in processed_sources:
+                    continue
+                fpath = os.path.join(BUNDLED_DOCS_DIR, fname)
+                if os.path.isfile(fpath):
+                    raw_items = self.extract_text_from_file(fpath)
+                    for item in raw_items:
+                        all_chunks.extend(self._chunk_text(item))
+                    processed_sources.add(fname)
+
+        # 4. Process virtual in-memory documents
+        for fname, info in self.virtual_documents.items():
+            if fname in self.deleted_docs or fname in processed_sources:
+                continue
+            item = {
+                "source": fname,
+                "page": 1,
+                "text": f"{info['title']}\n{info['content']}".strip()
+            }
+            all_chunks.extend(self._chunk_text(item))
+            processed_sources.add(fname)
 
         if not all_chunks:
             # Fallback chunk if empty
@@ -313,7 +477,7 @@ class GenZaiEngine:
             "total_chunks": len(self.chunks)
         }
 
-        # Persist to disk
+        # Persist to disk if writable
         self.save_store()
 
         return {
@@ -327,6 +491,7 @@ class GenZaiEngine:
     def save_store(self):
         """Saves current chunks, metadata, and vectorizer matrices."""
         try:
+            os.makedirs(STORE_DIR, exist_ok=True)
             chunks_path = os.path.join(STORE_DIR, "chunks.json")
             with open(chunks_path, "w", encoding="utf-8") as f:
                 json.dump(self.chunks, f, ensure_ascii=False, indent=2)
@@ -344,17 +509,19 @@ class GenZaiEngine:
                 with open(mat_path, "wb") as f:
                     pickle.dump(self.matrix, f)
         except Exception as e:
-            print(f"[genZai] Error saving store: {e}")
+            print(f"[genZai] Notice saving store to disk: {e}")
 
     def load_store(self):
         """Loads chunks, metadata, and matrix from disk if available."""
         try:
-            chunks_path = os.path.join(STORE_DIR, "chunks.json")
-            meta_path = os.path.join(STORE_DIR, "meta.json")
-            vec_path = os.path.join(STORE_DIR, "vectorizer.pkl")
-            mat_path = os.path.join(STORE_DIR, "matrix.pkl")
+            # Check writable STORE_DIR first, fallback to BUNDLED_STORE_DIR
+            store_to_check = STORE_DIR if os.path.exists(os.path.join(STORE_DIR, "chunks.json")) else BUNDLED_STORE_DIR
+            chunks_path = os.path.join(store_to_check, "chunks.json")
+            meta_path = os.path.join(store_to_check, "meta.json")
+            vec_path = os.path.join(store_to_check, "vectorizer.pkl")
+            mat_path = os.path.join(store_to_check, "matrix.pkl")
 
-            if os.path.exists(chunks_path) and os.path.exists(vec_path) and os.path.exists(mat_path):
+            if os.path.exists(chunks_path):
                 with open(chunks_path, "r", encoding="utf-8") as f:
                     self.chunks = json.load(f)
 
@@ -362,11 +529,21 @@ class GenZaiEngine:
                     with open(meta_path, "r", encoding="utf-8") as f:
                         self.meta = json.load(f)
 
-                with open(vec_path, "rb") as f:
-                    self.vectorizer = pickle.load(f)
-
-                with open(mat_path, "rb") as f:
-                    self.matrix = pickle.load(f)
+                if os.path.exists(vec_path) and os.path.exists(mat_path):
+                    with open(vec_path, "rb") as f:
+                        self.vectorizer = pickle.load(f)
+                    with open(mat_path, "rb") as f:
+                        self.matrix = pickle.load(f)
+                elif self.chunks:
+                    # Rebuild TF-IDF vectorizer and matrix directly from loaded chunks
+                    corpus = [c["text"] for c in self.chunks]
+                    self.vectorizer = TfidfVectorizer(
+                        ngram_range=(1, 2),
+                        stop_words="english",
+                        sublinear_tf=True,
+                        min_df=1
+                    )
+                    self.matrix = self.vectorizer.fit_transform(corpus)
         except Exception as e:
             print(f"[genZai] Error loading store: {e}")
 

@@ -40,59 +40,72 @@ def genzai_status():
 
 @app.route("/api/genzai/train", methods=["POST"])
 def genzai_train():
-    res = engine.train_model()
-    return jsonify(res)
+    try:
+        res = engine.train_model()
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"error": f"Training failed: {str(e)}"}), 500
 
 @app.route("/api/genzai/upload", methods=["POST"])
 def genzai_upload():
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-    file = request.files["file"]
-    if not file.filename:
-        return jsonify({"error": "Empty filename"}), 400
-    
-    # Allowed extensions
-    allowed_extensions = {".pdf", ".txt", ".md", ".json", ".csv", ".py", ".html"}
-    ext = os.path.splitext(file.filename)[1].lower()
-    if ext not in allowed_extensions:
-        return jsonify({"error": f"Unsupported file type '{ext}'. Supported: PDF, TXT, MD, JSON, CSV"}), 400
+    try:
+        if "file" not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
+        file = request.files["file"]
+        if not file.filename:
+            return jsonify({"error": "Empty filename"}), 400
+        
+        # Allowed extensions
+        allowed_extensions = {".pdf", ".txt", ".md", ".json", ".csv", ".py", ".html"}
+        ext = os.path.splitext(file.filename)[1].lower()
+        if ext not in allowed_extensions:
+            return jsonify({"error": f"Unsupported file type '{ext}'. Supported: PDF, TXT, MD, JSON, CSV"}), 400
 
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(DOCS_DIR, filename)
-    file.save(filepath)
-    
-    train_res = engine.train_model()
-    return jsonify({
-        "message": f"Successfully uploaded and trained '{filename}' into genZai!",
-        "filename": filename,
-        "training": train_res,
-        "status": engine.get_status()
-    })
+        filename = secure_filename(file.filename)
+        os.makedirs(DOCS_DIR, exist_ok=True)
+        filepath = os.path.join(DOCS_DIR, filename)
+        file.save(filepath)
+        
+        train_res = engine.train_model()
+        return jsonify({
+            "message": f"Successfully uploaded and trained '{filename}' into genZai!",
+            "filename": filename,
+            "training": train_res,
+            "status": engine.get_status()
+        })
+    except Exception as e:
+        return jsonify({"error": f"Upload failed: {str(e)}"}), 500
 
 @app.route("/api/genzai/note", methods=["POST"])
 def genzai_add_note():
-    data = request.json or {}
-    title = data.get("title", "").strip() or "Custom Knowledge Note"
-    content = data.get("content", "").strip()
-    if not content:
-        return jsonify({"error": "Note content cannot be empty"}), 400
-    
-    filename = engine.add_text_note(title, content)
-    return jsonify({
-        "message": f"Successfully trained knowledge note '{title}' into genZai!",
-        "filename": filename,
-        "status": engine.get_status()
-    })
+    try:
+        data = request.json or {}
+        title = data.get("title", "").strip() or "Custom Knowledge Note"
+        content = data.get("content", "").strip()
+        if not content:
+            return jsonify({"error": "Note content cannot be empty"}), 400
+        
+        filename = engine.add_text_note(title, content)
+        return jsonify({
+            "message": f"Successfully trained knowledge note '{title}' into genZai!",
+            "filename": filename,
+            "status": engine.get_status()
+        })
+    except Exception as e:
+        return jsonify({"error": f"Failed to train note: {str(e)}"}), 500
 
 @app.route("/api/genzai/document/<path:filename>", methods=["DELETE"])
 def genzai_delete_doc(filename):
-    success = engine.delete_document(filename)
-    if success:
-        return jsonify({
-            "message": f"Document '{filename}' deleted. genZai knowledge store retrained.",
-            "status": engine.get_status()
-        })
-    return jsonify({"error": f"Document '{filename}' not found or cannot be deleted."}), 404
+    try:
+        success = engine.delete_document(filename)
+        if success:
+            return jsonify({
+                "message": f"Document '{filename}' deleted. genZai knowledge store retrained.",
+                "status": engine.get_status()
+            })
+        return jsonify({"error": f"Document '{filename}' not found or cannot be deleted."}), 404
+    except Exception as e:
+        return jsonify({"error": f"Failed to delete document: {str(e)}"}), 500
 
 @app.route("/api/genzai/generate-dataset", methods=["POST"])
 def genzai_generate_dataset():
@@ -137,9 +150,17 @@ def genzai_generate_dataset():
             if auto_train:
                 safe_title = re.sub(r'[^a-zA-Z0-9_\- ]', '', topic)[:30].strip().replace(" ", "_")
                 saved_filename = f"dataset_{safe_title}.json"
+                os.makedirs(DOCS_DIR, exist_ok=True)
                 filepath = os.path.join(DOCS_DIR, saved_filename)
-                with open(filepath, "w", encoding="utf-8") as f:
-                    json.dump(pairs, f, ensure_ascii=False, indent=2)
+                try:
+                    with open(filepath, "w", encoding="utf-8") as f:
+                        json.dump(pairs, f, ensure_ascii=False, indent=2)
+                except Exception as e:
+                    engine.virtual_documents[saved_filename] = {
+                        "title": f"Dataset: {topic}",
+                        "content": json.dumps(pairs, ensure_ascii=False),
+                        "size": len(json.dumps(pairs).encode("utf-8"))
+                    }
                 engine.train_model()
 
             return jsonify({
@@ -342,5 +363,27 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ==========================================
+# Global JSON Error Handlers
+# ==========================================
+@app.errorhandler(400)
+def handle_bad_request(e):
+    return jsonify({"error": str(getattr(e, "description", e))}), 400
+
+@app.errorhandler(404)
+def handle_not_found(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": f"API endpoint '{request.path}' not found."}), 404
+    return send_from_directory("templates", "index.html")
+
+@app.errorhandler(500)
+def handle_server_error(e):
+    return jsonify({"error": f"Internal server error: {str(getattr(e, 'description', e))}"}), 500
+
+@app.errorhandler(Exception)
+def handle_unexpected_exception(e):
+    return jsonify({"error": f"Server error: {str(e)}"}), 500
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=True)
+

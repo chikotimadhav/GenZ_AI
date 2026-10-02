@@ -71,6 +71,31 @@ document.addEventListener("DOMContentLoaded", () => {
     let conversationHistory = [];
     const DEFAULT_MODEL = "genZai (Custom Trained Model)";
 
+    // Safe JSON Fetch helper preventing "Unexpected token < in JSON"
+    async function safeFetchJson(url, options = {}) {
+        try {
+            const res = await fetch(url, options);
+            let data = null;
+            try {
+                const text = await res.text();
+                try {
+                    data = JSON.parse(text);
+                } catch (parseErr) {
+                    const cleanText = text && text.length < 200 && !text.includes("<") ? text : `Server error (${res.status || 'unknown'})`;
+                    data = { error: cleanText };
+                }
+            } catch (bodyErr) {
+                data = { error: `Network error: ${bodyErr.message}` };
+            }
+            return { res, data };
+        } catch (netErr) {
+            return {
+                res: { ok: false, status: 0, statusText: "Network Error" },
+                data: { error: `Connection failed: ${netErr.message || "Cannot reach server."}` }
+            };
+        }
+    }
+
     // Navigation & Layout Interactions
     if (menuBtn) menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
     if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", () => sidebar.classList.remove("active"));
@@ -285,14 +310,13 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append("file", file);
 
             try {
-                const res = await fetch("/api/genzai/upload", {
+                const { res, data } = await safeFetchJson("/api/genzai/upload", {
                     method: "POST",
                     body: formData
                 });
-                const data = await res.json();
                 if (res.ok) {
                     successCount++;
-                    lastMsg = data.message;
+                    lastMsg = data.message || "File uploaded successfully";
                 } else {
                     lastMsg = data.error || "Upload failed";
                 }
@@ -332,12 +356,11 @@ document.addEventListener("DOMContentLoaded", () => {
             saveNoteBtn.innerHTML = `<span class="spinner-ring" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Training...`;
 
             try {
-                const res = await fetch("/api/genzai/note", {
+                const { res, data } = await safeFetchJson("/api/genzai/note", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ title, content })
                 });
-                const data = await res.json();
                 if (res.ok) {
                     noteNoticeBox.style.display = "block";
                     noteNoticeBox.className = "upload-notice";
@@ -380,14 +403,13 @@ document.addEventListener("DOMContentLoaded", () => {
             startGenerateBtn.disabled = true;
 
             try {
-                const res = await fetch("/api/genzai/generate-dataset", {
+                const { res, data } = await safeFetchJson("/api/genzai/generate-dataset", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ topic, count, auto_train: true })
                 });
-                const data = await res.json();
 
-                if (res.ok && data.pairs && data.pairs.length > 0) {
+                if (res.ok && data && data.pairs && data.pairs.length > 0) {
                     pairsScrollList.innerHTML = "";
                     data.pairs.forEach((pair, idx) => {
                         const card = document.createElement("div");
@@ -417,10 +439,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------------------------------
     async function fetchGenzaiStatus() {
         try {
-            const res = await fetch("/api/genzai/status");
-            const data = await res.json();
+            const { res, data } = await safeFetchJson("/api/genzai/status");
 
-            if (res.ok) {
+            if (res.ok && data) {
                 if (statDocCount) statDocCount.textContent = data.total_documents || 0;
                 if (statChunkCount) statChunkCount.textContent = data.total_chunks || 0;
                 if (statTrainedStatus) statTrainedStatus.textContent = data.trained ? "Active" : "Unindexed";
@@ -481,13 +502,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function deleteDocument(filename) {
         try {
-            const res = await fetch(`/api/genzai/document/${encodeURIComponent(filename)}`, {
+            const { res, data } = await safeFetchJson(`/api/genzai/document/${encodeURIComponent(filename)}`, {
                 method: "DELETE"
             });
             if (res.ok) {
                 fetchGenzaiStatus();
             } else {
-                const data = await res.json();
                 alert(data.error || "Failed to delete document.");
             }
         } catch (err) {
@@ -500,11 +520,12 @@ document.addEventListener("DOMContentLoaded", () => {
             retrainAllBtn.disabled = true;
             retrainAllBtn.innerHTML = `<span class="spinner-ring" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:4px;"></span> Retraining...`;
             try {
-                const res = await fetch("/api/genzai/train", { method: "POST" });
-                const data = await res.json();
+                const { res, data } = await safeFetchJson("/api/genzai/train", { method: "POST" });
                 if (res.ok) {
-                    alert(`⚡ ${data.message} (${data.total_chunks} chunks indexed)`);
+                    alert(`⚡ ${data.message || 'Trained successfully'} (${data.total_chunks || 0} chunks indexed)`);
                     fetchGenzaiStatus();
+                } else {
+                    alert(data.error || "Failed to retrain genZai.");
                 }
             } catch (err) {
                 alert(`Error: ${err.message}`);
@@ -522,10 +543,9 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchModels() {
         try {
             apiStatusText.textContent = "Connecting to server...";
-            const response = await fetch("/api/models");
-            const data = await response.json();
+            const { res: response, data } = await safeFetchJson("/api/models");
             
-            if (response.ok && data.models) {
+            if (response.ok && data && data.models) {
                 modelSelect.innerHTML = "";
                 const VERIFIED_SET = new Set([
                     "genZai (Custom Trained Model)",
@@ -682,7 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            const response = await fetch("/api/chat", {
+            const { res: response, data } = await safeFetchJson("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -690,9 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             removeTypingIndicatorUI(indicatorId);
 
-            const data = await response.json();
-
-            if (response.ok && data.choices && data.choices.length > 0) {
+            if (response.ok && data && data.choices && data.choices.length > 0) {
                 const choice = data.choices[0];
                 const msg = choice.message;
                 const content = msg.content;
