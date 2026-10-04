@@ -41,12 +41,37 @@
         includePageContext: false
     };
 
+    const TARGET_MODELS = [
+        { id: "genZai (Custom Trained Model)", label: "✦ genZai (Custom Trained Model)" },
+        { id: "meta/llama-3.2-11b-vision-instruct", label: "⚡ Llama 3.2 11B Vision (Meta)" },
+        { id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning", label: "🧠 Nemotron 3 Reasoning (NVIDIA)" },
+        { id: "deepseek-ai/deepseek-v4.1-flash", label: "⚡ DeepSeek V4.1 Flash" },
+        { id: "deepseek-ai/deepseek-coder-6.7b-instruct", label: "💻 DeepSeek Coder 6.7B" },
+        { id: "google/gemma-4-31b-it", label: "⚡ Gemma 4 31B (Google)" },
+        { id: "moonshotai/kimi-k3", label: "⚡ Kimi K3 (Moonshot AI)" },
+        { id: "openai/gpt-oss-20b", label: "⚡ GPT OSS 20B (OpenAI)" },
+        { id: "nvidia/nemotron-3-ultra-550b-a55b", label: "🚀 Nemotron 3 Ultra 550B" },
+        { id: "nvidia/llama-3.1-nemotron-70b-instruct", label: "⚡ Nemotron 70B Instruct" },
+        { id: "nvidia/llama-3.1-nemotron-51b-instruct", label: "⚡ Nemotron 51B Instruct" },
+        { id: "meta/llama-3.2-90b-vision-instruct", label: "⚡ Llama 3.2 90B Vision" },
+        { id: "meta/llama-guard-4-12b", label: "🛡️ Llama Guard 4 12B" },
+        { id: "nvidia/nemotron-4-340b-instruct", label: "⚡ Nemotron 4 340B Instruct" },
+        { id: "z-ai/glm-5.3", label: "⚡ GLM 5.3" }
+    ];
+
+    function getWidgetModelLabel(id) {
+        const found = TARGET_MODELS.find(m => m.id === id);
+        if (found) return found.label;
+        if (id.toLowerCase().includes('genzai')) return `✦ ${id}`;
+        return `⚡ ${id}`;
+    }
+
     // State
     const state = {
         isOpen: false,
         isLoading: false,
         messages: [],
-        models: [config.defaultModel],
+        models: TARGET_MODELS.map(m => m.id),
         selectedModel: config.defaultModel,
         pageContextActive: false,
         unreadCount: 0
@@ -764,7 +789,9 @@
                         </div>
                         <div class="model-select-wrapper">
                             <select class="model-select" id="gzModelSelect" title="Select AI Model">
-                                <option value="${config.defaultModel}">${config.defaultModel}</option>
+                                ${TARGET_MODELS.map(m => `
+                                    <option value="${m.id}" ${m.id === config.defaultModel ? 'selected' : ''}>${m.label}</option>
+                                `).join('')}
                             </select>
                         </div>
                     </div>
@@ -1013,9 +1040,11 @@
             if (resp.ok) {
                 const data = await resp.json();
                 if (data.models && Array.isArray(data.models)) {
-                    state.models = data.models;
-                    modelSelect.innerHTML = data.models.map(m => `
-                        <option value="${m}" ${m === state.selectedModel ? 'selected' : ''}>${m}</option>
+                    const targetIds = TARGET_MODELS.map(m => m.id);
+                    const combined = Array.from(new Set([...data.models, ...targetIds]));
+                    state.models = combined;
+                    modelSelect.innerHTML = combined.map(m => `
+                        <option value="${m}" ${m === state.selectedModel ? 'selected' : ''}>${getWidgetModelLabel(m)}</option>
                     `).join('');
                 }
                 statusDot.style.backgroundColor = '#10b981';

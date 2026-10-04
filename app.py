@@ -12,6 +12,23 @@ from genzai_engine import engine, DOCS_DIR
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32MB max upload
 
+# Enable CORS for Chrome Extension and multi-site embeds
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        res = jsonify({"status": "ok"})
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
+        res.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+        return res, 200
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+    return response
+
 # Load API key from environment or local .env file
 def get_api_key():
     key = os.getenv("NVIDIA_API_KEY")
@@ -479,11 +496,20 @@ def list_models():
             # Prioritize verified online models
             VERIFIED_MODELS = [
                 "meta/llama-3.2-11b-vision-instruct",
-                "moonshotai/kimi-k3",
-                "nvidia/nemotron-3-ultra-550b-a55b",
                 "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+                "deepseek-ai/deepseek-v4.1-flash",
+                "deepseek-ai/deepseek-coder-6.7b-instruct",
+                "google/gemma-4-31b-it",
+                "moonshotai/kimi-k3",
+                "openai/gpt-oss-20b",
+                "nvidia/nemotron-3-ultra-550b-a55b",
+                "nvidia/llama-3.1-nemotron-70b-instruct",
+                "nvidia/llama-3.1-nemotron-51b-instruct",
+                "meta/llama-3.2-90b-vision-instruct",
+                "meta/llama-guard-4-12b",
+                "nvidia/nemotron-4-340b-instruct",
                 "nvidia/riva-translate-4b-instruct-v2",
-                "openai/gpt-oss-20b"
+                "z-ai/glm-5.3"
             ]
             verified = [m for m in VERIFIED_MODELS if m in model_ids]
             remaining = sorted([m for m in model_ids if m not in VERIFIED_MODELS])
@@ -493,9 +519,11 @@ def list_models():
             
             return jsonify({"models": ordered_models})
         else:
-            return jsonify({"models": ["genZai (Custom Trained Model)", "meta/llama-3.2-11b-vision-instruct"]})
+            fallback = ["genZai (Custom Trained Model)", "meta/llama-3.2-11b-vision-instruct", "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning", "deepseek-ai/deepseek-v4.1-flash", "google/gemma-4-31b-it", "moonshotai/kimi-k3", "openai/gpt-oss-20b"]
+            return jsonify({"models": fallback})
     except Exception as e:
-        return jsonify({"models": ["genZai (Custom Trained Model)", "meta/llama-3.2-11b-vision-instruct"]})
+        fallback = ["genZai (Custom Trained Model)", "meta/llama-3.2-11b-vision-instruct", "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning", "deepseek-ai/deepseek-v4.1-flash", "google/gemma-4-31b-it", "moonshotai/kimi-k3", "openai/gpt-oss-20b"]
+        return jsonify({"models": fallback})
 
 @app.route("/api/chat", methods=["POST"])
 def chat():

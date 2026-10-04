@@ -2,10 +2,38 @@
  * GenZ AI — Chrome / Edge Extension Content Script
  * Injects a floating AI chat box popup onto any webpage the user visits.
  * Total styling isolation using Shadow DOM.
+ * Supports all target models (genZai, Llama 3.2, Nemotron Reasoning, DeepSeek, Gemma, etc.)
+ * Easily switches between Host's Local Server (http://127.0.0.1:5000) and Friend's Online Tunnel URL.
  */
 (function() {
     if (window.__GENZAI_EXTENSION_CONTENT_INJECTED__) return;
     window.__GENZAI_EXTENSION_CONTENT_INJECTED__ = true;
+
+    // Comprehensive list of target models with clear badges
+    const TARGET_MODELS = [
+        { id: "genZai (Custom Trained Model)", label: "✦ genZai (Custom Trained Model)" },
+        { id: "meta/llama-3.2-11b-vision-instruct", label: "⚡ Llama 3.2 11B Vision (Meta)" },
+        { id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning", label: "🧠 Nemotron 3 Reasoning (NVIDIA)" },
+        { id: "deepseek-ai/deepseek-v4.1-flash", label: "⚡ DeepSeek V4.1 Flash" },
+        { id: "deepseek-ai/deepseek-coder-6.7b-instruct", label: "💻 DeepSeek Coder 6.7B" },
+        { id: "google/gemma-4-31b-it", label: "⚡ Gemma 4 31B (Google)" },
+        { id: "moonshotai/kimi-k3", label: "⚡ Kimi K3 (Moonshot AI)" },
+        { id: "openai/gpt-oss-20b", label: "⚡ GPT OSS 20B (OpenAI)" },
+        { id: "nvidia/nemotron-3-ultra-550b-a55b", label: "🚀 Nemotron 3 Ultra 550B" },
+        { id: "nvidia/llama-3.1-nemotron-70b-instruct", label: "⚡ Nemotron 70B Instruct" },
+        { id: "nvidia/llama-3.1-nemotron-51b-instruct", label: "⚡ Nemotron 51B Instruct" },
+        { id: "meta/llama-3.2-90b-vision-instruct", label: "⚡ Llama 3.2 90B Vision" },
+        { id: "meta/llama-guard-4-12b", label: "🛡️ Llama Guard 4 12B" },
+        { id: "nvidia/nemotron-4-340b-instruct", label: "⚡ Nemotron 4 340B Instruct" },
+        { id: "z-ai/glm-5.3", label: "⚡ GLM 5.3" }
+    ];
+
+    function getModelLabel(id) {
+        const found = TARGET_MODELS.find(m => m.id === id);
+        if (found) return found.label;
+        if (id.toLowerCase().includes('genzai')) return `✦ ${id}`;
+        return `⚡ ${id}`;
+    }
 
     // Load user preferences from chrome.storage
     chrome.storage.local.get({
@@ -46,6 +74,48 @@
         return true;
     });
 
+    // Safe API fetcher: proxies via background service worker to prevent CORS and HTTPS mixed content issues
+    function safeApiFetch(url, options = {}) {
+        return new Promise((resolve, reject) => {
+            if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
+                try {
+                    chrome.runtime.sendMessage({
+                        action: 'API_FETCH',
+                        url: url,
+                        options: options
+                    }, (response) => {
+                        if (chrome.runtime.lastError || !response) {
+                            directFetch(url, options).then(resolve).catch(reject);
+                        } else if (response.ok) {
+                            resolve(response.data);
+                        } else {
+                            const err = (response.data && response.data.error) || response.error || `HTTP ${response.status}`;
+                            reject(new Error(err));
+                        }
+                    });
+                    return;
+                } catch(e) {
+                    // Fallback to direct fetch
+                }
+            }
+            directFetch(url, options).then(resolve).catch(reject);
+        });
+    }
+
+    async function directFetch(url, options = {}) {
+        const resp = await fetch(url, options);
+        let data = null;
+        try {
+            data = await resp.json();
+        } catch(e) {
+            data = { error: `Server returned HTTP ${resp.status}` };
+        }
+        if (!resp.ok) {
+            throw new Error((data && data.error) || `HTTP ${resp.status}`);
+        }
+        return data;
+    }
+
     function initExtensionWidget(settings) {
         if (document.getElementById('genzai-extension-root')) return;
 
@@ -63,7 +133,7 @@
             isOpen: false,
             isLoading: false,
             messages: [],
-            models: [config.defaultModel],
+            models: TARGET_MODELS.map(m => m.id),
             selectedModel: config.defaultModel,
             pageContextActive: false
         };
@@ -150,123 +220,201 @@
                 100% { transform: scale(1.35); opacity: 0; }
             }
             .greeting-badge {
-                position: absolute;
-                bottom: 68px; right: 0;
-                background: #151720;
-                border: 1px solid #2d3345;
-                color: #ffffff;
-                padding: 9px 13px;
+                margin-bottom: 12px;
+                background: var(--gz-bg-card);
+                border: 1px solid var(--gz-border);
+                padding: 10px 14px;
                 border-radius: 12px;
-                font-size: 13px;
-                font-weight: 500;
-                white-space: nowrap;
                 box-shadow: var(--gz-shadow);
+                font-size: 13px;
+                max-width: 260px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                animation: gz-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
                 cursor: pointer;
             }
             .greeting-close {
-                border: none; background: transparent; color: var(--gz-text-muted); cursor: pointer;
-                display: flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+                background: none; border: none; color: var(--gz-text-muted); cursor: pointer; padding: 2px;
+                display: flex; align-items: center; justify-content: center; border-radius: 4px;
             }
-            .greeting-close:hover { color: #fff; }
+            .greeting-close:hover { color: var(--gz-text); }
+            @keyframes gz-slide-up {
+                from { opacity: 0; transform: translateY(12px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
             .chat-window {
-                position: absolute;
-                bottom: 70px; right: 0;
                 width: 380px;
-                max-width: calc(100vw - 32px);
                 height: 580px;
-                max-height: calc(100vh - 90px);
+                max-width: calc(100vw - 32px);
+                max-height: calc(100vh - 100px);
                 background: var(--gz-bg-main);
                 border: 1px solid var(--gz-border);
-                border-radius: 18px;
+                border-radius: 16px;
                 box-shadow: var(--gz-shadow);
-                display: flex;
+                display: none;
                 flex-direction: column;
                 overflow: hidden;
-                opacity: 0;
-                transform: scale(0.92) translateY(20px);
-                pointer-events: none;
-                transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-                transform-origin: bottom right;
-                backdrop-filter: blur(16px);
+                margin-bottom: 12px;
+                animation: gz-chat-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             }
-            .chat-window.open {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-                pointer-events: auto;
+            .chat-window.open { display: flex; }
+            @keyframes gz-chat-pop {
+                from { opacity: 0; transform: scale(0.92) translateY(20px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
             }
             .chat-header {
-                padding: 12px 16px;
+                padding: 12px 14px;
                 background: var(--gz-bg-card);
                 border-bottom: 1px solid var(--gz-border);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 8px;
                 flex-shrink: 0;
             }
-            .header-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-            .brand-avatar {
-                width: 34px; height: 34px; border-radius: 10px;
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-                display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
+            .header-brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 0;
             }
-            .brand-title { font-size: 14px; font-weight: 600; color: #fff; }
+            .brand-avatar {
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                flex-shrink: 0;
+            }
+            .brand-title {
+                font-weight: 600;
+                font-size: 13px;
+                color: #ffffff;
+                white-space: nowrap;
+            }
             .status-dot {
-                width: 7px; height: 7px; border-radius: 50%;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
                 background-color: var(--gz-accent-emerald);
-                box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+                display: inline-block;
+                transition: background-color 0.3s;
             }
             .model-select {
-                background: transparent; border: none; color: var(--gz-text-sub);
-                font-size: 11px; cursor: pointer; max-width: 170px; outline: none;
+                background: var(--gz-bg-subtle);
+                border: 1px solid var(--gz-border);
+                color: var(--gz-text-sub);
+                font-size: 11px;
+                padding: 3px 6px;
+                border-radius: 6px;
+                outline: none;
+                cursor: pointer;
+                max-width: 175px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
             }
-            .model-select option { background: var(--gz-bg-card); color: var(--gz-text); }
+            .model-select option {
+                background: #151821;
+                color: #f3f4f6;
+            }
             .header-actions { display: flex; align-items: center; gap: 4px; }
             .header-btn {
-                width: 28px; height: 28px; border-radius: 6px;
-                background: transparent; border: none; color: var(--gz-text-sub);
-                display: flex; align-items: center; justify-content: center; cursor: pointer;
+                background: transparent;
+                border: none;
+                color: var(--gz-text-sub);
+                width: 28px;
+                height: 28px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.15s;
             }
-            .header-btn:hover { background: var(--gz-bg-subtle); color: #fff; }
-            .header-btn.active { background: rgba(99, 102, 241, 0.2); color: var(--gz-primary); }
+            .header-btn:hover { background: var(--gz-bg-subtle); color: var(--gz-text); }
             .context-bar {
-                padding: 6px 14px; background: #11141c; border-bottom: 1px solid var(--gz-border);
-                display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--gz-text-muted);
+                background: rgba(99, 102, 241, 0.08);
+                border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+                padding: 6px 12px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 11px;
+                color: #a5b4fc;
+                flex-shrink: 0;
             }
-            .context-indicator { display: flex; align-items: center; gap: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-            .context-toggle-btn { border: none; background: transparent; color: var(--gz-primary); font-size: 11px; cursor: pointer; }
+            .context-indicator { display: flex; align-items: center; gap: 6px; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .context-toggle-btn { background: none; border: none; color: #818cf8; cursor: pointer; font-size: 11px; text-decoration: underline; }
             .messages-container {
-                flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px;
+                flex: 1;
+                padding: 14px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                scroll-behavior: smooth;
             }
             .welcome-box {
-                background: var(--gz-bg-card); border: 1px solid var(--gz-border); border-radius: 14px; padding: 14px;
+                background: var(--gz-bg-subtle);
+                border: 1px dashed var(--gz-border);
+                border-radius: 12px;
+                padding: 14px;
+                text-align: center;
+                margin-top: 10px;
             }
-            .welcome-box h3 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-            .welcome-box p { font-size: 12px; color: var(--gz-text-sub); line-height: 1.4; margin-bottom: 10px; }
+            .welcome-box h3 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+            .welcome-box p { font-size: 11px; color: var(--gz-text-sub); line-height: 1.4; margin-bottom: 10px; }
             .quick-chips { display: flex; flex-direction: column; gap: 6px; }
             .chip-btn {
-                background: var(--gz-bg-subtle); border: 1px solid var(--gz-border); border-radius: 8px;
-                padding: 8px 10px; font-size: 12px; color: var(--gz-text); text-align: left; cursor: pointer;
-                display: flex; align-items: center; gap: 8px; font-family: inherit;
+                background: var(--gz-bg-card);
+                border: 1px solid var(--gz-border);
+                color: var(--gz-text);
+                font-size: 11px;
+                padding: 6px 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.15s;
             }
-            .chip-btn:hover { background: rgba(99, 102, 241, 0.12); border-color: var(--gz-primary); color: #fff; }
-            .msg-row { display: flex; gap: 8px; max-width: 100%; }
-            .msg-row.user { justify-content: flex-end; }
+            .chip-btn:hover { border-color: var(--gz-primary); background: var(--gz-bg-subtle); }
+            .msg-row { display: flex; gap: 8px; max-width: 90%; }
+            .msg-row.user { align-self: flex-end; flex-direction: row-reverse; }
+            .msg-row.assistant { align-self: flex-start; }
             .msg-avatar {
-                width: 24px; height: 24px; border-radius: 6px;
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-                display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; flex-shrink: 0;
+                width: 26px; height: 26px; border-radius: 8px;
+                background: var(--gz-bg-subtle); border: 1px solid var(--gz-border);
+                display: flex; align-items: center; justify-content: center;
+                color: var(--gz-primary); flex-shrink: 0;
             }
+            .msg-row.user .msg-avatar { background: var(--gz-primary); color: #fff; }
             .msg-bubble {
-                max-width: 85%; padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.45; word-break: break-word;
+                background: var(--gz-bg-subtle);
+                border: 1px solid var(--gz-border);
+                padding: 9px 12px;
+                border-radius: 12px;
+                font-size: 12.5px;
+                line-height: 1.45;
+                color: var(--gz-text);
+                word-break: break-word;
             }
-            .msg-row.user .msg-bubble { background: #4f46e5; color: #ffffff; border-bottom-right-radius: 3px; }
-            .msg-row.assistant .msg-bubble { background: var(--gz-bg-card); border: 1px solid var(--gz-border); border-bottom-left-radius: 3px; }
+            .msg-row.user .msg-bubble {
+                background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+                border-color: #6366f1;
+                color: #ffffff;
+                border-bottom-right-radius: 2px;
+            }
+            .msg-row.assistant .msg-bubble { border-bottom-left-radius: 2px; }
             .msg-bubble p { margin-bottom: 6px; }
             .msg-bubble p:last-child { margin-bottom: 0; }
+            .msg-bubble ul, .msg-bubble ol { margin-left: 18px; margin-bottom: 6px; }
+            .msg-bubble li { margin-bottom: 3px; }
             .msg-bubble code { background: rgba(0,0,0,0.35); padding: 2px 4px; border-radius: 4px; font-size: 11px; color: #a5b4fc; }
             .msg-bubble pre { background: #08090d; border: 1px solid var(--gz-border); border-radius: 6px; padding: 8px; margin: 6px 0; overflow-x: auto; position: relative; }
             .msg-bubble pre code { background: transparent; padding: 0; color: #e2e8f0; font-size: 11px; }
@@ -297,6 +445,15 @@
         `;
         shadow.appendChild(styleEl);
 
+        function formatServerFooter(url) {
+            if (!url) return '🖥️ My Local (127.0.0.1:5000)';
+            if (url.includes('127.0.0.1') || url.includes('localhost')) {
+                return '🖥️ My Local (127.0.0.1:5000)';
+            }
+            const clean = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            return '🌐 Friend Tunnel (' + clean.slice(0, 18) + (clean.length > 18 ? '...' : '') + ')';
+        }
+
         const wrapper = document.createElement('div');
         wrapper.className = 'widget-wrapper';
         wrapper.innerHTML = `
@@ -311,10 +468,12 @@
                         <div>
                             <div style="display:flex;align-items:center;gap:6px;">
                                 <span class="brand-title">${config.title}</span>
-                                <span class="status-dot" id="gzStatusDot"></span>
+                                <span class="status-dot" id="gzStatusDot" title="Connecting to server..."></span>
                             </div>
-                            <select class="model-select" id="gzModelSelect">
-                                <option value="${config.defaultModel}">${config.defaultModel}</option>
+                            <select class="model-select" id="gzModelSelect" title="Select Target AI Model">
+                                ${TARGET_MODELS.map(m => `
+                                    <option value="${m.id}" ${m.id === config.defaultModel ? 'selected' : ''}>${m.label}</option>
+                                `).join('')}
                             </select>
                         </div>
                     </div>
@@ -334,7 +493,7 @@
                 <div class="messages-container" id="gzMessagesContainer">
                     <div class="welcome-box" id="gzWelcomeBox">
                         <h3>${ICONS.sparkles} GenZ AI Web Copilot</h3>
-                        <p>Ask anything, summarize this webpage, or query your custom trained genZai model.</p>
+                        <p>Ask anything, summarize this webpage, or run reasoning & vision across target NVIDIA NIM models.</p>
                         <div class="quick-chips">
                             <button class="chip-btn" data-query="Please provide a concise 3-point summary of this webpage.">
                                 ${ICONS.fileText} Summarize this page
@@ -352,14 +511,13 @@
                     </div>
                     <div class="footer-branding">
                         <span>${config.subtitle}</span>
-                        <span id="gzServerStatusText" style="cursor:pointer;color:#818cf8;text-decoration:underline;display:inline-flex;align-items:center;gap:3px;" title="Click to change Server URL (Online / Local)">
-                            ${(config.serverUrl || '').replace(/^https?:\/\//, '').replace(/\/$/, '')} ⚙️
+                        <span id="gzServerStatusText" style="cursor:pointer;color:#818cf8;text-decoration:underline;display:inline-flex;align-items:center;gap:3px;" title="Click to switch: My Local Server vs Friend's Tunnel">
+                            ${formatServerFooter(config.serverUrl)} ⚙️
                         </span>
                     </div>
                 </div>
             </div>
             <button class="launcher-btn" id="gzLauncherBtn">
-
                 <div class="pulse-ring"></div>
                 <div id="gzLauncherIcon">${ICONS.sparkles}</div>
             </button>
@@ -383,6 +541,14 @@
         const sendBtn = shadow.getElementById('gzSendBtn');
         const modelSelect = shadow.getElementById('gzModelSelect');
         const statusDot = shadow.getElementById('gzStatusDot');
+        const serverStatusTextEl = shadow.getElementById('gzServerStatusText');
+
+        function updateServerStatusUI(url) {
+            config.serverUrl = url;
+            if (serverStatusTextEl) {
+                serverStatusTextEl.innerHTML = `${formatServerFooter(url)} ⚙️`;
+            }
+        }
 
         function formatMarkdown(text) {
             if (!text) return '';
@@ -395,7 +561,13 @@
             escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
             escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, p1, p2) => {
                 if (p2 === '#change-server-url') {
-                    return `<button class="gz-change-url-btn" style="background:#6366f1;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin:4px 0;font-weight:600;">⚙️ ${p1}</button>`;
+                    return `<button class="gz-change-url-btn" style="background:#6366f1;color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;margin:4px 0;font-weight:600;display:inline-block;">⚙️ ${p1}</button>`;
+                }
+                if (p2 === '#use-local-server') {
+                    return `<button class="gz-use-local-btn" style="background:#10b981;color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;margin:4px 0;font-weight:600;display:inline-block;">🖥️ ${p1}</button>`;
+                }
+                if (p2 === '#retry-connection') {
+                    return `<button class="gz-retry-btn" style="background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;margin:4px 0;font-weight:600;display:inline-block;">🔄 ${p1}</button>`;
                 }
                 return `<a href="${p2}" target="_blank" rel="noopener noreferrer" style="color:#818cf8;text-decoration:underline;">${p1}</a>`;
             });
@@ -408,7 +580,6 @@
                 return `<p>${p.replace(/\n/g, '<br/>')}</p>`;
             }).join('');
         }
-
 
         function toggleChat(force) {
             state.isOpen = force !== undefined ? force : !state.isOpen;
@@ -441,40 +612,49 @@
         function setPageContext(active) {
             state.pageContextActive = active;
             if (active) {
-                pageContextBtn.classList.add('active');
-                contextBar.style.display = 'flex';
                 const ctx = extractPageContext();
-                contextTitle.innerText = `Page: ${ctx.title.slice(0, 26)}...`;
+                contextTitle.innerText = ctx.title;
+                contextBar.style.display = 'flex';
+                pageContextBtn.style.color = '#818cf8';
             } else {
-                pageContextBtn.classList.remove('active');
                 contextBar.style.display = 'none';
+                pageContextBtn.style.color = '';
             }
         }
 
         function appendMessage(role, content, citations) {
             if (welcomeBox) welcomeBox.style.display = 'none';
+
             const row = document.createElement('div');
             row.className = `msg-row ${role}`;
-            let citationHtml = '';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'msg-avatar';
+            avatar.innerHTML = role === 'user' ? 'ME' : ICONS.sparkles;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+            bubble.innerHTML = formatMarkdown(content);
+
             if (citations && citations.length > 0) {
-                citationHtml = `
-                    <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--gz-border);">
-                        <span style="font-size:10px;color:#a5b4fc;display:block;margin-bottom:2px;font-weight:600;">📚 genZai Knowledge:</span>
-                        ${citations.map(c => `<span class="citation-badge">${c.source}</span>`).join('')}
-                    </div>
-                `;
+                const citeBox = document.createElement('div');
+                citeBox.style.marginTop = '6px';
+                citeBox.innerHTML = citations.map(c => `
+                    <span class="citation-badge" title="Score: ${Math.round((c.score || 0) * 100)}%">
+                        ${ICONS.fileText} ${c.source} ${c.page ? `(p.${c.page})` : ''}
+                    </span>
+                `).join('');
+                bubble.appendChild(citeBox);
             }
 
-            if (role === 'user') {
-                row.innerHTML = `<div class="msg-bubble">${formatMarkdown(content)}</div>`;
-            } else {
-                row.innerHTML = `<div class="msg-avatar">${ICONS.sparkles}</div><div class="msg-bubble">${formatMarkdown(content)}${citationHtml}</div>`;
-            }
+            row.appendChild(avatar);
+            row.appendChild(bubble);
             messagesContainer.appendChild(row);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function showTypingIndicator() {
+            removeTypingIndicator();
             const typingEl = document.createElement('div');
             typingEl.className = 'msg-row assistant';
             typingEl.id = 'gzExtTyping';
@@ -495,19 +675,22 @@
 
         async function fetchModels() {
             try {
-                const resp = await fetch(`${config.serverUrl}/api/models`);
-                if (resp.ok) {
-                    const data = await resp.json();
-                    if (data.models && Array.isArray(data.models)) {
-                        state.models = data.models;
-                        modelSelect.innerHTML = data.models.map(m => `
-                            <option value="${m}" ${m === state.selectedModel ? 'selected' : ''}>${m}</option>
-                        `).join('');
-                    }
-                    statusDot.style.backgroundColor = '#10b981';
+                const data = await safeApiFetch(`${config.serverUrl}/api/models`);
+                if (data && data.models && Array.isArray(data.models)) {
+                    // Combine server models with all target models
+                    const targetIds = TARGET_MODELS.map(m => m.id);
+                    const combined = Array.from(new Set([...data.models, ...targetIds]));
+                    state.models = combined;
+
+                    modelSelect.innerHTML = combined.map(m => `
+                        <option value="${m}" ${m === state.selectedModel ? 'selected' : ''}>${getModelLabel(m)}</option>
+                    `).join('');
                 }
+                statusDot.style.backgroundColor = '#10b981';
+                statusDot.title = `Connected to ${config.serverUrl}`;
             } catch (e) {
                 statusDot.style.backgroundColor = '#f59e0b';
+                statusDot.title = `Cannot reach server at ${config.serverUrl}`;
             }
         }
 
@@ -533,7 +716,7 @@
             showTypingIndicator();
 
             try {
-                const response = await fetch(`${config.serverUrl}/api/chat`, {
+                const data = await safeApiFetch(`${config.serverUrl}/api/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -546,14 +729,6 @@
 
                 removeTypingIndicator();
 
-                if (!response.ok) {
-                    let errText = 'Server error occurred.';
-                    try { const errJson = await response.json(); errText = errJson.error || errText; } catch(e) {}
-                    appendMessage('assistant', `⚠️ **Error**: ${errText}`);
-                    return;
-                }
-
-                const data = await response.json();
                 const assistantMsg = data.choices && data.choices[0] && data.choices[0].message
                     ? data.choices[0].message.content
                     : 'No response received.';
@@ -562,34 +737,71 @@
 
             } catch (err) {
                 removeTypingIndicator();
+                const isTunnel = config.serverUrl.includes('trycloudflare.com') || (!config.serverUrl.includes('127.0.0.1') && !config.serverUrl.includes('localhost'));
                 const displayUrl = (config.serverUrl || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
-                appendMessage('assistant', `⚠️ **Connection Error**: Could not connect to GenZ AI Server at \`${config.serverUrl}\`.\n\n🌐 **Taking it Online / Connecting to Friend's Server:**\nIf your server is hosted online (e.g. via Cloudflare HTTPS Tunnel or Cloud Web Service):\n[Click Here to Enter Server URL](#change-server-url) or click the server address in the bottom right corner (${displayUrl} ⚙️).`);
+
+                let msg = `⚠️ **Connection Error**: Could not connect to GenZ AI Server at \`${config.serverUrl}\`.\n\n`;
+
+                if (isTunnel) {
+                    msg += `🖥️ **Using on Your Own Computer (Host)?**\n` +
+                        `Your local server is faster and direct without needing public tunnels:\n` +
+                        `[Switch to My Local Server (http://127.0.0.1:5000)](#use-local-server)\n\n` +
+                        `🌐 **Friend's Remote Access:**\n` +
+                        `If your friend is accessing or your Cloudflare tunnel restarted:\n` +
+                        `[Click to Enter New Tunnel URL](#change-server-url) or click (${displayUrl} ⚙️) at bottom right.`;
+                } else {
+                    msg += `🖥️ **Local Server Check:**\n` +
+                        `Please verify your local Python backend is running:\n` +
+                        `• Run \`python app.py\` (or double-click \`start_online.bat\`) in your project folder.\n\n` +
+                        `[Retry Connection](#retry-connection) · [Switch to Friend / Online Tunnel URL](#change-server-url)`;
+                }
+
+                appendMessage('assistant', msg);
             } finally {
                 state.isLoading = false;
                 sendBtn.disabled = false;
             }
         }
 
+        function switchToMyLocalServer() {
+            const localUrl = 'http://127.0.0.1:5000';
+            config.serverUrl = localUrl;
+            chrome.storage.local.set({ serverUrl: localUrl }, () => {
+                updateServerStatusUI(localUrl);
+                appendMessage('assistant', `✅ Switched to **My Local Server** (\`${localUrl}\`). Connecting...`);
+                fetchModels();
+            });
+        }
+
         function promptChangeServerUrl() {
-            const current = config.serverUrl || 'http://127.0.0.1:5000';
-            const entered = window.prompt("Enter GenZ AI Server URL (Cloudflare HTTPS or Render URL):", current);
+            const isLocal = config.serverUrl.includes('127.0.0.1') || config.serverUrl.includes('localhost');
+            const promptText = `Select GenZ AI Server:\n\n` +
+                `1. Enter '1' or 'local' to use My Local Server (http://127.0.0.1:5000)\n` +
+                `2. Or enter Friend's Public Cloudflare Tunnel URL (https://...trycloudflare.com):\n\n` +
+                `Current: ${config.serverUrl}`;
+            
+            const entered = window.prompt(promptText, config.serverUrl);
             if (entered !== null) {
-                const clean = entered.trim().replace(/\/$/, '');
-                if (clean && clean !== current) {
+                let clean = entered.trim();
+                if (clean === '1' || clean.toLowerCase() === 'local' || clean === '') {
+                    clean = 'http://127.0.0.1:5000';
+                } else {
+                    clean = clean.replace(/\/$/, '');
+                    if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+                        clean = 'https://' + clean;
+                    }
+                }
+                if (clean !== config.serverUrl) {
                     config.serverUrl = clean;
                     chrome.storage.local.set({ serverUrl: clean }, () => {
-                        const statusTextEl = shadow.getElementById('gzServerStatusText');
-                        if (statusTextEl) {
-                            statusTextEl.innerHTML = `${clean.replace(/^https?:\/\//, '')} ⚙️`;
-                        }
+                        updateServerStatusUI(clean);
                         fetchModels();
-                        appendMessage('assistant', `✅ Server URL updated to \`${clean}\`. Reconnecting...`);
+                        appendMessage('assistant', `✅ Server updated to \`${clean}\`. Reconnecting...`);
                     });
                 }
             }
         }
 
-        const serverStatusTextEl = shadow.getElementById('gzServerStatusText');
         if (serverStatusTextEl) {
             serverStatusTextEl.addEventListener('click', promptChangeServerUrl);
         }
@@ -597,13 +809,15 @@
         // Auto-sync settings if updated in extension popup
         if (chrome.storage && chrome.storage.onChanged) {
             chrome.storage.onChanged.addListener((changes, areaName) => {
-                if (areaName === 'local' && changes.serverUrl && changes.serverUrl.newValue) {
-                    config.serverUrl = changes.serverUrl.newValue;
-                    const stEl = shadow.getElementById('gzServerStatusText');
-                    if (stEl) {
-                        stEl.innerHTML = `${config.serverUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')} ⚙️`;
+                if (areaName === 'local') {
+                    if (changes.serverUrl && changes.serverUrl.newValue) {
+                        updateServerStatusUI(changes.serverUrl.newValue);
+                        fetchModels();
                     }
-                    fetchModels();
+                    if (changes.defaultModel && changes.defaultModel.newValue) {
+                        state.selectedModel = changes.defaultModel.newValue;
+                        if (modelSelect) modelSelect.value = changes.defaultModel.newValue;
+                    }
                 }
             });
         }
@@ -647,11 +861,24 @@
         pageContextBtn.addEventListener('click', () => setPageContext(!state.pageContextActive));
         disableContextBtn.addEventListener('click', () => setPageContext(false));
         sendBtn.addEventListener('click', () => sendMessage());
-        modelSelect.addEventListener('change', (e) => { state.selectedModel = e.target.value; });
+
+        modelSelect.addEventListener('change', (e) => {
+            state.selectedModel = e.target.value;
+            chrome.storage.local.set({ defaultModel: e.target.value });
+        });
 
         shadow.addEventListener('click', (e) => {
-            if (e.target.closest('.gz-change-url-btn')) {
+            if (e.target.closest('.gz-change-url-btn') || e.target.closest('button[data-action="change-url"]')) {
                 promptChangeServerUrl();
+                return;
+            }
+            if (e.target.closest('.gz-use-local-btn') || e.target.closest('button[data-action="use-local"]')) {
+                switchToMyLocalServer();
+                return;
+            }
+            if (e.target.closest('.gz-retry-btn')) {
+                appendMessage('assistant', `🔄 Retrying connection to \`${config.serverUrl}\`...`);
+                fetchModels();
                 return;
             }
             const chip = e.target.closest('.chip-btn');
