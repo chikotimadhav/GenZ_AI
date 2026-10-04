@@ -2,8 +2,10 @@
  * GenZ AI — Chrome / Edge Extension Content Script
  * Injects a floating AI chat box popup onto any webpage the user visits.
  * Total styling isolation using Shadow DOM.
- * Supports all target models (genZai, Llama 3.2, Nemotron Reasoning, DeepSeek, Gemma, etc.)
- * Easily switches between Host's Local Server (http://127.0.0.1:5000) and Friend's Online Tunnel URL.
+ * Features:
+ *  - 📸 Read Screen & Answer: Automatically extracts MCQs, practice questions, and options from active screen and solves them.
+ *  - Supports all target models (genZai, Llama 3.2, Nemotron Reasoning, DeepSeek, Gemma, etc.)
+ *  - Easily switches between Host's Local Server (http://127.0.0.1:5000) and Friend's Online Tunnel URL.
  */
 (function() {
     if (window.__GENZAI_EXTENSION_CONTENT_INJECTED__) return;
@@ -70,6 +72,12 @@
                 window.GenZAIExtensionInstance.send("Please provide a thorough 3-5 bullet point summary of this webpage with its key takeaways.");
                 sendResponse({ started: true });
             }
+        } else if (request.action === 'READ_SCREEN') {
+            if (window.GenZAIExtensionInstance) {
+                window.GenZAIExtensionInstance.open();
+                window.GenZAIExtensionInstance.readScreen();
+                sendResponse({ started: true });
+            }
         }
         return true;
     });
@@ -125,7 +133,7 @@
             position: settings.position || 'bottom-right',
             title: 'GenZ AI Copilot',
             subtitle: 'Browser Extension · Powered by NVIDIA NIM',
-            greeting: 'Hi! I can summarize this page or answer any questions.',
+            greeting: 'Hi! I can solve questions on your screen or answer any questions.',
             autoGreeting: true
         };
 
@@ -146,7 +154,9 @@
             trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`,
             fileText: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>`,
             copy: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
-            globe: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`
+            globe: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`,
+            camera: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>`,
+            target: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`
         };
 
         const hostEl = document.createElement('div');
@@ -244,8 +254,8 @@
                 to { opacity: 1; transform: translateY(0); }
             }
             .chat-window {
-                width: 380px;
-                height: 580px;
+                width: 390px;
+                height: 590px;
                 max-width: calc(100vw - 32px);
                 max-height: calc(100vh - 100px);
                 background: var(--gz-bg-main);
@@ -336,9 +346,11 @@
                 transition: all 0.15s;
             }
             .header-btn:hover { background: var(--gz-bg-subtle); color: var(--gz-text); }
+            .header-btn.active { color: #818cf8; background: rgba(99, 102, 241, 0.15); }
+            
             .context-bar {
-                background: rgba(99, 102, 241, 0.08);
-                border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+                background: rgba(99, 102, 241, 0.1);
+                border-bottom: 1px solid rgba(99, 102, 241, 0.25);
                 padding: 6px 12px;
                 display: flex;
                 align-items: center;
@@ -347,8 +359,9 @@
                 color: #a5b4fc;
                 flex-shrink: 0;
             }
-            .context-indicator { display: flex; align-items: center; gap: 6px; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            .context-toggle-btn { background: none; border: none; color: #818cf8; cursor: pointer; font-size: 11px; text-decoration: underline; }
+            .context-indicator { display: flex; align-items: center; gap: 6px; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+            .context-toggle-btn { background: none; border: none; color: #818cf8; cursor: pointer; font-size: 11px; text-decoration: underline; margin-left: 6px; }
+
             .messages-container {
                 flex: 1;
                 padding: 14px;
@@ -364,7 +377,7 @@
                 border-radius: 12px;
                 padding: 14px;
                 text-align: center;
-                margin-top: 10px;
+                margin-top: 6px;
             }
             .welcome-box h3 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
             .welcome-box p { font-size: 11px; color: var(--gz-text-sub); line-height: 1.4; margin-bottom: 10px; }
@@ -374,7 +387,7 @@
                 border: 1px solid var(--gz-border);
                 color: var(--gz-text);
                 font-size: 11px;
-                padding: 6px 10px;
+                padding: 7px 10px;
                 border-radius: 8px;
                 cursor: pointer;
                 text-align: left;
@@ -384,6 +397,16 @@
                 transition: all 0.15s;
             }
             .chip-btn:hover { border-color: var(--gz-primary); background: var(--gz-bg-subtle); }
+            .chip-btn.highlight-chip {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+                border-color: rgba(99, 102, 241, 0.4);
+                color: #c7d2fe;
+            }
+            .chip-btn.highlight-chip:hover {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.25));
+                border-color: var(--gz-primary);
+            }
+
             .msg-row { display: flex; gap: 8px; max-width: 90%; }
             .msg-row.user { align-self: flex-end; flex-direction: row-reverse; }
             .msg-row.assistant { align-self: flex-start; }
@@ -434,7 +457,32 @@
             .typing-dot:nth-child(2) { animation-delay: -0.16s; }
             .typing-dot:nth-child(3) { animation-delay: 0s; }
             @keyframes gz-bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-            .chat-footer { padding: 10px 14px; background: var(--gz-bg-card); border-top: 1px solid var(--gz-border); display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+            
+            .chat-footer { padding: 10px 14px; background: var(--gz-bg-card); border-top: 1px solid var(--gz-border); display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+            .quick-prompt-bar { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+            .quick-pill-btn {
+                background: var(--gz-bg-subtle);
+                border: 1px solid var(--gz-border);
+                color: var(--gz-text-sub);
+                font-size: 11px;
+                font-weight: 500;
+                padding: 4px 9px;
+                border-radius: 6px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                white-space: nowrap;
+                transition: all 0.15s ease;
+            }
+            .quick-pill-btn:hover { border-color: var(--gz-primary); color: #fff; background: rgba(99, 102, 241, 0.15); }
+            .quick-pill-btn.active-pill {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.25));
+                border-color: rgba(99, 102, 241, 0.6);
+                color: #c7d2fe;
+                font-weight: 600;
+            }
+            
             .input-row { display: flex; align-items: flex-end; gap: 6px; background: var(--gz-bg-subtle); border: 1px solid var(--gz-border); border-radius: 10px; padding: 7px 9px; }
             .input-row:focus-within { border-color: var(--gz-primary); }
             .chat-textarea { flex: 1; background: transparent; border: none; color: var(--gz-text); font-family: inherit; font-size: 13px; max-height: 80px; resize: none; outline: none; }
@@ -478,6 +526,7 @@
                         </div>
                     </div>
                     <div class="header-actions">
+                        <button class="header-btn" id="gzReadScreenBtn" title="📸 Read Screen & Answer (Solve MCQ / Question)">${ICONS.camera}</button>
                         <button class="header-btn" id="gzPageContextBtn" title="Attach webpage context">${ICONS.fileText}</button>
                         <button class="header-btn" id="gzClearChatBtn" title="Clear chat">${ICONS.trash}</button>
                         <button class="header-btn" id="gzMinimizeBtn" title="Minimize">${ICONS.minus}</button>
@@ -485,16 +534,19 @@
                 </div>
                 <div class="context-bar" id="gzContextBar" style="display:none;">
                     <div class="context-indicator">
-                        ${ICONS.globe}
-                        <span id="gzContextTitle">Webpage Context</span>
+                        ${ICONS.target}
+                        <span id="gzContextTitle">Webpage Screen Context</span>
                     </div>
                     <button class="context-toggle-btn" id="gzDisableContextBtn">Remove</button>
                 </div>
                 <div class="messages-container" id="gzMessagesContainer">
                     <div class="welcome-box" id="gzWelcomeBox">
                         <h3>${ICONS.sparkles} GenZ AI Web Copilot</h3>
-                        <p>Ask anything, summarize this webpage, or run reasoning & vision across target NVIDIA NIM models.</p>
+                        <p>Ask anything, or let GenZ AI read questions on your screen and provide instant verified answers.</p>
                         <div class="quick-chips">
+                            <button class="chip-btn highlight-chip" id="gzChipReadScreen" data-action="read-screen">
+                                ${ICONS.camera} <strong>Read Screen & Answer</strong> (Solve MCQ / Quiz)
+                            </button>
                             <button class="chip-btn" data-query="Please provide a concise 3-point summary of this webpage.">
                                 ${ICONS.fileText} Summarize this page
                             </button>
@@ -505,8 +557,16 @@
                     </div>
                 </div>
                 <div class="chat-footer">
+                    <div class="quick-prompt-bar">
+                        <button class="quick-pill-btn active-pill" id="gzQuickReadScreenBtn">
+                            ${ICONS.camera} Read Screen & Answer
+                        </button>
+                        <button class="quick-pill-btn" id="gzQuickSummarizeBtn">
+                            ${ICONS.fileText} Summarize Page
+                        </button>
+                    </div>
                     <div class="input-row">
-                        <textarea class="chat-textarea" id="gzTextarea" placeholder="Ask GenZ AI anything on this page..." rows="1"></textarea>
+                        <textarea class="chat-textarea" id="gzTextarea" placeholder="Ask anything, or type 'read screen' to solve..." rows="1"></textarea>
                         <button class="send-btn" id="gzSendBtn">${ICONS.send}</button>
                     </div>
                     <div class="footer-branding">
@@ -532,6 +592,9 @@
         const minimizeBtn = shadow.getElementById('gzMinimizeBtn');
         const clearChatBtn = shadow.getElementById('gzClearChatBtn');
         const pageContextBtn = shadow.getElementById('gzPageContextBtn');
+        const readScreenBtn = shadow.getElementById('gzReadScreenBtn');
+        const quickReadScreenBtn = shadow.getElementById('gzQuickReadScreenBtn');
+        const quickSummarizeBtn = shadow.getElementById('gzQuickSummarizeBtn');
         const contextBar = shadow.getElementById('gzContextBar');
         const contextTitle = shadow.getElementById('gzContextTitle');
         const disableContextBtn = shadow.getElementById('gzDisableContextBtn');
@@ -594,31 +657,107 @@
             }
         }
 
-        function extractPageContext() {
-            const title = document.title || 'Untitled Webpage';
+        /**
+         * Intelligent Screen & Question Extractor
+         * Scans for MCQ questions, practice problems, radio buttons, choices, and viewport elements
+         */
+        function extractScreenQuestionContext() {
+            const title = document.title || 'Webpage';
             const url = window.location.href;
-            let text = '';
+            
+            // 1. Look for targeted Quiz / MCQ / Question containers first
+            const questionSelectors = [
+                '[class*="question"]',
+                '[class*="mcq"]',
+                '[class*="practice"]',
+                '[class*="quiz"]',
+                '[class*="assessment"]',
+                '[class*="problem"]',
+                '[class*="exercise"]',
+                '[id*="question"]',
+                '[id*="mcq"]',
+                'form',
+                'main',
+                'article',
+                '[role="main"]'
+            ];
+            
+            let detectedQuestions = [];
+            for (const sel of questionSelectors) {
+                try {
+                    const els = document.querySelectorAll(sel);
+                    for (const el of els) {
+                        if (el.closest('#genzai-extension-root')) continue;
+                        const rect = el.getBoundingClientRect();
+                        const isVisible = rect.width > 0 && rect.height > 0 && 
+                                          rect.top < window.innerHeight && rect.bottom > 0;
+                        if (isVisible) {
+                            const text = (el.innerText || '').trim();
+                            if (text.length > 25 && text.length < 3500 && !detectedQuestions.includes(text)) {
+                                detectedQuestions.push(text);
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            // 2. Extract visible text in the viewport (headings, questions, options, radio labels)
+            const visibleItems = [];
+            try {
+                const candidates = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, label, li, pre, code, [role="radio"], [role="option"], .option, .choice, [class*="option"], [class*="choice"]');
+                candidates.forEach(el => {
+                    if (el.closest('#genzai-extension-root')) return;
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width > 0 && rect.height > 0 && 
+                        rect.top >= -50 && rect.top <= window.innerHeight + 50 && 
+                        rect.left >= 0 && rect.left <= window.innerWidth) {
+                        const t = (el.innerText || '').trim();
+                        if (t && t.length > 2 && !visibleItems.includes(t)) {
+                            visibleItems.push(t);
+                        }
+                    }
+                });
+            } catch (e) {}
+
+            // 3. Fallback to clean body text
+            let fallbackText = '';
             try {
                 const clone = document.body.cloneNode(true);
                 const removeEls = clone.querySelectorAll('script, style, noscript, nav, footer, #genzai-extension-root');
                 removeEls.forEach(el => el.remove());
-                text = (clone.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 3000);
-            } catch (e) {
-                text = (document.body.innerText || '').slice(0, 2000);
+                fallbackText = (clone.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 3000);
+            } catch (e) {}
+
+            let finalContent = '';
+            if (detectedQuestions.length > 0) {
+                finalContent = detectedQuestions.join('\n\n---\n\n');
+            } else if (visibleItems.length > 0) {
+                finalContent = visibleItems.join('\n');
+            } else {
+                finalContent = fallbackText;
             }
-            return { title, url, text };
+
+            return {
+                title: title,
+                url: url,
+                combinedText: finalContent.slice(0, 3500)
+            };
         }
 
-        function setPageContext(active) {
+        function extractPageContext() {
+            return extractScreenQuestionContext();
+        }
+
+        function setPageContext(active, customTitle) {
             state.pageContextActive = active;
             if (active) {
-                const ctx = extractPageContext();
-                contextTitle.innerText = ctx.title;
+                const ctx = extractScreenQuestionContext();
+                contextTitle.innerText = customTitle || ctx.title;
                 contextBar.style.display = 'flex';
-                pageContextBtn.style.color = '#818cf8';
+                pageContextBtn.classList.add('active');
             } else {
                 contextBar.style.display = 'none';
-                pageContextBtn.style.color = '';
+                pageContextBtn.classList.remove('active');
             }
         }
 
@@ -694,9 +833,100 @@
             }
         }
 
+        /**
+         * 📸 Core Feature: Read Screen & Answer Question
+         * Scans the active screen, parses MCQ or practice problem, and provides verified answer
+         */
+        async function readScreenAndAnswer(customQuery) {
+            if (state.isLoading) return;
+
+            setPageContext(true, "📸 Reading Active Screen...");
+            const screenData = extractScreenQuestionContext();
+
+            const userDisplay = customQuery || "📸 Read screen and solve the question";
+            appendMessage('user', userDisplay);
+            state.messages.push({ role: 'user', content: userDisplay });
+
+            state.isLoading = true;
+            sendBtn.disabled = true;
+            showTypingIndicator();
+
+            const solvingPrompt = `[ACTIVE SCREEN ANALYSIS & QUESTION SOLVING]
+The user is viewing a webpage containing a test, quiz, or multiple-choice question (MCQ).
+Page Title: "${screenData.title}"
+URL: "${screenData.url}"
+
+[CONTENT VISIBLE ON THE USER'S SCREEN]:
+"""
+${screenData.combinedText}
+"""
+
+TASK FOR GENZ AI:
+1. Identify the primary question being asked on the screen and all available answer options.
+2. At the very top, state the **CORRECT ANSWER** clearly and prominently in bold (e.g. "**Correct Answer:** Option ...").
+3. Provide a clear, step-by-step conceptual or mathematical explanation explaining why this option is correct.
+4. Briefly explain why the other options are incorrect.
+User Query / Directive: ${customQuery || "Please solve this question from my screen and give the correct answer."}`;
+
+            let payloadMessages = [
+                { role: 'user', content: solvingPrompt }
+            ];
+
+            try {
+                const data = await safeApiFetch(`${config.serverUrl}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: state.selectedModel,
+                        messages: payloadMessages,
+                        temperature: 0.2, // precise & deterministic for test questions
+                        max_tokens: 1024
+                    })
+                });
+
+                removeTypingIndicator();
+
+                const assistantMsg = data.choices && data.choices[0] && data.choices[0].message
+                    ? data.choices[0].message.content
+                    : 'Could not generate an answer from the screen content.';
+                appendMessage('assistant', assistantMsg, data.citations || []);
+                state.messages.push({ role: 'assistant', content: assistantMsg });
+
+            } catch (err) {
+                removeTypingIndicator();
+                appendMessage('assistant', `⚠️ **Error reading screen**: ${err.message || 'Could not connect to GenZ AI server'}.\n\nEnsure your local server is running (\`http://127.0.0.1:5000\`). [Switch to Local Server](#use-local-server)`);
+            } finally {
+                state.isLoading = false;
+                sendBtn.disabled = false;
+            }
+        }
+
         async function sendMessage(overrideText) {
             const text = (overrideText || textarea.value).trim();
             if (!text || state.isLoading) return;
+
+            // Detect natural language screen reading / question solving intent
+            const lower = text.toLowerCase();
+            const isScreenReadingIntent = 
+                lower.includes('read screen') ||
+                lower.includes('read the screen') ||
+                lower.includes('solve this') ||
+                lower.includes('solve question') ||
+                lower.includes('answer this') ||
+                lower.includes('what is the answer') ||
+                lower.includes('answer the question') ||
+                lower.includes('which option') ||
+                lower.includes('solve mcq') ||
+                (lower === 'solve') ||
+                (lower === 'answer') ||
+                (lower === 'read');
+
+            if (isScreenReadingIntent) {
+                textarea.value = '';
+                textarea.style.height = 'auto';
+                readScreenAndAnswer(text);
+                return;
+            }
 
             textarea.value = '';
             textarea.style.height = 'auto';
@@ -706,8 +936,8 @@
 
             let payloadMessages = [...state.messages];
             if (state.pageContextActive) {
-                const ctx = extractPageContext();
-                const pagePrompt = `[Current Webpage Context]\nTitle: "${ctx.title}"\nURL: "${ctx.url}"\nContent excerpt:\n"${ctx.text}"\n\nPlease consider the page context above when answering.`;
+                const ctx = extractScreenQuestionContext();
+                const pagePrompt = `[Current Webpage Screen Context]\nTitle: "${ctx.title}"\nURL: "${ctx.url}"\nContent excerpt:\n"${ctx.combinedText}"\n\nPlease consider the page context above when answering.`;
                 payloadMessages.unshift({ role: 'system', content: pagePrompt });
             }
 
@@ -774,7 +1004,6 @@
         }
 
         function promptChangeServerUrl() {
-            const isLocal = config.serverUrl.includes('127.0.0.1') || config.serverUrl.includes('localhost');
             const promptText = `Select GenZ AI Server:\n\n` +
                 `1. Enter '1' or 'local' to use My Local Server (http://127.0.0.1:5000)\n` +
                 `2. Or enter Friend's Public Cloudflare Tunnel URL (https://...trycloudflare.com):\n\n` +
@@ -859,6 +1088,13 @@
         });
 
         pageContextBtn.addEventListener('click', () => setPageContext(!state.pageContextActive));
+        readScreenBtn.addEventListener('click', () => readScreenAndAnswer());
+        quickReadScreenBtn.addEventListener('click', () => readScreenAndAnswer());
+        quickSummarizeBtn.addEventListener('click', () => {
+            setPageContext(true);
+            sendMessage("Please provide a thorough 3-5 bullet point summary of this webpage with its key takeaways.");
+        });
+
         disableContextBtn.addEventListener('click', () => setPageContext(false));
         sendBtn.addEventListener('click', () => sendMessage());
 
@@ -881,6 +1117,10 @@
                 fetchModels();
                 return;
             }
+            if (e.target.closest('[data-action="read-screen"]')) {
+                readScreenAndAnswer();
+                return;
+            }
             const chip = e.target.closest('.chip-btn');
             if (chip) {
                 const query = chip.getAttribute('data-query');
@@ -899,7 +1139,8 @@
             open: () => toggleChat(true),
             close: () => toggleChat(false),
             setContext: (active) => setPageContext(active),
-            send: (text) => sendMessage(text)
+            send: (text) => sendMessage(text),
+            readScreen: (prompt) => readScreenAndAnswer(prompt)
         };
     }
 })();

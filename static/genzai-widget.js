@@ -1057,10 +1057,67 @@
         }
     }
 
+    /**
+     * Screen & Question Extractor for MCQ / practice problems
+     */
+    function extractScreenQuestionContext() {
+        const title = document.title || 'Webpage';
+        const url = window.location.href;
+        const questionSelectors = [
+            '[class*="question"]', '[class*="mcq"]', '[class*="practice"]',
+            '[class*="quiz"]', '[class*="assessment"]', '[class*="problem"]',
+            'form', 'main', 'article', '[role="main"]'
+        ];
+        
+        let detected = [];
+        for (const sel of questionSelectors) {
+            try {
+                document.querySelectorAll(sel).forEach(el => {
+                    if (el.closest('#genzai-widget-root')) return;
+                    const r = el.getBoundingClientRect();
+                    if (r.width > 0 && r.height > 0 && r.top < window.innerHeight && r.bottom > 0) {
+                        const t = (el.innerText || '').trim();
+                        if (t.length > 25 && t.length < 3500 && !detected.includes(t)) {
+                            detected.push(t);
+                        }
+                    }
+                });
+            } catch (e) {}
+        }
+
+        let fallbackText = '';
+        try {
+            const clone = document.body.cloneNode(true);
+            const removeEls = clone.querySelectorAll('script, style, noscript, nav, footer, #genzai-widget-root');
+            removeEls.forEach(el => el.remove());
+            fallbackText = (clone.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 3000);
+        } catch (e) {}
+
+        const finalContent = detected.length > 0 ? detected.join('\n\n---\n\n') : fallbackText;
+        return { title, url, text: finalContent, combinedText: finalContent };
+    }
+
+    function extractPageContext() {
+        return extractScreenQuestionContext();
+    }
+
     // Send Message
     async function sendMessage(overrideText) {
         const text = (overrideText || textarea.value).trim();
         if (!text || state.isLoading) return;
+
+        // Auto-detect screen reading / problem solving intent
+        const lower = text.toLowerCase();
+        const isScreenReading = 
+            lower.includes('read screen') ||
+            lower.includes('read the screen') ||
+            lower.includes('solve this') ||
+            lower.includes('solve question') ||
+            lower.includes('answer this') ||
+            lower.includes('what is the answer') ||
+            lower.includes('which option') ||
+            (lower === 'solve') ||
+            (lower === 'answer');
 
         textarea.value = '';
         textarea.style.height = 'auto';
@@ -1072,11 +1129,12 @@
         // Prepare messages payload
         let payloadMessages = [...state.messages];
 
-        // Attach webpage context if active
-        if (state.pageContextActive) {
-            const ctx = extractPageContext();
-            const pagePrompt = `[Webpage Context — Title: "${ctx.title}", URL: "${ctx.url}"]\nContent excerpt:\n"${ctx.text}"\n\nPlease use the above webpage context to answer user questions when relevant.`;
-            payloadMessages.unshift({ role: 'system', content: pagePrompt });
+        if (isScreenReading || state.pageContextActive) {
+            const ctx = extractScreenQuestionContext();
+            const solvingDirective = isScreenReading
+                ? `[ACTIVE SCREEN ANALYSIS & QUESTION SOLVING]\nWebpage: "${ctx.title}" (${ctx.url})\n\n[SCREEN QUESTION CONTENT]:\n"""\n${ctx.combinedText}\n"""\n\nTASK:\n1. State the **CORRECT ANSWER** clearly at the very top.\n2. Provide a clear, step-by-step conceptual or mathematical explanation.\n3. Briefly explain why other options are incorrect.`
+                : `[Webpage Context — Title: "${ctx.title}", URL: "${ctx.url}"]\nContent excerpt:\n"${ctx.text}"\n\nPlease use the above webpage context to answer user questions when relevant.`;
+            payloadMessages.unshift({ role: 'system', content: solvingDirective });
         }
 
         state.isLoading = true;

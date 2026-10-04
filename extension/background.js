@@ -52,5 +52,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         // Return true to indicate asynchronous sendResponse
         return true;
+    } else if (request.action === 'CAPTURE_SCREEN') {
+        chrome.tabs.captureVisibleTab(null, { format: 'jpeg', quality: 80 }, (dataUrl) => {
+            if (chrome.runtime.lastError || !dataUrl) {
+                sendResponse({ ok: false, error: chrome.runtime.lastError?.message || 'Could not capture screen' });
+            } else {
+                sendResponse({ ok: true, dataUrl: dataUrl });
+            }
+        });
+        return true;
     }
 });

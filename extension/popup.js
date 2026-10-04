@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const feedbackText = document.getElementById('feedbackText');
     const statusBadge = document.getElementById('statusBadge');
     const statusText = document.getElementById('statusText');
+    const readScreenTabBtn = document.getElementById('readScreenTabBtn');
     const summarizeTabBtn = document.getElementById('summarizeTabBtn');
     const openChatOnPageBtn = document.getElementById('openChatOnPageBtn');
     const openStudioLink = document.getElementById('openStudioLink');
@@ -211,7 +212,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 9. Summarize Active Page
+    // 9. Read Screen & Answer Question on Active Page
+    if (readScreenTabBtn) {
+        readScreenTabBtn.addEventListener('click', function() {
+            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                if (!tabs[0] || !tabs[0].id) return;
+                chrome.tabs.sendMessage(tabs[0].id, { action: 'READ_SCREEN' }, function(response) {
+                    if (chrome.runtime.lastError) {
+                        feedbackText.style.display = 'block';
+                        feedbackText.style.color = '#f59e0b';
+                        feedbackText.innerText = 'Refresh the active webpage and try again.';
+                    } else {
+                        window.close();
+                    }
+                });
+            });
+        });
+    }
+
+    // 10. Summarize Active Page
     summarizeTabBtn.addEventListener('click', function() {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             if (!tabs[0] || !tabs[0].id) return;

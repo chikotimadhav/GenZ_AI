@@ -24,6 +24,7 @@ Run your **genZai** custom AI model and NVIDIA NIM as a floating chat box popup 
 
 - **Floating Popup Chatbox**: A floating bubble appears in the bottom right corner of any website you visit. Click it to expand your custom AI chat box!
 - **Zero Style Interference**: Encapsulated using isolated **Shadow DOM** so it never breaks the layout or styling of third-party websites.
+- **📸 Read Screen & Answer (MCQs & Exams)**: One-click button to read questions, practice problems, formulas, and multiple-choice options on your screen (NxtWave, Coursera, LeetCode, etc.) and give the verified correct answer with step-by-step explanations!
 - **Webpage Context & Summaries**: Click the **"Summarize this page"** button or toggle **"Page Context"** to chat with AI directly about any article, documentation, or site you're reading.
 - **Target Models**: Select between `genZai (Custom Trained Model)` and 15+ target NVIDIA NIM models including:
   - `meta/llama-3.2-11b-vision-instruct` (Vision + Text)
