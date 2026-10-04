@@ -352,11 +352,14 @@
                     </div>
                     <div class="footer-branding">
                         <span>${config.subtitle}</span>
-                        <span id="gzServerStatusText">${config.serverUrl.replace(/https?:\/\//, '')}</span>
+                        <span id="gzServerStatusText" style="cursor:pointer;color:#818cf8;text-decoration:underline;display:inline-flex;align-items:center;gap:3px;" title="Click to change Server URL (Online / Local)">
+                            ${(config.serverUrl || '').replace(/^https?:\/\//, '').replace(/\/$/, '')} ⚙️
+                        </span>
                     </div>
                 </div>
             </div>
             <button class="launcher-btn" id="gzLauncherBtn">
+
                 <div class="pulse-ring"></div>
                 <div id="gzLauncherIcon">${ICONS.sparkles}</div>
             </button>
@@ -390,6 +393,12 @@
             escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
             escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
             escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, p1, p2) => {
+                if (p2 === '#change-server-url') {
+                    return `<button class="gz-change-url-btn" style="background:#6366f1;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin:4px 0;font-weight:600;">⚙️ ${p1}</button>`;
+                }
+                return `<a href="${p2}" target="_blank" rel="noopener noreferrer" style="color:#818cf8;text-decoration:underline;">${p1}</a>`;
+            });
             escaped = escaped.replace(/(?:^|\n)[-*]\s+([^\n]+)/g, '<li>$1</li>');
             escaped = escaped.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
             return escaped.split(/\n\n+/).map(p => {
@@ -399,6 +408,7 @@
                 return `<p>${p.replace(/\n/g, '<br/>')}</p>`;
             }).join('');
         }
+
 
         function toggleChat(force) {
             state.isOpen = force !== undefined ? force : !state.isOpen;
@@ -552,11 +562,50 @@
 
             } catch (err) {
                 removeTypingIndicator();
-                appendMessage('assistant', `⚠️ **Connection Error**: Could not connect to GenZ AI Server at \`${config.serverUrl}\`. Make sure \`python app.py\` is running locally.`);
+                const displayUrl = (config.serverUrl || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+                appendMessage('assistant', `⚠️ **Connection Error**: Could not connect to GenZ AI Server at \`${config.serverUrl}\`.\n\n🌐 **Taking it Online / Connecting to Friend's Server:**\nIf your server is hosted online (e.g. via Cloudflare HTTPS Tunnel or Cloud Web Service):\n[Click Here to Enter Server URL](#change-server-url) or click the server address in the bottom right corner (${displayUrl} ⚙️).`);
             } finally {
                 state.isLoading = false;
                 sendBtn.disabled = false;
             }
+        }
+
+        function promptChangeServerUrl() {
+            const current = config.serverUrl || 'http://127.0.0.1:5000';
+            const entered = window.prompt("Enter GenZ AI Server URL (Cloudflare HTTPS or Render URL):", current);
+            if (entered !== null) {
+                const clean = entered.trim().replace(/\/$/, '');
+                if (clean && clean !== current) {
+                    config.serverUrl = clean;
+                    chrome.storage.local.set({ serverUrl: clean }, () => {
+                        const statusTextEl = shadow.getElementById('gzServerStatusText');
+                        if (statusTextEl) {
+                            statusTextEl.innerHTML = `${clean.replace(/^https?:\/\//, '')} ⚙️`;
+                        }
+                        fetchModels();
+                        appendMessage('assistant', `✅ Server URL updated to \`${clean}\`. Reconnecting...`);
+                    });
+                }
+            }
+        }
+
+        const serverStatusTextEl = shadow.getElementById('gzServerStatusText');
+        if (serverStatusTextEl) {
+            serverStatusTextEl.addEventListener('click', promptChangeServerUrl);
+        }
+
+        // Auto-sync settings if updated in extension popup
+        if (chrome.storage && chrome.storage.onChanged) {
+            chrome.storage.onChanged.addListener((changes, areaName) => {
+                if (areaName === 'local' && changes.serverUrl && changes.serverUrl.newValue) {
+                    config.serverUrl = changes.serverUrl.newValue;
+                    const stEl = shadow.getElementById('gzServerStatusText');
+                    if (stEl) {
+                        stEl.innerHTML = `${config.serverUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')} ⚙️`;
+                    }
+                    fetchModels();
+                }
+            });
         }
 
         textarea.addEventListener('input', function() {
@@ -601,6 +650,10 @@
         modelSelect.addEventListener('change', (e) => { state.selectedModel = e.target.value; });
 
         shadow.addEventListener('click', (e) => {
+            if (e.target.closest('.gz-change-url-btn')) {
+                promptChangeServerUrl();
+                return;
+            }
             const chip = e.target.closest('.chip-btn');
             if (chip) {
                 const query = chip.getAttribute('data-query');

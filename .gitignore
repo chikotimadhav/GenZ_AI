@@ -12,5 +12,4 @@ __pycache__/
 *.pyd
 *.pkl
 .pytest_cache/
-.DS_Store
-
+cloudflared.exe
