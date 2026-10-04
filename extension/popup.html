@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenZ AI Web Copilot</title>
+    <style>
+        :root {
+            --bg-body: #0d0e14;
+            --bg-card: #151720;
+            --bg-input: #1d202b;
+            --border: #232733;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --text: #f3f4f6;
+            --text-sub: #9ca3af;
+            --text-muted: #6b7280;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            width: 320px;
+            background: var(--bg-body);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+            font-size: 13px;
+            line-height: 1.4;
+            padding: 16px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .brand-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .brand-desc {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--emerald);
+        }
+        .status-badge.offline .status-dot {
+            background: var(--red);
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .setting-label {
+            font-weight: 500;
+            color: #fff;
+            font-size: 12px;
+        }
+        .setting-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2d3345;
+            transition: .25s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .25s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+        .btn-secondary {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-input);
+            border-color: #373e52;
+            color: #fff;
+        }
+
+        .input-group {
+            margin-top: 8px;
+        }
+        .input-label {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            display: block;
+        }
+        .input-box {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 8px;
+            color: var(--text);
+            font-size: 12px;
+            outline: none;
+        }
+        .input-box:focus {
+            border-color: var(--primary);
+        }
+        .save-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .save-btn {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+            background: #252a38;
+            border: 1px solid var(--border);
+            color: #e2e8f0;
+            cursor: pointer;
+        }
+        .save-btn:hover { background: #2f3547; color: #fff; }
+        .feedback-text {
+            font-size: 11px;
+            margin-top: 6px;
+            display: none;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            </div>
+            <div>
+                <div class="brand-title">GenZ AI Copilot</div>
+                <div class="brand-desc">Browser Assistant</div>
+            </div>
+        </div>
+        <div class="status-badge" id="statusBadge">
+            <div class="status-dot"></div>
+            <span id="statusText">Checking...</span>
+        </div>
+    </div>
+
+    <!-- Toggle Floating Popup on Webpages -->
+    <div class="card">
+        <div class="setting-row">
+            <div>
+                <div class="setting-label">Floating Chat on Sites</div>
+                <div class="setting-desc">Show circular chat bubble on websites</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggleFloatingWidget" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="btn-group">
+        <button class="btn btn-primary" id="summarizeTabBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            Summarize Active Page
+        </button>
+        <button class="btn btn-secondary" id="openChatOnPageBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Toggle Chat Bubble on Page
+        </button>
+    </div>
+
+    <!-- Backend Server Settings -->
+    <div class="card">
+        <div class="setting-label">Backend Connection</div>
+        <div class="input-group">
+            <label class="input-label" for="serverUrlInput">GenZ AI Server URL:</label>
+            <input type="text" class="input-box" id="serverUrlInput" value="http://127.0.0.1:5000" placeholder="http://127.0.0.1:5000">
+        </div>
+        <div class="save-row">
+            <button class="save-btn" id="testServerBtn">Test Ping</button>
+            <button class="save-btn" id="saveServerBtn" style="background:var(--primary);color:#fff;border-color:transparent;">Save</button>
+        </div>
+        <div class="feedback-text" id="feedbackText"></div>
+    </div>
+
+    <!-- Link to full Studio -->
+    <a href="http://127.0.0.1:5000" target="_blank" class="btn btn-secondary" id="openStudioLink">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        Open Full Studio Workspace
+    </a>
+
+    <div class="footer-note">GenZ AI Model Studio · Built by Madhav</div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

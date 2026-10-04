@@ -90,9 +90,29 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        response = app.response_class()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        return response
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    return response
+
 @app.route("/")
 def index():
     return send_from_directory("templates", "index.html")
+
+@app.route("/demo-external-site")
+def demo_external_site():
+    return send_from_directory("templates", "demo_external_site.html")
 
 # ==========================================
 # Admin Authentication API Endpoints

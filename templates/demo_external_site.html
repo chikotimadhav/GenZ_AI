@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Third-Party Website — ApexCloud AI Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --text-page: #0f172a;
+            --primary-accent: #2563eb;
+            --border-light: #e2e8f0;
+            --card-bg: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-page);
+            line-height: 1.6;
+        }
+
+        /* Demo Notice Banner */
+        .demo-bar {
+            background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+            color: #ffffff;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .demo-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .demo-bar-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .demo-bar-btn:hover {
+            background: #ffffff;
+            color: #4f46e5;
+        }
+
+        /* Mock Navigation */
+        .mock-nav {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            padding: 18px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-logo span {
+            color: var(--primary-accent);
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--primary-accent);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #bfdbfe;
+        }
+        .hero-title {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+        .hero-subtitle {
+            font-size: 18px;
+            color: #64748b;
+            max-width: 680px;
+            margin: 0 auto 32px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        }
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+        .feature-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .article-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+        .article-card h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+        .article-card p {
+            color: #475569;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .cta-banner {
+            background: #1e293b;
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+        }
+        .cta-banner h2 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+        .cta-banner p {
+            color: #94a3b8;
+            max-width: 540px;
+            margin: 0 auto 24px;
+        }
+
+        .widget-hint-box {
+            position: fixed;
+            bottom: 96px;
+            right: 28px;
+            background: #0f172a;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px 20px;
+            max-width: 300px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            font-size: 13px;
+            animation: bounceIn 0.6s ease-out;
+        }
+        .widget-hint-box h4 {
+            font-size: 14px;
+            color: #a5b4fc;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .widget-hint-arrow {
+            text-align: right;
+            font-size: 20px;
+            color: #6366f1;
+            margin-top: 4px;
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+            60% { opacity: 1; transform: translateY(-4px) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Demo Navigation Notice -->
+    <div class="demo-bar">
+        <div>
+            ⚡ <strong>Live Demo: External Website with GenZ AI Popup Chatbox</strong>
+            <span style="opacity: 0.85; margin-left: 8px;">(Testing widget injection and on-page chatbox)</span>
+        </div>
+        <div class="demo-bar-actions">
+            <a href="/" class="demo-bar-btn">← Back to GenZ AI Studio</a>
+        </div>
+    </div>
+
+    <!-- Mock Navigation Bar -->
+    <nav class="mock-nav">
+        <div class="nav-logo">
+            <span>⚡ ApexCloud</span> Systems
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Products</a></li>
+            <li><a href="#">Solutions</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Blog</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <section class="hero-section">
+            <span class="hero-badge">Enterprise Cloud Infrastructure</span>
+            <h1 class="hero-title">Next-Generation Distributed Cloud & GPU Acceleration</h1>
+            <p class="hero-subtitle">
+                Deploy containerized workloads, scale inference clusters with sub-millisecond latency, and build intelligent enterprise applications on the world's fastest cloud computing network.
+            </p>
+        </section>
+
+        <!-- Feature Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🚀</span>
+                <h3>High-Throughput Inference</h3>
+                <p>Equipped with state-of-the-art NVIDIA TensorRT accelerators delivering over 10,000 tokens per second across multi-region edge nodes.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <h3>Zero-Trust Data Protection</h3>
+                <p>Complete end-to-end cryptographic isolation with automated key rotation and strictly air-gapped sovereign cloud regions.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>Instant Vector Search & RAG</h3>
+                <p>Sub-second retrieval over billions of semantic vector embeddings with integrated TF-IDF and dense neural indexers.</p>
+            </div>
+        </div>
+
+        <!-- Detailed Article Mock -->
+        <article class="article-card">
+            <h2>Deep Dive: Optimizing Neural Architecture in 2026</h2>
+            <p>
+                As AI models scale past trillions of parameters, specialized inference orchestration becomes the cornerstone of sustainable computing. Through intelligent KV-cache compression and dynamic batching, modern distributed pipelines eliminate memory bottlenecks while cutting latency by up to 78%.
+            </p>
+            <p>
+                Our benchmark studies indicate that combining speculative decoding with localized retrieval-augmented generation (RAG) yields factual precision indistinguishable from human subject matter experts.
+            </p>
+            <p>
+                <em>Try asking the GenZ AI popup in the bottom right corner to summarize this page or explain any technical terms!</em>
+            </p>
+        </article>
+
+        <!-- Call to Action Banner -->
+        <div class="cta-banner">
+            <h2>Ready to transform your cloud infrastructure?</h2>
+            <p>Start a 14-day enterprise trial or speak with one of our principal cloud architects today.</p>
+        </div>
+    </div>
+
+    <!-- Interactive Hint Floating Box -->
+    <div class="widget-hint-box" id="hintBox">
+        <h4>✨ Try the GenZ AI Popup!</h4>
+        <p>Look at the floating circular button in the bottom right corner. Click it to chat, test responses, or click <strong>"Summarize this webpage"</strong>!</p>
+        <div class="widget-hint-arrow">↘</div>
+    </div>
+
+    <!-- 
+      THE 1-LINE EMBED SCRIPT:
+      This is all that is needed to embed the floating chat popup on ANY website!
+    -->
+    <script src="/static/genzai-widget.js" 
+            data-server="http://127.0.0.1:5000" 
+            data-model="genZai (Custom Trained Model)" 
+            data-position="bottom-right"
+            data-greeting="👋 Welcome! Need help understanding this page? Ask GenZ AI!"></script>
+
+    <script>
+        // Dismiss hint box after user interacts
+        setTimeout(() => {
+            const hint = document.getElementById('hintBox');
+            if (hint) {
+                hint.style.transition = 'opacity 0.5s ease';
+                hint.style.opacity = '0.9';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

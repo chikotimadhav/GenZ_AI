@@ -56,6 +56,13 @@
                             <span class="nav-pill" id="genzaiDocBadge">1 Doc</span>
                         </a>
                     </li>
+                    <li class="nav-highlight">
+                        <a href="#" id="navExtensionModal">
+                            <i data-lucide="puzzle"></i>
+                            <span>Extension & Widget</span>
+                            <span class="nav-pill" style="background:rgba(99,102,241,0.25);color:#a5b4fc;">Pop-up</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="#" id="navHistory">
                             <i data-lucide="history"></i>
@@ -133,6 +140,10 @@
                         <i data-lucide="brain-circuit"></i>
                         <span>Train genZai</span>
                     </button>
+                    <a href="/demo-external-site" target="_blank" class="btn btn-secondary btn-sm" title="Preview floating popup chatbox on another website" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                        <i data-lucide="external-link"></i>
+                        <span>Live Popup Demo</span>
+                    </a>
                     <button class="icon-btn" id="clearChatBtn" title="Clear conversation">
                         <i data-lucide="trash-2"></i>
                     </button>
@@ -652,6 +663,137 @@
                     </button>
                 </div>
                 <div class="admin-login-feedback" id="modalAdminNotice" style="display:none;margin-top:14px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. CHROME EXTENSION & EMBED WIDGET MODAL -->
+    <div class="modal-overlay" id="extensionModalOverlay">
+        <div class="modal-container" style="max-width: 720px;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-badge" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                        <i data-lucide="puzzle"></i>
+                    </div>
+                    <div>
+                        <h2>Pop-up Chatbox on Other Websites</h2>
+                        <p>Run GenZ AI as a browser extension on any site, or embed a floating widget on your own web apps.</p>
+                    </div>
+                </div>
+                <button class="icon-btn modal-close-btn" id="closeExtensionModalBtn" type="button">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- Modal Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" id="extTabBtnExtension" type="button">
+                    <i data-lucide="chrome"></i>
+                    <span>Chrome / Edge Extension</span>
+                </button>
+                <button class="modal-tab" id="extTabBtnEmbed" type="button">
+                    <i data-lucide="code-2"></i>
+                    <span>1-Line Website Embed</span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="padding: 24px;">
+                <!-- Tab 1: Browser Extension -->
+                <div id="extTabContentExtension" style="display: block;">
+                    <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <h4 style="color: #a5b4fc; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                            Works like a native extension on ANY website
+                        </h4>
+                        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                            When installed, a small circular AI bubble floats in the bottom-right corner of every website you visit (Google, GitHub, Wikipedia, documentation, news). Click it to pop up a chat box, summarize the active webpage, or query your custom trained <strong>genZai</strong> memory.
+                        </p>
+                    </div>
+
+                    <h3 style="font-size: 14px; margin-bottom: 12px; color: #ffffff;">Quick Installation Steps (Takes 30 seconds):</h3>
+                    <ol style="padding-left: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                        <li>Open your browser and navigate to <strong><code>chrome://extensions</code></strong> (or <strong><code>edge://extensions</code></strong> in Microsoft Edge).</li>
+                        <li>In the top right corner, turn <strong>ON</strong> the toggle for <strong>Developer mode</strong>.</li>
+                        <li>Click the <strong>Load unpacked</strong> button in the top left toolbar.</li>
+                        <li>Select the folder located at:
+                            <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                <input type="text" readonly value="c:\Users\Madhav\nvidia\extension" id="extFolderPathInput" style="flex:1; background:#14161f; border:1px solid #282d3d; border-radius:6px; padding:8px 12px; color:#f3f4f6; font-size:12px; font-family:monospace;" />
+                                <button class="btn btn-secondary btn-sm" id="copyExtPathBtn" type="button">
+                                    <i data-lucide="copy"></i>
+                                    <span>Copy Path</span>
+                                </button>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                        <a href="/demo-external-site" target="_blank" class="btn btn-primary" style="text-decoration: none;">
+                            <i data-lucide="external-link"></i>
+                            <span>Test Live Floating Popup on Demo Site</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tab 2: 1-Line Embed Script -->
+                <div id="extTabContentEmbed" style="display: none;">
+                    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <h4 style="color: #34d399; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+                            Embed on your own websites
+                        </h4>
+                        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                            Paste this single script tag into the <code>&lt;body&gt;</code> of any website or web application (HTML, React, Next.js, WordPress, etc.). It injects the isolated Shadow DOM popup chat box with zero CSS conflicts!
+                        </p>
+                    </div>
+
+                    <div style="position: relative; margin-bottom: 20px;">
+                        <pre style="background: #0b0c10; border: 1px solid #232733; border-radius: 10px; padding: 14px; font-size: 12px; color: #a5b4fc; overflow-x: auto; font-family: monospace; line-height: 1.5;"><code id="embedScriptSnippet">&lt;!-- GenZ AI Floating Chatbox Widget --&gt;
+&lt;script src="http://127.0.0.1:5000/static/genzai-widget.js" 
+        data-server="http://127.0.0.1:5000" 
+        data-model="genZai (Custom Trained Model)"
+        data-position="bottom-right"
+        data-greeting="Hi there! 👋 How can I help you today?" defer&gt;&lt;/script&gt;</code></pre>
+                        <button class="btn btn-secondary btn-sm" id="copyEmbedCodeBtn" style="position: absolute; top: 10px; right: 10px;" type="button">
+                            <i data-lucide="copy"></i>
+                            <span>Copy Embed Code</span>
+                        </button>
+                    </div>
+
+                    <h4 style="font-size: 13px; margin-bottom: 10px; color: #ffffff;">Optional Configuration Attributes:</h4>
+                    <table style="width: 100%; font-size: 12px; border-collapse: collapse; color: var(--text-secondary); margin-bottom: 20px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                                <th style="padding: 6px 0; color: #fff;">Attribute</th>
+                                <th style="padding: 6px 0; color: #fff;">Default</th>
+                                <th style="padding: 6px 0; color: #fff;">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 6px 0; font-family: monospace; color: #818cf8;">data-server</td>
+                                <td style="padding: 6px 0;">http://127.0.0.1:5000</td>
+                                <td style="padding: 6px 0;">Target GenZ AI server URL</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 6px 0; font-family: monospace; color: #818cf8;">data-position</td>
+                                <td style="padding: 6px 0;">bottom-right</td>
+                                <td style="padding: 6px 0;">Floating position (bottom-right or bottom-left)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; font-family: monospace; color: #818cf8;">data-greeting</td>
+                                <td style="padding: 6px 0;">Hi there! 👋 How can I help...</td>
+                                <td style="padding: 6px 0;">Proactive welcome greeting bubble text</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <a href="/demo-external-site" target="_blank" class="btn btn-primary" style="text-decoration: none;">
+                            <i data-lucide="external-link"></i>
+                            <span>Preview Widget in Action</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

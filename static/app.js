@@ -503,11 +503,92 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // =========================================================================
+    // Extension & Embed Widget Modal Controls
+    // =========================================================================
+    const navExtensionModal = document.getElementById("navExtensionModal");
+    const extensionModalOverlay = document.getElementById("extensionModalOverlay");
+    const closeExtensionModalBtn = document.getElementById("closeExtensionModalBtn");
+    const extTabBtnExtension = document.getElementById("extTabBtnExtension");
+    const extTabBtnEmbed = document.getElementById("extTabBtnEmbed");
+    const extTabContentExtension = document.getElementById("extTabContentExtension");
+    const extTabContentEmbed = document.getElementById("extTabContentEmbed");
+    const copyExtPathBtn = document.getElementById("copyExtPathBtn");
+    const copyEmbedCodeBtn = document.getElementById("copyEmbedCodeBtn");
+    const extFolderPathInput = document.getElementById("extFolderPathInput");
+    const embedScriptSnippet = document.getElementById("embedScriptSnippet");
+
+    function openExtensionModal() {
+        if (!extensionModalOverlay) return;
+        extensionModalOverlay.classList.add("active");
+        lucide.createIcons();
+    }
+
+    function closeExtensionModal() {
+        if (!extensionModalOverlay) return;
+        extensionModalOverlay.classList.remove("active");
+    }
+
+    if (navExtensionModal) {
+        navExtensionModal.addEventListener("click", (e) => {
+            e.preventDefault();
+            openExtensionModal();
+        });
+    }
+
+    if (closeExtensionModalBtn) {
+        closeExtensionModalBtn.addEventListener("click", closeExtensionModal);
+    }
+
+    if (extensionModalOverlay) {
+        extensionModalOverlay.addEventListener("click", (e) => {
+            if (e.target === extensionModalOverlay) closeExtensionModal();
+        });
+    }
+
+    if (extTabBtnExtension && extTabBtnEmbed) {
+        extTabBtnExtension.addEventListener("click", () => {
+            extTabBtnExtension.classList.add("active");
+            extTabBtnEmbed.classList.remove("active");
+            if (extTabContentExtension) extTabContentExtension.style.display = "block";
+            if (extTabContentEmbed) extTabContentEmbed.style.display = "none";
+            lucide.createIcons();
+        });
+
+        extTabBtnEmbed.addEventListener("click", () => {
+            extTabBtnEmbed.classList.add("active");
+            extTabBtnExtension.classList.remove("active");
+            if (extTabContentExtension) extTabContentExtension.style.display = "none";
+            if (extTabContentEmbed) extTabContentEmbed.style.display = "block";
+            lucide.createIcons();
+        });
+    }
+
+    if (copyExtPathBtn && extFolderPathInput) {
+        copyExtPathBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(extFolderPathInput.value);
+            const originalHtml = copyExtPathBtn.innerHTML;
+            copyExtPathBtn.innerHTML = `<span>Copied!</span>`;
+            setTimeout(() => { copyExtPathBtn.innerHTML = originalHtml; lucide.createIcons(); }, 1800);
+        });
+    }
+
+    if (copyEmbedCodeBtn && embedScriptSnippet) {
+        copyEmbedCodeBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(embedScriptSnippet.innerText);
+            const originalHtml = copyEmbedCodeBtn.innerHTML;
+            copyEmbedCodeBtn.innerHTML = `<span>Copied!</span>`;
+            setTimeout(() => { copyEmbedCodeBtn.innerHTML = originalHtml; lucide.createIcons(); }, 1800);
+        });
+    }
+
     document.querySelectorAll(".modal-tab").forEach(tab => {
         tab.addEventListener("click", () => {
             const targetTab = tab.getAttribute("data-tab");
-            switchModalTab(targetTab);
-            if (targetTab === "tab-library") fetchGenzaiStatus();
+            if (targetTab) {
+                switchModalTab(targetTab);
+                if (targetTab === "tab-library") fetchGenzaiStatus();
+            }
         });
     });
 
